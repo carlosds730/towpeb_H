@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block content %}
+    {% if no_data %}
+        <p>Escriba algo para buscar</p>
+    {% else %}
+        {% for product in results %}
+            {% if login %}
+                <a href="/product/{{ product.pk }}/?pk_l={{ login.0 }}">{{ product.name }}</a>
+            {% else %}
+                <a href="/product/{{ product.pk }}/">{{ product.name }}</a>
+            {% endif %}
+            <br>
+        {% endfor %}
+    {% endif %}
+{% endblock %}

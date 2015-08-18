@@ -60,9 +60,16 @@
             <div id="menu-button" class="menu-icon"><i class="fa fa-bars"></i>Menu</div>
             <ul class="unstyled">
                 <li class="search-field fr">
-                    <form class="search" action="https://minimal-vintage.myshopify.com/search">
+                    <form class="search" action="/search/" method="post">{% csrf_token %}
                         <button type="submit" alt="Go" class="go"><i class="fa fa-search"></i></button>
-                        <input type="text" name="q" class="search_box" placeholder="Buscar" value=""/>
+                        <input type="text" name="query" class="search_box" placeholder="Buscar" value=""/>
+                        {% if login %}
+                            <input type="hidden" name="login" class="search_box" placeholder="Buscar"
+                                   value="{{ login.0 }}"/>
+                        {% else %}
+                            <input type="hidden" name="login" class="search_box" placeholder="Buscar"
+                                   value="{{ login.0 }}"/>
+                        {% endif %}
                     </form>
                 </li>
                 <li class="fr"><a href="/cart_shop/{{ login.0 }}/" class="cart" title="Cart"><i
@@ -149,9 +156,16 @@
                     </li>
                     <li class="search-field">
                         {#TODO: la busqueda la realizo por los labels y por los nombres de los productos y categorias, verdad?#}
-                        <form class="search" action="https://minimal-vintage.myshopify.com/search">
+                        <form class="search" action="/search/" method="post">{% csrf_token %}
                             <button type="submit" alt="Go" class="go"><i class="fa fa-search"></i></button>
-                            <input type="text" name="q" class="search_box" placeholder="Buscar" value=""/>
+                            <input type="text" name="query" class="search_box" placeholder="Buscar" value=""/>
+                            {% if login %}
+                                <input type="hidden" name="login" class="search_box" placeholder="Buscar"
+                                       value="{{ login.0 }}"/>
+                            {% else %}
+                                <input type="hidden" name="login" class="search_box" placeholder="Buscar"
+                                       value="{{ login.0 }}"/>
+                            {% endif %}
                         </form>
                     </li>
                 </ul>

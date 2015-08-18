@@ -7,6 +7,7 @@ from django.shortcuts import render
 from Shop_Site.extra_functions import hash
 from Shop_Site import models
 from Shop_Site import forms
+from Shop_Site import stopwords
 
 
 # Create your views here.
@@ -284,3 +285,72 @@ def add_to_cart(request):
             '/categories/' + request.POST['category_pk'] + '/?pk_l=' + request.POST['login'])
     else:
         raise Http404('Este url no tiene página')
+
+
+def search(request):
+    if request.method == 'POST':
+        categories_all = models.Category.objects.all()
+        try:
+            query = request.POST['query']
+            selected_products = []
+            if query:
+                words = stopwords.word_tokenize(query)
+                words = stopwords.remove_stopwords(words)
+                for product in models.Products.objects.all():
+                    exist = True
+                    for word in words:
+                        if not exist:
+                            break
+                        if word not in product.name.lower() and word not in product.short_description.lower() and word not in product.description.lower() and word not in product.category.name.lower() and word not in product.mark.lower() and word not in product.label.split(
+                                ','):
+                            exist = False
+                            for attr in product.attributes.all():
+                                if word in str(
+                                        attr.price).lower() or word in attr.color.lower() or word in attr.size.lower():
+                                    exist = True
+                                    break
+
+                    if exist:
+                        selected_products.append(product)
+            cant = 0
+            try:
+                log = request.POST['login']
+                log = models.Clients.objects.get(pk=int(log))
+                if log.name:
+                    log = (log.pk, log.name)
+                else:
+                    log = (log.pk, log.email)
+
+                p = models.Purchase.objects.get(client__pk=int(request.POST['login']), on_hold=True)
+                cant = p.amount
+            except KeyError:
+                log = None
+            except models.Clients.DoesNotExist:
+                log = None
+            except models.Purchase.DoesNotExist:
+                log = None
+            except ValueError:
+                log = None
+
+            return render(request, 'search.html',
+                          {'results': selected_products, 'login': log, 'categories': categories_all,
+                           'purchases': cant})
+        except KeyError:
+            raise Http404('Wrong request!!!!!!!')
+    if request.method == 'GET':
+        try:
+            log = request.GET['pk_l']
+            log = models.Clients.objects.get(pk=int(log))
+            if log.name:
+                log = (log.pk, log.name)
+            else:
+                log = (log.pk, log.email)
+        except KeyError:
+            log = None
+        except models.Clients.DoesNotExist:
+            log = None
+        except models.Purchase.DoesNotExist:
+            log = None
+        except ValueError:
+            log = None
+        return add_info_home(request, {'no_data': True, 'login': log}, 'search.html')
