@@ -5,13 +5,20 @@
     {% if no_data %}
         <p>Escriba algo para buscar</p>
     {% else %}
-        {% for product in results %}
-            {% if login %}
-                <a href="/product/{{ product.pk }}/?pk_l={{ login.0 }}">{{ product.name }}</a>
-            {% else %}
-                <a href="/product/{{ product.pk }}/">{{ product.name }}</a>
-            {% endif %}
-            <br>
+        <div class="header">
+            <h3 style="color: #004024"><strong>Resultados:</strong></h3>
+        </div>
+        <div class="container">
+            <ul>
+                {% for product in results %}
+                    {% if login %}
+                        <li><a style="color: #004024"
+                               href="/product/{{ product.pk }}/?pk_l={{ login.0 }}">{{ product.name }}</a></li>
+                    {% else %}
+                        <li><a style="color: #004024" href="/product/{{ product.pk }}/">{{ product.name }}</a></li>
+                    {% endif %}
         {% endfor %}
+            </ul>
+        </div>
     {% endif %}
 {% endblock %}

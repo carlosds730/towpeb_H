@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block content %}
+    {% if on_hold %}
+        <div class="header">
+            <h3 style="color: #004024"><strong>Carrito actual:</strong></h3>
+        </div>
+        <div class="container">
+            <ul>
+                {% for p in on_hold.products.all %}
+                    {% if login %}
+                        <li><a style="color: #004024"
+                               href="/product/{{ p.product.pk }}/?pk_l={{ login.0 }}">{{ p.product.name }}</a>: {{ p.attribute }}
+                        </li>
+                    {% else %}
+                        <li><a style="color: #004024"
+                               href="/product/{{ p.product.pk }}/">{{ p.product.name }}</a>: {{ p.attribute }}</li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+    {% if shops %}
+        <div class="header">
+            <h3 style="color: #004024"><strong>Carritos anteriores:</strong></h3>
+        </div>
+        <div class="container">
+            <ul>
+                {% for s in shops %}
+                    <div class="header">
+                        <h5 style="color: #004024"><strong>Compra del dia {{ s.date | date}}</strong></h5>
+                    </div>
+                    {% for p in s.products.all %}
+                        {% if login %}
+                            <li><a style="color: #004024"
+                                   href="/product/{{ p.product.pk }}/?pk_l={{ login.0 }}">{{ p.product.name }}</a>
+                                : {{ p.attribute }}</li>
+                        {% else %}
+                            <li><a style="color: #004024"
+                                   href="/product/{{ p.product.pk }}/">{{ p.product.name }}</a>: {{ p.attribute }}</li>
+                        {% endif %}
+                    {% endfor %}
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+
+{% endblock %}

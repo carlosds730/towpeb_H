@@ -1,9 +1,12 @@
 # -*- coding: utf8 -*-
+import django.utils.timezone as tz
+
 from django.db import models
 from django.core.exceptions import ValidationError
 from sorl.thumbnail import ImageField
 
 from Shop_Site.extra_functions import hash
+
 
 
 
@@ -149,6 +152,9 @@ class Purchase(models.Model):
 
     on_hold = models.BooleanField(verbose_name='En espera', default=True,
                                   help_text='Define si la compra no se ha realizado')
+
+    date = models.DateField(verbose_name='Fecha', default=tz.now(), blank=True, null=True,
+                            help_text='Fecha en que se realiza la compra')
 
     amount = models.IntegerField(verbose_name='Cantidad', default=1,
                                  help_text='Cantidad de productos que se quieren comprar')

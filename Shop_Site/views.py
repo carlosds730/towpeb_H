@@ -354,3 +354,28 @@ def search(request):
         except ValueError:
             log = None
         return add_info_home(request, {'no_data': True, 'login': log}, 'search.html')
+
+
+def cart_shop(request):
+    if request.method == 'GET':
+        try:
+            log = request.GET['pk_l']
+            client = models.Clients.objects.get(pk=int(log))
+            if client.name:
+                log = (client.pk, client.name)
+            else:
+                log = (client.pk, client.email)
+        except KeyError:
+            raise Http404('Wrong client!!!!!')
+        except ValueError:
+            raise Http404('Wrong client!!!!!')
+        except models.Clients.DoesNotExist:
+            raise Http404('Wrong client!!!!!')
+        on_hold = None
+        shops = []
+        for purchase in models.Purchase.objects.filter(client__pk=client.pk):
+            if purchase.on_hold:
+                on_hold = purchase
+            else:
+                shops.append(purchase)
+        return add_info_home(request, {'login': log, 'on_hold': on_hold, 'shops': shops}, 'cart_shop.html')
