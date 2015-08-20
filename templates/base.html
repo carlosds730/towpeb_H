@@ -84,7 +84,7 @@
                 {% endif %}
                 <li class="customer-links">
                     {% if login %}
-                        <a href="#" id="customer_login_link">{{ login.1 }}</a>
+                        <a id="customer_login_link">{{ login.1 }}</a>
                         <span class="or">&nbsp;|&nbsp;</span>
                         <a href="/" id="customer_register_link">Cerrar sesión</a>
                     {% else %}
@@ -145,7 +145,7 @@
                         <span class="more"><i class="fa fa-user"></i></span>
                         {% if login %}
                             <ul class="sub-menu">
-                            <li class="customer-links"><a href="#" id="customer_login_link">{{ login.1 }}</a>
+                                <li class="customer-links"><a id="customer_login_link">{{ login.1 }}</a>
                             </li>
                             <span class="or">&nbsp;|&nbsp;</span>
                             <li class="customer-links"><a href="/" id="customer_register_link">Cerrar sesión</a>

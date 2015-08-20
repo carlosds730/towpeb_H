@@ -1,11 +1,11 @@
 # -*- coding: utf8 -*-
 import django.utils.timezone as tz
-
 from django.db import models
 from django.core.exceptions import ValidationError
 from sorl.thumbnail import ImageField
 
 from Shop_Site.extra_functions import hash
+
 
 
 
@@ -161,6 +161,12 @@ class Purchase(models.Model):
 
     def __str__(self):
         return str(self.pk)
+
+    def total_price(self):
+        total = 0
+        for p in self.products.all():
+            total += p.attribute.price
+        return str(total) + ' €'
 
 
 class Sale_Product(models.Model):

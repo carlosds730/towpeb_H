@@ -5,8 +5,10 @@
     {% if on_hold %}
         <div class="header">
             <h3 style="color: #004024"><strong>Carrito actual:</strong></h3>
+
         </div>
         <div class="container">
+            <h5 style="color: #004024"><strong>Total: {{ on_hold.total_price }}</strong></h5>
             <ul>
                 {% for p in on_hold.products.all %}
                     {% if login %}
@@ -26,11 +28,13 @@
             <h3 style="color: #004024"><strong>Carritos anteriores:</strong></h3>
         </div>
         <div class="container">
-            <ul>
-                {% for s in shops %}
+            {% for s in shops %}
                     <div class="header">
-                        <h5 style="color: #004024"><strong>Compra del día {{ s.date | date}}</strong></h5>
+                        <h5 style="color: #004024"><strong>Compra del d&iacutea {{ s.date | date }}</strong></h5>
+                        <h5 style="color: #004024"><strong>Total gastado: {{ s.total_price }} </strong></h5>
                     </div>
+                <div class="container">
+                <ul>
                     {% for p in s.products.all %}
                         {% if login %}
                             <li><a style="color: #004024"
@@ -43,6 +47,8 @@
                     {% endfor %}
                 {% endfor %}
             </ul>
+            </div>
+
         </div>
     {% endif %}
 
