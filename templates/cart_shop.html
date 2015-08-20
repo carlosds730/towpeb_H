@@ -29,7 +29,7 @@
             <ul>
                 {% for s in shops %}
                     <div class="header">
-                        <h5 style="color: #004024"><strong>Compra del dia {{ s.date | date}}</strong></h5>
+                        <h5 style="color: #004024"><strong>Compra del día {{ s.date | date}}</strong></h5>
                     </div>
                     {% for p in s.products.all %}
                         {% if login %}
