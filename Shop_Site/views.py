@@ -379,3 +379,55 @@ def cart_shop(request):
             else:
                 shops.append(purchase)
         return add_info_home(request, {'login': log, 'on_hold': on_hold, 'shops': shops}, 'cart_shop.html')
+
+
+def about_us(request):
+    if request.method == 'GET':
+        try:
+            log = request.GET['pk_l']
+            client = models.Clients.objects.get(pk=int(log))
+            if client.name:
+                log = (client.pk, client.name)
+            else:
+                log = (client.pk, client.email)
+        except KeyError:
+            log = None
+        except ValueError:
+            log = None
+        except models.Clients.DoesNotExist:
+            log = None
+
+        return add_info_home(request, {'login': log}, url='about_us.html')
+
+
+def finish_views(request, html):
+    if request.method == 'GET':
+        try:
+            log = request.GET['pk_l']
+            client = models.Clients.objects.get(pk=int(log))
+            if client.name:
+                log = (client.pk, client.name)
+            else:
+                log = (client.pk, client.email)
+        except KeyError:
+            log = None
+        except ValueError:
+            log = None
+        except models.Clients.DoesNotExist:
+            log = None
+
+        return add_info_home(request, {'login': log}, url=html)
+
+
+def sizes(request):
+    return finish_views(request, 'guia_tallas.html')
+
+
+def privacy(request):
+    return finish_views(request, 'privacy.html')
+
+def conditions(request):
+    return finish_views(request, 'conditions.html')
+
+def cookies(request):
+    return finish_views(request, 'cookies.html')

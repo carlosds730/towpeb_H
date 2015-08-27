@@ -21,26 +21,19 @@
                                     itemprop="title">Inicio</span></a></span>
                         {% endif %}
 
-                        <span class="arrow-space">&#62;</span>
+                         <span class="arrow-space">&#62;</span>
                          <span itemscope itemtype="http://data-vocabulary.org/Breadcrumb">
                              {% if login %}
                                  <a href="/categories/{{ product.category.pk }}/?pk_l={{ login.0 }}"
                                     title="All Products" itemprop="url">
-                                     <span itemprop="title">Productos</span>
+                                     <span itemprop="title">{{ product.category.name }}</span>
                                  </a>
                              {% else %}
                                  <a href="/categories/{{ product.category.pk }}/" title="All Products"
                                     itemprop="url">
-                                <span itemprop="title">Productos</span>
-                            </a>
+                                     <span itemprop="title">{{ product.category.name }}</span>
+                                 </a>
                              {% endif %}
-
-                         </span>
-                        <span class="arrow-space">&#62;</span>
-                        <span itemscope itemtype="http://data-vocabulary.org/Breadcrumb">
-                            <a style="cursor: auto" title="All Products" itemprop="url">
-                                <span itemprop="title">Camisas</span>
-                            </a>
                          </span>
                         <span class="arrow-space">&#62;</span>
                         <strong>{{ product.name }}</strong>
@@ -52,7 +45,7 @@
                     <!-- Begin featured image -->
                     <div class="image featured">
                         {#DONE:Here goes the main image of the product#}
-                        <a href="{{ product.image.url }}" id="placeholder" data-image-id="960818456">
+                        <a href="{{ product.image.url }}" id="placeholder" data-image-id="-1">
                             <img src="{{ product.image.url }}" alt="{{ product.short_description }}"/>
                         </a>
 
@@ -61,21 +54,14 @@
                             {#DONE: The main image should be here too#}
                             <li>
                                 <a href="{{ product.image.url }}" class="fancy" rel="gallery"
-                                   data-image-id="100"></a>
+                                   data-image-id="-1"></a>
                             </li>
                             {% for img in product.pictures.all %}
-                            <li>
-                                <a href="{{ img.image.url }}" class="fancy" rel="gallery"
-                                   data-image-id="{{ img.pk }}"></a>
-                            </li>
+                                <li>
+                                    <a href="{{ img.image.url }}" class="fancy" rel="gallery"
+                                       data-image-id="{{ img.pk }}"></a>
+                                </li>
                             {% endfor %}
-
-                            {#                            <li>#}
-                            {#                                <a href="{% static 'img/single_product/otras/catálogo_hutton_017-600x830.jpg' %}" class="fancy" rel="gallery" data-image-id="960818458"></a>#}
-                            {#                            </li>#}
-                            {#                            <li>#}
-                            {#                                <a href="{% static 'img/single_product/otras/catálogo_hutton_018-600x830.jpg' %}" class="fancy" rel="gallery" data-image-id="960818459"></a>#}
-                            {#                            </li>#}
                         </ul>
                     </div>
                     <!-- End product image -->
@@ -87,17 +73,17 @@
                     <div class="thumbs clearfix">
 
                         <div class="image">
-                            <a href="{{ product.image.url }}" data-image-id="100">
+                            <a href="{{ product.image.url }}" data-image-id="-1">
                                 <img src="{{ product.image.url }}"
                                      alt="{{ product.short_description }}"/>
                             </a>
                         </div>
                         {% for img in product.pictures.all %}
-                        <div class="image">
-                            <a href="{{ img.image.url }}" data-image-id="{{ img.pk }}">
-                                <img src="{{ img.image.url }}" alt="Picture"/>
-                            </a>
-                        </div>
+                            <div class="image">
+                                <a href="{{ img.image.url }}" data-image-id="{{ img.pk }}">
+                                    <img src="{{ img.image.url }}" alt="Picture"/>
+                                </a>
+                            </div>
                         {% endfor %}
                         {#                        <div class="image">#}
                         {#                            <a href="{% static 'img/single_product/otras/catálogo_hutton_021-600x830.jpg' %}" data-image-id="960818457">#}
@@ -135,7 +121,7 @@
                                     <select class="single-option-selector" name="attr_pk" data-option="option1"
                                             id="product-select-option-0">
                                         {% for attr in product.attributes.all %}
-                                            <option  value="{{ attr.pk }}">{{ attr }}</option>
+                                            <option value="{{ attr.pk }}">{{ attr }}</option>
                                         {% endfor %}
                                     </select>
                                 </div>
@@ -167,7 +153,7 @@
                             <div class="purchase-section multiple">
                                 <div class="purchase">
                                     {% if login %}
-                                    <input type="submit" id="add-to-cart" class="btn" name="add" value="Añadir al carrito"/>
+                                        <input type="submit" id="add-to-cart" class="btn" name="add" value="Añadir al carrito"/>
                                     {% else %}
                                         <a href="/login/" id="add-to-cart"
                                            class="btn" name="add"

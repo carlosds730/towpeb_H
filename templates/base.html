@@ -28,9 +28,9 @@
     {% block css_and_js %}
         <link href="{% static 'css/styles.scss87ea.css' %}" type="text/css" media="all" rel="stylesheet"/>
         <link href="{% static 'css/social-icons.css' %}" type="text/css" media="all" rel="stylesheet"/>
-{#        <link href="{% static 'css/bootstrap.min.css' %}" type="text/css" media="all" rel="stylesheet"/>#}
+        {#        <link href="{% static 'css/bootstrap.min.css' %}" type="text/css" media="all" rel="stylesheet"/>#}
         <link href="{% static 'css/font-awesome.css' %}" type="text/css" media="all" rel="stylesheet"/>
-        <link href="{% static 'css/bootstrap.css' %}" type="text/css" media="all" rel="stylesheet"/>
+        {#        <link href="{% static 'css/bootstrap.css' %}" type="text/css" media="all" rel="stylesheet"/>#}
 
         <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Arvo:300,400,700">
 
@@ -75,8 +75,8 @@
                 </li>
                 {% if login %}
                     <li class="fr"><a href="/cart_shop/?pk_l={{ login.0 }}" class="cart" title="Cart"><i
-                        class="fa fa-shopping-cart"></i>Carrito: {{ purchases }} Items
-                </a></li>
+                            class="fa fa-shopping-cart"></i>Carrito: {{ purchases }} Items
+                    </a></li>
                 {% else %}
                     <li class="fr"><a class="cart" title="Cart"><i
                             class="fa fa-shopping-cart"></i>Carrito: {{ purchases }} Items
@@ -116,7 +116,11 @@
                     </li>
                     <li>
                         {# TODO: Que se supone q vaya aqui INFO q me tienes q mandar#}
-                        <a href="#" class="current navlink"><span>Sobre nostros</span></a>
+                        {% if login %}
+                            <a href="/about_us/?pk_l={{ login.0 }}" class="current navlink"><span>Sobre nostros</span></a>
+                        {% else %}
+                            <a href="/about_us/" class="current navlink"><span>Sobre nostros</span></a>
+                        {% endif %}
                     </li>
                     <li>
 
@@ -139,17 +143,21 @@
                     </li>
                     <li>
                         {# TODO: Explicame aqui igual q es esto y mandame lo que quieres q vaya ahi #}
-                        <a href="#" class=" current navlink"><span>Guía de tallas</span></a>
+                        {% if login %}
+                            <a href="/sizes/?pk_l={{ login.0 }}" class=" current navlink"><span>Guía de tallas</span></a>
+                        {% else %}
+                            <a href="/sizes/" class=" current navlink"><span>Guía de tallas</span></a>
+                        {% endif %}
                     </li>
                     <li><span class="account-links">Usuarios</span>
                         <span class="more"><i class="fa fa-user"></i></span>
                         {% if login %}
                             <ul class="sub-menu">
                                 <li class="customer-links"><a id="customer_login_link">{{ login.1 }}</a>
-                            </li>
-                            <span class="or">&nbsp;|&nbsp;</span>
-                            <li class="customer-links"><a href="/" id="customer_register_link">Cerrar sesión</a>
-                            </li>
+                                </li>
+                                <span class="or">&nbsp;|&nbsp;</span>
+                                <li class="customer-links"><a href="/" id="customer_register_link">Cerrar sesión</a>
+                                </li>
                             </ul>
                         {% else %}
                             <ul class="sub-menu">
@@ -210,9 +218,11 @@
                                     {% endif %}
                                 </li>
                                 <li class="">
-                                    <a href="#">
-                                        Sobre nosotros
-                                    </a>
+                                    {% if login %}
+                                        <a href="/about_us/?pk_l={{ login.0 }}">Sobre nostros</a>
+                                    {% else %}
+                                        <a href="/about_us/">Sobre nostros</a>
+                                    {% endif %}
                                 </li>
                                 <li class=" dropdown">
                                     <a style="cursor: pointer">
@@ -238,9 +248,11 @@
                                     </ul>
                                 </li>
                                 <li class="">
-                                    <a href="#">
-                                        Guía de tallas
-                                    </a>
+                                    {% if login %}
+                                        <a href="/sizes/?pk_l={{ login.0 }}">Guía de tallas</a>
+                                    {% else %}
+                                        <a href="/sizes/">Guía de tallas</a>
+                                    {% endif %}
                                 </li>
                             </ul>
 
@@ -435,11 +447,21 @@
                     <h4>Avisos legales</h4>
                     <ul class="unstyled">
                         {# TODO: Que se supone q vaya en todos estos enlaces, me imagino q sea textos, mandamelos#}
-                        <li><a href="#" title="Política de privacidad">Política de privacidad</a></li>
-
-                        <li><a href="#" title="Términos y Condiciones">Términos y Condiciones</a></li>
-
-                        <li><a href="#" title="Política de Cookies">Política de Cookies</a></li>
+                        {% if login %}
+                            <li><a href="/privacy/#home?pk_l={{ login.0 }}" title="Política de privacidad">Política de privacidad</a></li>
+                        {% else %}
+                            <li><a href="/privacy/#home" title="Política de privacidad">Política de privacidad</a></li>
+                        {% endif %}
+                        {% if login %}
+                            <li><a href="/conditions/#home?pk_l={{ login.0 }}" title="Términos y Condiciones">Términos y Condiciones</a></li>
+                        {% else %}
+                            <li><a href="/conditions/#home" title="Términos y Condiciones">Términos y Condiciones</a></li>
+                        {% endif %}
+                        {% if login %}
+                            <li><a href="/cookies/#home?pk_l={{ login.0 }}" title="Política de Cookies">Política de Cookies</a></li>
+                        {% else %}
+                            <li><a href="/cookies/#home" title="Política de Cookies">Política de Cookies</a></li>
+                        {% endif %}
                     </ul>
                 </div>
                 <!-- End footer navigation -->

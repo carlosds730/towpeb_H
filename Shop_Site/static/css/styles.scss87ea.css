@@ -768,7 +768,7 @@ ul.expanded > li, ol.expanded > li {
 }
 
 .toolbar a {
-    color:  #ffffff;
+    color: #ffffff;
 }
 
 .toolbar a:hover {
@@ -857,7 +857,7 @@ ul.expanded > li, ol.expanded > li {
     border: 0
 }
 
-.logo img{
+.logo img {
     max-height: 72px;
 }
 
@@ -1132,9 +1132,9 @@ nav.mobile {
 }
 
 /*.footer-wrapper:after{*/
-    /*content: ' ';*/
-    /*clear: both;*/
-    /*display: block;*/
+/*content: ' ';*/
+/*clear: both;*/
+/*display: block;*/
 /*}*/
 
 footer {
@@ -1742,9 +1742,9 @@ div.errors {
 }
 
 /*@media only screen and (min-width: 1026px) {*/
-    /*.p30{*/
-        /*float: left;*/
-    /*}*/
+/*.p30{*/
+/*float: left;*/
+/*}*/
 /*}*/
 
 @media only screen and (min-width: 768px) and (max-width: 1026px) {
@@ -3133,4 +3133,31 @@ a:hover .share-count:after {
 
 .social-sharing.is-clean .icon-google {
     color: #dd4b39
+}
+
+.container_div {
+    text-align: center;
+    border-bottom: 1px solid #dddddd;
+    margin-bottom: 20px;
+}
+
+.container_div:last-child {
+    border-bottom: 0 solid #dddddd;
+    margin-bottom: 0;
+}
+
+.container_div > img:last-child {
+    margin-bottom: 20px;
+}
+
+.privacy>p:last-child {
+    margin-bottom: 30px;
+}
+
+.privacy > h1 {
+    text-align: center;
+}
+
+.privacy > h3 {
+    text-align: justify;
 }

@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block content %}
+    <div class="container_div">
+        <h1>Camisas</h1>
+        <img src="{% static 'img/guia_tallas/CamisaArt-801_T.png' %}">
+        <br>
+        <img src="{% static 'img/guia_tallas/camisas_tallas.png' %}">
+    </div>
+    <div class="container_div">
+        <h1>Polos</h1>
+        <img src="{% static 'img/guia_tallas/polo-1.png' %}">
+        <br>
+        <img src="{% static 'img/guia_tallas/polos_tallas.png' %}">
+    </div>
+    <div class="container_div">
+        <h1>Americanas</h1>
+        <img src="{% static 'img/guia_tallas/americanas.png' %}">
+    </div>
+{% endblock %}
