@@ -7,7 +7,7 @@ body {
     padding-bottom: 0;
     background-color: #e4e6e9;
     min-height: 100%;
-    font-family: 'Open Sans';
+    font-family: Helvetica, Arial, sans-serif;
     font-size: 13px;
     color: #393939;
     line-height: 1.5
@@ -137,7 +137,7 @@ h2.block {
 h3 {
     font-size: 22px;
     font-weight: normal;
-    font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif
+    font-family: Helvetica, Arial, sans-serif
 }
 
 h3.smaller {
@@ -155,7 +155,7 @@ h3.block {
 h4 {
     font-size: 18px;
     font-weight: normal;
-    font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif
+    font-family: Helvetica, Arial, sans-serif
 }
 
 h4.smaller {
@@ -9217,7 +9217,7 @@ th .lbl:only-child, td .lbl:only-child {
 }
 
 .login-box .user-signup-link {
-    color: #CF7
+    color: #FEFFFD;
 }
 
 .login-box .toolbar {
@@ -15402,4 +15402,8 @@ th[aria-selected=true] .ui-jqgrid-sortable {
     .ace-settings-container, body.breadcrumbs-fixed .ace-settings-container {
         top: 65px
     }
+}
+
+.input_line > input{
+    font-family: Helvetica, Arial, sans-serif;
 }
