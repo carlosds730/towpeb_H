@@ -10,15 +10,10 @@
                 <div class="span12">
                     <!-- Begin breadcrumb -->
                     <div class="breadcrumb clearfix">
-                        {% if login %}
-                            <span itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a
-                                    href="/?pk_l={{ login.0 }}" title="Hutton" itemprop="url"><span
-                                    itemprop="title">Inicio</span></a></span>
-                        {% else %}
+
                             <span itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="/" title="Hutton"
                                                                                                 itemprop="url"><span
                                     itemprop="title">Inicio</span></a></span>
-                        {% endif %}
 
                         <span class="arrow-space">&#62;</span>
                         <span itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a
@@ -75,17 +70,11 @@
                                              alt="{{ p.2 }}"/>
                                     </a>
                                 {% else %}
-                                    {% if login %}
-                                        <a href="/product/{{ p.0 }}/?pk_l={{ login.0 }}">
+
+                                    <a href="/product/{{ p.0 }}/">
                                             <img src="{{ p.3 }}"
                                                  alt="{{ p.2 }}"/>
                                         </a>
-                                    {% else %}
-                                        <a href="/product/{{ p.0 }}/">
-                                            <img src="{{ p.3 }}"
-                                                 alt="{{ p.2 }}"/>
-                                        </a>
-                                    {% endif %}
                                 {% endif %}
                             </div>
                             <div class="details">
@@ -98,23 +87,15 @@
                               </span>
                                     </a>
                                 {% else %}
-                                    {% if login %}
-                                        <a href="/product/{{ p.0 }}/?pk_l={{ login.0 }}" class="clearfix">
+
+                                    <a href="/product/{{ p.0 }}/" class="clearfix">
                                             <h4 class="title">{{ p.1 }}</h4>
                                             <span class="vendor">{{ p.2 }}</span>
                               <span class="price">
                                 {{ p.7 }} €
                               </span>
                                         </a>
-                                    {% else %}
-                                        <a href="/product/{{ p.0 }}/" class="clearfix">
-                                            <h4 class="title">{{ p.1 }}</h4>
-                                            <span class="vendor">{{ p.2 }}</span>
-                              <span class="price">
-                                {{ p.7 }} €
-                              </span>
-                                        </a>
-                                    {% endif %}
+
                                 {% endif %}
                             </div>
                         </div>
@@ -126,8 +107,7 @@
     <script>
         function order() {
             var request = $.get('/categories/{{ category.pk }}/', {
-                'order': $('#select').val(),
-                'pk_l': '{{ login.0 }}'
+                'order': $('#select').val()
             });
             request.done(function (data) {
                 var a = document.getElementById("container_general");
@@ -159,12 +139,7 @@
                             image_div.setAttribute('class', 'image');
                             var a_1 = document.createElement('a');
                             if (p[6] != 0) {
-                                if (data['login']) {
-                                    a_1.setAttribute('href', '/product/' + p[0].toString() + '/?pk_l=' + data['login'][0].toString());
-                                }
-                                else {
-                                    a_1.setAttribute('href', '/product/' + p[0].toString() + '/');
-                                }
+                                a_1.setAttribute('href', '/product/' + p[0].toString() + '/');
                             }
                             var image = document.createElement('img');
                             image.setAttribute('src', p[3].toString());
@@ -178,12 +153,7 @@
 
                             var a_2 = document.createElement('a');
                             if (p[6] != 0) {
-                                if (data['login']) {
-                                    a_2.setAttribute('href', '/product/' + p[0].toString() + '/?pk_l=' + data['login'][0].toString());
-                                }
-                                else {
-                                    a_2.setAttribute('href', '/product/' + p[0].toString() + '/');
-                                }
+                                a_2.setAttribute('href', '/product/' + p[0].toString() + '/');
                             }
                             a_2.setAttribute('class', 'clearfix');
                             var h_4 = document.createElement('h4');

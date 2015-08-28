@@ -9,16 +9,15 @@
             <h3 style="color: #004024"><strong>Resultados:</strong></h3>
         </div>
         <div class="container">
+            {% if no_result %}
+                <p>Ning&uacuten producto satisface los criterios de su b&uacutesqueda</p>
+            {% else %}
             <ul>
                 {% for product in results %}
-                    {% if login %}
-                        <li><a style="color: #004024"
-                               href="/product/{{ product.pk }}/?pk_l={{ login.0 }}">{{ product.name }}</a></li>
-                    {% else %}
-                        <li><a style="color: #004024" href="/product/{{ product.pk }}/">{{ product.name }}</a></li>
-                    {% endif %}
-        {% endfor %}
+                    <li><a style="color: #004024" href="/product/{{ product.pk }}/">{{ product.name }}</a></li>
+                {% endfor %}
             </ul>
+            {% endif %}
         </div>
     {% endif %}
 {% endblock %}

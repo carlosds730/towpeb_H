@@ -4,8 +4,6 @@ from django.db import models
 from django.core.exceptions import ValidationError
 from sorl.thumbnail import ImageField
 
-from Shop_Site.extra_functions import hash
-
 
 
 
@@ -136,11 +134,10 @@ class Clients(models.Model):
     def __str__(self):
         return str(self.name)
 
-    def save(self, *args, **kwargs):
-        if self.password:
-            self.password = hash(self.password)
-        super(Clients, self).save(*args, **kwargs)
-
+        # def save(self, *args, **kwargs):
+        #     if self.password:
+        #         self.password = hash(self.password)
+        #     super(Clients, self).save(*args, **kwargs)
 
 
 class Purchase(models.Model):
@@ -172,7 +169,7 @@ class Purchase(models.Model):
     def total_price(self):
         total = 0
         for p in self.products.all():
-            total += p.attribute.price
+            total += p.attribute.price * p.amount
         return str(total) + ' €'
 
 
@@ -185,8 +182,13 @@ class Sale_Product(models.Model):
 
     attribute = models.ForeignKey('Attribute', verbose_name='Atributo', blank=True, null=True)
 
+    amount = models.IntegerField(verbose_name='Cantidad', default=0, null=True, blank=True)
+
     def __str__(self):
         return str(self.product) + ' ' + str(self.attribute)
+
+    def price(self):
+        return str(self.attribute.price * self.amount) + ' €'
 
 
 class Pictures(models.Model):

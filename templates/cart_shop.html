@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load thumbnail %}
 {% load staticfiles %}
 
 {% block content %}
@@ -9,10 +10,19 @@
         </div>
         <div class="container">
             <h5 style="color: #004024"><strong>Total: {{ on_hold.total_price }}</strong></h5>
-            <ul>
+            <ul class="carrito">
                 {% for p in on_hold.products.all %}
-                    <li><a style="color: #004024"
-                           href="/product/{{ p.product.pk }}/">{{ p.product.name }}</a>: {{ p.attribute }}</li>
+                    <li id="product_{{ p.pk }}" class="item-description">
+                        {% thumbnail p.product.image "100x100" as imagen %}
+                            <img src="{{ imagen.url }}">
+                        {% endthumbnail %}
+                        <a style="color: #004024" id="dscrptn_{{ p.pk }}"
+                           href="/product/{{ p.product.pk }}/">{{ p.amount }} {{ p.product.name }}: {{ p.attribute }}
+                            Total: {{ p.price }}</a>
+                        <a class="remove" style="cursor: pointer" onclick="Eliminate({{ p.pk }})">
+                            Eliminar
+                        </a>
+                    </li>
                 {% endfor %}
             </ul>
         </div>
@@ -24,20 +34,49 @@
         <div class="container">
             {% for s in shops %}
                 <div class="header">
-                    <h5 style="color: #004024"><strong>Compra del d&iacutea {{ s.date | date }}</strong></h5>
-                    <h5 style="color: #004024"><strong>Total gastado: {{ s.total_price }} </strong></h5>
+                    <h5 style="color: #004024"><strong>{{ s.date | date }} ({{ s.total_price }})</strong>
+                        <a style="cursor: pointer" data-open="1" id="link_{{ s.pk }}" onclick="Collapse({{ s.pk }})">
+                            Ver los productos
+                        </a>
+                    </h5>
                 </div>
-                <div class="container">
-                <ul>
-                {% for p in s.products.all %}
-                    <li><a style="color: #004024"
-                           href="/product/{{ p.product.pk }}/">{{ p.product.name }}</a>: {{ p.attribute }}</li>
-                {% endfor %}
+                <div id="carrito_{{ s.pk }}" class="products_container">
+                    <ul>
+                        {% for p in s.products.all %}
+                            <li><a style="color: #004024"
+                                   href="/product/{{ p.product.pk }}/">{{ p.product.name }}: {{ p.attribute }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </div>
             {% endfor %}
-            </ul>
-            </div>
-
         </div>
     {% endif %}
+    <script>
+        function Collapse(id) {
+            $("#carrito_" + id).slideToggle();
+            var a = document.getElementById("link_" + id);
+            if (a.getAttribute("data-open") == "1") {
+                a.innerText = "Ocultar los productos";
+                a.setAttribute("data-open", "0");
+            }
+            else {
+                a.innerText = "Ver los productos";
+                a.setAttribute("data-open", "1");
+            }
+        }
+        function Eliminate(id) {
+            var text = document.getElementById("dscrptn_" + id).innerText;
+            if (window.confirm("Realmente desea eliminar " + text + " de su carrito?")) {
+                var request = $.get("/eliminate/", {'pk': id});
+                request.done(function (data) {
+                    $("#product_" + id).fadeOut().remove();
+                });
+                request.error(function (data) {
+                    alert("Ha ocurrido un problema al eliminar. Inténtelo más tarde");
+                });
+            }
+        }
+    </script>
 
 {% endblock %}
+

@@ -12,28 +12,19 @@
                 <!-- Begin breadcrumb -->
                 <div class="span12">
                     <div class="breadcrumb clearfix">
-                        {% if login %}
-                            <span itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a
-                                    href="/?pk_l={{ login.0 }}" title="Vintage" itemprop="url"><span itemprop="title">Inicio</span></a></span>
-                        {% else %}
+
                             <span itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="/" title="Vintage"
                                                                                                 itemprop="url"><span
                                     itemprop="title">Inicio</span></a></span>
-                        {% endif %}
 
                          <span class="arrow-space">&#62;</span>
                          <span itemscope itemtype="http://data-vocabulary.org/Breadcrumb">
-                             {% if login %}
-                                 <a href="/categories/{{ product.category.pk }}/?pk_l={{ login.0 }}"
-                                    title="All Products" itemprop="url">
-                                     <span itemprop="title">{{ product.category.name }}</span>
-                                 </a>
-                             {% else %}
+
                                  <a href="/categories/{{ product.category.pk }}/" title="All Products"
                                     itemprop="url">
                                      <span itemprop="title">{{ product.category.name }}</span>
                                  </a>
-                             {% endif %}
+
                          </span>
                         <span class="arrow-space">&#62;</span>
                         <strong>{{ product.name }}</strong>
@@ -140,7 +131,7 @@
                             <div class="selector-wrapper">
                                 <label>Cantidad</label>
                                 <input id="quantity" type="number" name="quantity" value="1" min="1" class="tc item-quantity"/>
-                                <input type="hidden" name="login" value="{{ login.0 }}" class="tc item-quantity"/>
+
                                 <input type="hidden" name="purchase" value="{{ purchase.pk }}"
                                        class="tc item-quantity"/>
                                 <input type="hidden" name="product_pk" value="{{ product.pk }}"

@@ -26,6 +26,7 @@ def get_login(cookies):
     except KeyError:
         return None
 
+
 def home(request):
     if request.method == 'GET':
         return add_info_home(request, {})
@@ -127,7 +128,7 @@ def register(request):
                 })
             except models.Clients.DoesNotExist:
                 client = models.Clients.objects.create(name=request.POST['name'], email=email,
-                                                       password=password,
+                                                       password=hash(password),
                                                        address=request.POST['address'])
                 client.save()
                 value = redirect(request.POST['next'])
@@ -242,6 +243,7 @@ def add_items_no_repeated(collection, _property='size'):
 
 def add_to_cart(request):
     if request.method == 'POST':
+        log = None
         try:
             log = get_login(request.COOKIES)
             if log:
@@ -266,23 +268,34 @@ def add_to_cart(request):
             attr = models.Attribute.objects.get(pk=int(attr_pk))
         except models.Attribute.DoesNotExist:
             raise Http404('Not Found')
-        sale_product = models.Sale_Product.objects.create(product=product, attribute=attr)
-        sale_product.save()
         if purchase:
-            purchase.products.add(sale_product)
-            purchase.amount += 1
+            try:
+                sale_product = purchase.products.get(product=product, attribute=attr)
+                sale_product.amount += quantity
+                sale_product.save()
+            except:
+                sale_product = models.Sale_Product.objects.create(product=product, attribute=attr)
+                sale_product.amount += quantity
+                sale_product.save()
+                purchase.products.add(sale_product)
+                purchase.amount += 1
             purchase.save()
             return HttpResponseRedirect(
                 '/categories/' + request.POST['category_pk'] + '/')
         else:
             try:
-                client = models.Clients.objects.get(pk=int(request.POST['login']))
+                if log:
+                    client = models.Clients.objects.get(pk=log[0])
+                else:
+                    raise Http404('Client Not Found')
             except models.Clients.DoesNotExist:
                 raise Http404('Client Not Found')
+            sale_product, _ = models.Sale_Product.objects.create(product=product, attribute=attr)
+            sale_product.amount += quantity
+            sale_product.save()
             purchase = models.Purchase.objects.create()
             purchase.products.add(sale_product)
             purchase.client = client
-            purchase.amount = quantity
             purchase.amount = 1
             purchase.save()
         return HttpResponseRedirect(
@@ -316,29 +329,13 @@ def search(request):
 
                     if exist:
                         selected_products.append(product)
-            cant = 0
-            try:
-                log = request.POST['login']
-                log = models.Clients.objects.get(pk=int(log))
-                if log.name:
-                    log = (log.pk, log.name)
-                else:
-                    log = (log.pk, log.email)
-
-                p = models.Purchase.objects.get(client__pk=int(request.POST['login']), on_hold=True)
-                cant = p.amount
-            except KeyError:
-                log = None
-            except models.Clients.DoesNotExist:
-                log = None
-            except models.Purchase.DoesNotExist:
-                log = None
-            except ValueError:
-                log = None
-
-            return render(request, 'search.html',
-                          {'results': selected_products, 'login': log, 'categories': categories_all,
-                           'purchases': cant})
+            if len(selected_products):
+                return add_info_home(request, {'results': selected_products}, 'search.html')
+            else:
+                return add_info_home(request, {'no_result': True}, 'search.html')
+                # return render(request, 'search.html',
+                #               {'results': selected_products, 'login': log, 'categories': categories_all,
+                #                'purchases': cant})
         except KeyError:
             raise Http404('Wrong request!!!!!!!')
     if request.method == 'GET':
@@ -385,3 +382,21 @@ def conditions(request):
 
 def cookies(request):
     return finish_views(request, 'cookies.html')
+
+
+def eliminate(request):
+    if request.is_ajax():
+        try:
+            log = get_login(request.COOKIES)
+            pk = request.GET['pk']
+            purchase = models.Purchase.objects.get(client__pk=log[0], on_hold=True)
+            sale_product = purchase.products.get(pk=int(pk))
+            purchase.products.remove(sale_product)
+            purchase.amount -= 1
+            purchase.save()
+            return HttpResponse(json.dumps({'cant': purchase.amount, 'total': purchase.total_price()}),
+                                content_type='application/json')
+        except KeyError:
+            raise Http404('')
+        except models.Sale_Product.DoesNotExist:
+            raise Http404('')

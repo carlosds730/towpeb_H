@@ -66,9 +66,15 @@
                         <input type="text" name="query" class="search_box" placeholder="Buscar" value=""/>
                     </form>
                 </li>
-                <li class="fr"><a class="cart" title="Cart"><i
+                {% if login %}
+                    <li class="fr"><a href="/cart_shop/" class="cart" id="carrito" title="Cart"><i
+                            class="fa fa-shopping-cart"></i>Carrito: {{ purchases }} Items
+                    </a></li>
+                {% else %}
+                <li class="fr"><a class="cart" id="carrito" title="Cart"><i
                         class="fa fa-shopping-cart"></i>Carrito: {{ purchases }} Items
                 </a></li>
+                {% endif %}
                 <li class="customer-links">
                     {% if login %}
                         <a id="customer_login_link">{{ login.1 }}</a>

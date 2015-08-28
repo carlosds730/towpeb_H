@@ -28,6 +28,7 @@ urlpatterns = static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + [
     url(r'^register/?$', views.register, name='register'),
     url(r'^search/?$', views.search, name='search'),
     url(r'^cart_shop/?$', views.cart_shop, name='cart shop'),
+    url(r'^eliminate/?$', views.eliminate, name='eliminate'),
     url(r'^add_to_cart/?$', views.add_to_cart, name='add_to_cart'),
     url(r'^about_us/?$', views.about_us, name='about_us'),
     url(r'^sizes/?$', views.sizes, name='sizes'),
