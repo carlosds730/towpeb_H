@@ -63,6 +63,12 @@
                         <div id="login-box" class="login-box visible widget-box no-border">
                             <div class="widget-body">
                                 <div class="widget-main">
+                                    {% if error %}
+                                        <div class="alert alert-danger alert-dismissable fade in">
+                                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true" onclick="Close()">&times;</button>
+                                            {{ error }}
+                                        </div>
+                                    {% endif %}
                                     <h4 class="header my-green lighter bigger">
                                         {% trans 'Registrarse' %}
                                     </h4>
@@ -133,6 +139,12 @@
     </div>
 </div>
 <!-- /.main-container -->
+<script src="{% static 'js/jquery.min.js' %}" type="text/javascript"></script>
+<script>
+    function Close() {
+        $(".alert").fadeOut('slow');
+    }
+</script>
 
 
 </body>

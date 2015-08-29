@@ -3,80 +3,84 @@
 {% load staticfiles %}
 
 {% block content %}
-    {% if on_hold %}
-        <div class="header">
-            <h3 style="color: #004024"><strong>Carrito actual:</strong></h3>
+    {% if on_hold or shops %}
+        {% if on_hold %}
+            <div class="header">
+                <h3 style="color: #004024"><strong>Carrito actual:</strong></h3>
 
-        </div>
-        <div class="container">
-            <h5 style="color: #004024"><strong id="total_price">Total: {{ on_hold.total_price }}</strong></h5>
+            </div>
+            <div class="container">
+                <h5 style="color: #004024"><strong id="total_price">Total: {{ on_hold.total_price }}</strong></h5>
 
-            <div class="carrito row clearfix">
-                {% for p in on_hold.products.all %}
-                    <div class="row clearfix" id="product_{{ p.pk }}">
-                        <div class="span2" style="text-align: center">
-                            {% thumbnail p.product.image "100x100" as imagen %}
-                                <img src="{{ imagen.url }}">
-                            {% endthumbnail %}
+                <div class="carrito row clearfix">
+                    {% for p in on_hold.products.all %}
+                        <div class="row clearfix" id="product_{{ p.pk }}">
+                            <div class="span2" style="text-align: center">
+                                {% thumbnail p.product.image "100x100" as imagen %}
+                                    <a href="/product/{{ p.product.pk }}/">
+                                        <img src="{{ imagen.url }}">
+                                    </a>
+                                {% endthumbnail %}
+                            </div>
+                            <div class="span5 properties">
+                                <h5>
+                                    Producto: <a style="color: #004024" id="dscrptn_{{ p.pk }}"
+                                                 href="/product/{{ p.product.pk }}/">{{ p.product.name }}</a>
+                                </h5>
+                                <h5>
+                                    {{ p.attribute }}
+                                </h5>
+                                <h5>
+                                    Cantidad: {{ p.amount }}
+                                </h5>
+                                <h5>
+                                    Precio Total: {{ p.price }}
+                                </h5>
+
+                                <a class="remove btn-delete" style="cursor: pointer" onclick="Eliminate({{ p.pk }})">
+                                    <i class=" fa fa-trash-o">
+
+                                    </i>
+                                    Eliminar
+                                </a>
+                            </div>
                         </div>
-                        <div class="span5 properties">
-                            <h5>
-                                Producto: <a style="color: #004024" id="dscrptn_{{ p.pk }}"
-                                             href="/product/{{ p.product.pk }}/">{{ p.product.name }}</a>
-                            </h5>
-                            <h5>
-                                {{ p.attribute }}
-                            </h5>
-                            <h5>
-                                Cantidad: {{ p.amount }}
-                            </h5>
-                            <h5>
-                                Precio Total: {{ p.price }}
-                            </h5>
-
-                            <a class="remove btn-delete" style="cursor: pointer" onclick="Eliminate({{ p.pk }})">
-                                <i class=" fa fa-trash-o">
-
-                                </i>
-                                Eliminar
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+        {#    DONE: Do this#}
+        {% if shops %}
+            <div class="header">
+                <h3 style="color: #004024"><strong>Carritos anteriores:</strong></h3>
+            </div>
+            <div class="container">
+                {% for s in shops %}
+                    <div class="header">
+                        <h5 style="color: #004024"><strong>{{ s.date | date }} ({{ s.total_price }})</strong>
+                            <a style="cursor: pointer" data-open="1" id="link_{{ s.pk }}" onclick="Collapse({{ s.pk }})">
+                                Ver los productos
                             </a>
-                        </div>
+                        </h5>
                     </div>
-
-                    {#                    <li id="product_{{ p.pk }}" class="item-description">#}
-                    {#                        {% thumbnail p.product.image "100x100" as imagen %}#}
-                    {#                            <img src="{{ imagen.url }}">#}
-                    {#                        {% endthumbnail %}#}
-
-                    {#                    </li>#}
+                    <div id="carrito_{{ s.pk }}" class="products_container">
+                        <ul>
+                            {% for p in s.products.all %}
+                                <li>
+                                    <a style="color: #004024" href="/product/{{ p.product.pk }}/">{{ p.amount }} {{ p.product.name }} - {{ p.to_show_old_cart }}</a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
                 {% endfor %}
             </div>
-        </div>
-    {% endif %}
-    {% if shops %}
+        {% endif %}
+    {% else %}
         <div class="header">
-            <h3 style="color: #004024"><strong>Carritos anteriores:</strong></h3>
-        </div>
-        <div class="container">
-            {% for s in shops %}
-                <div class="header">
-                    <h5 style="color: #004024"><strong>{{ s.date | date }} ({{ s.total_price }})</strong>
-                        <a style="cursor: pointer" data-open="1" id="link_{{ s.pk }}" onclick="Collapse({{ s.pk }})">
-                            Ver los productos
-                        </a>
-                    </h5>
-                </div>
-                <div id="carrito_{{ s.pk }}" class="products_container">
-                    <ul>
-                        {% for p in s.products.all %}
-                            <li><a style="color: #004024"
-                                   href="/product/{{ p.product.pk }}/">{{ p.product.name }}: {{ p.attribute }}</a></li>
-                        {% endfor %}
-                    </ul>
-                </div>
-            {% endfor %}
+            <h3 style="color: #004024; margin-bottom: 37px"><strong>No hay ningún carrito para mostrar</strong></h3>
         </div>
     {% endif %}
+
     <script>
         function Collapse(id) {
             $("#carrito_" + id).slideToggle();
@@ -114,7 +118,9 @@
                 });
             }
         }
+
     </script>
+
 
 {% endblock %}
 

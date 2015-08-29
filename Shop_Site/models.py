@@ -190,6 +190,11 @@ class Sale_Product(models.Model):
     def price(self):
         return str(self.attribute.price * self.amount) + ' €'
 
+    def to_show_old_cart(self):
+        total = self.attribute.price * self.amount
+        return 'Talla: ' + str(
+            self.attribute.size + ' - ' 'Color: ' + self.attribute.color + ' - ' + 'Precio Total: ' + str(total) + '€')
+
 
 class Pictures(models.Model):
     class Meta:

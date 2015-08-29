@@ -83,7 +83,7 @@ def login(request):
                     })
             except models.Clients.DoesNotExist:
                 return render(request, 'login.html', {
-                    'error': 'No existe ningún cliente con ese correo',
+                    'error': 'Error en el usuario o la contraseña',
                     'email': request.POST['email'],
                     'password': request.POST['password'],
                     'next': request.POST['next']
@@ -119,7 +119,7 @@ def register(request):
             try:
                 models.Clients.objects.get(email=email)
                 return render(request, 'register.html', {
-                    'error': 'Ya existe esa direccion de correo',
+                    'error': 'Ya existe un usuario registrado con ese correo',
                     'name': request.POST['name'],
                     'email': request.POST['email'],
                     'password': request.POST['password'],
