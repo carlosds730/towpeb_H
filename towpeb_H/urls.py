@@ -14,13 +14,16 @@ Including another URLconf
     2. Add a URL to urlpatterns:  url(r'^blog/', include(blog_urls))
 """
 from django.conf.urls import include, url
+
 from django.contrib import admin
+
 from django.conf.urls.static import static
 
 from Shop_Site import views
 from towpeb_H import settings
 
 urlpatterns = static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + [
+    url(r'^payment/', include('django_braintree.urls')),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^login/?$', views.login, name='login'),
     url(r'^categories/(?P<pk>\d+)/?$', views.categories, name='categories'),
@@ -37,5 +40,5 @@ urlpatterns = static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + [
     url(r'^cookies/?$', views.cookies, name='cookies'),
     url(r'^shutdown/?$', views.shutdown, name='shutdown'),
     url(r'^$', views.home)
-    #url(r'', include('django_braintree.urls'))
+
 ]

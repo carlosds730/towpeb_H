@@ -13,8 +13,7 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
 
-
-#from braintree import Configuration, Environment
+from braintree import Configuration, Environment
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -41,7 +40,8 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'sorl.thumbnail',
-#   'django_braintree',
+    'django_common',
+    'django_braintree',
     'Shop_Site'
 )
 
@@ -63,12 +63,12 @@ BRAINTREE_MERCHANT = 'your_merchant_key'
 BRAINTREE_PUBLIC_KEY = 'your_public_key'
 BRAINTREE_PRIVATE_KEY = 'your_private_key'
 
-# Configuration.configure(
-#     Environment.Sandbox,
-#     BRAINTREE_MERCHANT,
-#     BRAINTREE_PUBLIC_KEY,
-#     BRAINTREE_PRIVATE_KEY
-# )
+Configuration.configure(
+    Environment.Sandbox,
+    BRAINTREE_MERCHANT,
+    BRAINTREE_PUBLIC_KEY,
+    BRAINTREE_PRIVATE_KEY
+)
 
 # If you cannot install M2Crypto (e.g. AppEngine):
 # BRAINTREE_UNSAFE_SSL = True

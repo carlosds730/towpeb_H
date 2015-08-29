@@ -76,7 +76,7 @@ def login(request):
                     return tmp
                 else:
                     return render(request, 'login.html', {
-                        'error': 'Error en la contraseña',
+                        'error': 'Error en el usuario o la contraseña',
                         'email': request.POST['email'],
                         'password': request.POST['password'],
                         'next': request.POST['next']
@@ -290,7 +290,7 @@ def add_to_cart(request):
                     raise Http404('Client Not Found')
             except models.Clients.DoesNotExist:
                 raise Http404('Client Not Found')
-            sale_product, _ = models.Sale_Product.objects.create(product=product, attribute=attr)
+            sale_product = models.Sale_Product.objects.create(product=product, attribute=attr)
             sale_product.amount += quantity
             sale_product.save()
             purchase = models.Purchase.objects.create()

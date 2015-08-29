@@ -2,9 +2,9 @@ import logging
 from datetime import datetime
 
 from django import forms
+from braintree import Customer, CreditCard
 
 from django_common.helper import md5_hash
-from braintree import Customer, CreditCard
 from django_braintree.models import UserVault
 
 
@@ -72,7 +72,7 @@ class UserCCDetailsForm(forms.Form):
                     'zip_code': info.billing_address.postal_code,
                 }
                 super(UserCCDetailsForm, self).__init__(initial=initial, *args, **kwargs)
-            except Exception, e:
+            except Exception as e:
                 logging.error('Was not able to get customer from vault. %s' % e)
                 super(UserCCDetailsForm, self).__init__(initial = {'name': '%s %s' % (user.first_name, user.last_name)},
                     *args, **kwargs)
@@ -116,7 +116,7 @@ class UserCCDetailsForm(forms.Form):
                 response = Customer.find(self.__user_vault.vault_id)
                 cc_info = response.credit_cards[0]
                 return CreditCard.update(cc_info.token, params=cc_details_map)
-            except Exception, e:
+            except Exception as e:
                 logging.error('Was not able to get customer from vault. %s' % e)
                 self.__user_vault.delete()  # delete the stale instance from our db
         
