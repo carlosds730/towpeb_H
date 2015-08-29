@@ -3161,3 +3161,33 @@ a:hover .share-count:after {
 .privacy > h3 {
     text-align: justify;
 }
+
+.products_container{
+    display: none;
+}
+
+.properties{
+
+}
+
+.properties > h5{
+    margin-bottom: 3px;
+}
+
+.btn-delete{
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+    display: inline-block;
+    height: 19px;
+    /*line-height: 36px;*/
+    border: none;
+    margin: 0;
+    padding: 0 7px;
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 12px;
+    text-transform: none;
+    background: #EF0315;
+    width: auto
+}

@@ -76,11 +76,7 @@
                                 </a>
                             </div>
                         {% endfor %}
-                        {#                        <div class="image">#}
-                        {#                            <a href="{% static 'img/single_product/otras/catálogo_hutton_021-600x830.jpg' %}" data-image-id="960818457">#}
-                        {#                                <img src="{% static 'img/single_product/otras/catálogo_hutton_021-600x830.jpg' %}" alt="Broadway Theatre Marquis Lettering"/>#}
-                        {#                            </a>#}
-                        {#                        </div>#}
+
                     </div>
                 </div>
                 <!-- End thumbnails -->
@@ -93,14 +89,6 @@
 
                     <h3 class="title" itemprop="name"> De: {{ product.mark }}</h3>
 
-                    {#                    <div class="purchase" itemprop="offers" itemscope itemtype="http://schema.org/Offer">#}
-                    {#                        <meta itemprop="priceCurrency" content="EUR"/>#}
-                    {##}
-                    {#                        <link itemprop="availability" href="http://schema.org/InStock"/>#}
-                    {#                        <h2 class="price" id="price-preview">#}
-                    {#                            <span itemprop="price">{{ price }} €</span>#}
-                    {#                        </h2>#}
-                    {#                    </div>#}
 
                     <form id="add-item-form" action="/add_to_cart/" method="post"
                           class="variants clearfix">{% csrf_token %}
@@ -117,17 +105,6 @@
                                     </select>
                                 </div>
                             </div>
-                            {#                            <div class="select clearfix">#}
-                            {#                                <div class="selector-wrapper">#}
-                            {#                                    <label for="product-select">Color</label>#}
-                            {#                                    <select class="single-option-selector" name="color" data-option="option1"#}
-                            {#                                            id="product-select-option-0">#}
-                            {#                                        {% for color in colors %}#}
-                            {#                                            <option value="{{ color }}">{{ color }}</option>#}
-                            {#                                        {% endfor %}#}
-                            {#                                    </select>#}
-                            {#                                </div>#}
-                            {#                            </div>#}
                             <div class="selector-wrapper">
                                 <label>Cantidad</label>
                                 <input id="quantity" type="number" name="quantity" value="1" min="1" class="tc item-quantity"/>
