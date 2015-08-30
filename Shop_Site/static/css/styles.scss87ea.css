@@ -295,7 +295,8 @@ a.btn:hover, input.btn:hover {
 
 input.disabled.btn:hover {
     background-color: #50b3da;
-    color: #ffffff
+    color: #ffffff;
+    cursor: auto;
 }
 
 .disabled {
@@ -3190,4 +3191,34 @@ a:hover .share-count:after {
     text-transform: none;
     background: #EF0315;
     width: auto
+}
+
+.btn-buy:hover, .btn-delete:hover{
+    color: #ffffff;
+}
+
+.btn-buy{
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+    display: inline-block;
+    height: 19px;
+    /*line-height: 36px;*/
+    border: none;
+    margin: 0;
+    padding: 0 7px;
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 12px;
+    text-transform: none;
+    background: #51a7ca;
+    width: auto
+}
+
+.container_payments{
+    margin-bottom: 10px;
+}
+
+#payment_button{
+    cursor: pointer;
 }

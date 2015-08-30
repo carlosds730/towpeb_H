@@ -3,10 +3,10 @@
     <option name="INTERPRETER_OPTIONS" value="" />
     <option name="PARENT_ENVS" value="true" />
     <envs>
-      <env name="PYTHONUNBUFFERED" value="1" />
       <env name="DJANGO_SETTINGS_MODULE" value="towpeb_H.settings" />
+      <env name="PYTHONUNBUFFERED" value="1" />
     </envs>
-    <option name="SDK_HOME" value="C:\Python33\python.exe" />
+    <option name="SDK_HOME" value="C:/Python33/python.exe" />
     <option name="WORKING_DIRECTORY" value="" />
     <option name="IS_MODULE_SDK" value="false" />
     <option name="ADD_CONTENT_ROOTS" value="true" />
@@ -14,9 +14,9 @@
     <module name="towpeb_H" />
     <option name="launchJavascriptDebuger" value="false" />
     <option name="port" value="8000" />
-    <option name="host" value="10.6.124.131" />
+    <option name="host" value="" />
     <option name="additionalOptions" value="" />
-    <option name="browserUrl" value="http://10.6.124.131:8000/" />
+    <option name="browserUrl" value="" />
     <option name="runTestServer" value="false" />
     <option name="runNoReload" value="false" />
     <option name="useCustomRunCommand" value="false" />
