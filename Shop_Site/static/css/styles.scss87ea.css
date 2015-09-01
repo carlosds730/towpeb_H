@@ -3151,7 +3151,7 @@ a:hover .share-count:after {
     margin-bottom: 20px;
 }
 
-.privacy>p:last-child {
+.privacy > p:last-child {
     margin-bottom: 30px;
 }
 
@@ -3163,19 +3163,19 @@ a:hover .share-count:after {
     text-align: justify;
 }
 
-.products_container{
+.products_container {
     display: none;
 }
 
-.properties{
+.properties {
 
 }
 
-.properties > h5{
+.properties > h5 {
     margin-bottom: 3px;
 }
 
-.btn-delete{
+.btn-delete {
     -webkit-box-shadow: none;
     -moz-box-shadow: none;
     box-shadow: none;
@@ -3193,11 +3193,11 @@ a:hover .share-count:after {
     width: auto
 }
 
-.btn-buy:hover, .btn-delete:hover{
+.btn-buy:hover, .btn-delete:hover {
     color: #ffffff;
 }
 
-.btn-buy{
+.btn-buy {
     -webkit-box-shadow: none;
     -moz-box-shadow: none;
     box-shadow: none;
@@ -3215,10 +3215,56 @@ a:hover .share-count:after {
     width: auto
 }
 
-.container_payments{
+.container_payments {
     margin-bottom: 10px;
 }
 
-#payment_button{
+#payment_button {
     cursor: pointer;
+}
+
+.precio_total {
+
+}
+
+.precio_total > a:hover {
+    color: #000000;
+}
+
+.precio_holder {
+    font-weight: bold;
+    color: #000000;
+}
+
+.precio {
+    font-weight: bold;
+    color: #000000;
+}
+
+.quantity_holder {
+    text-align: center;
+}
+
+.precio_total > h5 {
+    margin-bottom: 3px;
+}
+
+.validation {
+
+}
+
+.my_success {
+    color: #004024;
+}
+
+.my_success:hover {
+    color: #004024;
+}
+
+.my_error {
+    color: red;
+}
+
+.my_error:hover {
+    color: red;
 }

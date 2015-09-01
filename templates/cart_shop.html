@@ -11,12 +11,12 @@
             </div>
             <div class="container">
                 <div class="container_payments">
-                    <a style="color: #004024"><strong id="total_price">Total: {{ on_hold.total_price }}</strong></a>
+                    <a style="color: #004024"><strong id="total_price">Subtotal: {{ on_hold.total_price }}</strong></a>
                     <br>
                     <a id="payment_button" class="remove btn-buy">
                         <i class=" fa fa-shopping-cart">
                         </i>
-                        Pagar
+                        Comprar
                     </a>
                 </div>
                 <div class="carrito row clearfix">
@@ -29,7 +29,7 @@
                                     </a>
                                 {% endthumbnail %}
                             </div>
-                            <div class="span5 properties">
+                            <div class="span3 properties">
                                 <h5>
                                     Producto: <a style="color: #004024" id="dscrptn_{{ p.pk }}"
                                                  href="/product/{{ p.product.pk }}/">{{ p.product.name }}</a>
@@ -37,19 +37,46 @@
                                 <h5>
                                     {{ p.attribute }}
                                 </h5>
-                                <h5>
-                                    Cantidad: {{ p.amount }}
-                                </h5>
-                                <h5>
-                                    Precio Total: {{ p.price }}
-                                </h5>
-
                                 <a class="remove btn-delete" style="cursor: pointer" onclick="Eliminate({{ p.pk }})">
                                     <i class=" fa fa-trash-o">
 
                                     </i>
                                     Eliminar
                                 </a>
+                            </div>
+                            <div class="span2">
+                                <div class="selector-wrapper quantity_holder">
+                                    <input id="quantity_{{ p.pk }}" style="width: 41px; height: 17px; margin-top: 15px" type="number" onchange="Check({{ p.pk }}, {{ p.attribute.price|safe }})" name="quantity" value="{{ p.amount }}" min="1"
+                                           class="tc item-quantity quantity_select"/>
+                                </div>
+                            </div>
+                            <div class="span2 precio_total">
+                                <h5>&nbsp;</h5>
+                                <a class="precio_holder">Precio Total: </a>
+                                <a class="precio" id="precio_{{ p.pk }}">{{ p.price }}</a>
+                            </div>
+                            <div class="span2 properties validation" id="my_msg_{{ p.pk }}">
+                                <h5>&nbsp;</h5>
+                                {% if p.valid %}
+                                    <a class="my_success" id="succes_{{ p.pk }}">
+                                        <i class="fa fa-check"></i>
+                                        Es posible realizar la compra
+                                    </a>
+                                    <a style="display: none" class="my_error" id="error_{{ p.pk }}">
+                                        <i class="fa fa-times"></i>
+                                        No existen tal disponibilidad.
+                                    </a>
+                                {% else %}
+                                    {#TODO: Poner un texto de error que esté bueno#}
+                                    <a style="display: none" class="my_success" id="succes_{{ p.pk }}">
+                                        <i class="fa fa-check"></i>
+                                        Es posible realizar la compra
+                                    </a>
+                                    <a class="my_error" id="error_{{ p.pk }}">
+                                        <i class="fa fa-times"></i>
+                                        No existen tal disponibilidad.
+                                    </a>
+                                {% endif %}
                             </div>
                         </div>
                     {% endfor %}
@@ -64,8 +91,8 @@
             <div class="container">
                 {% for s in shops %}
                     <div class="header">
-                        <h5 style="color: #004024"><strong>{{ s.date | date }} ({{ s.total_price }})</strong>
-                            <a style="cursor: pointer" data-open="1" id="link_{{ s.pk }}" onclick="Collapse({{ s.pk }})">
+                        <h5 style="color: #004024">{{ s.date | date }} ({{ s.total_price }})
+                            <a style="cursor: pointer; font-weight: bold;" data-open="1" id="link_{{ s.pk }}" onclick="Collapse({{ s.pk }})">
                                 Ver los productos
                             </a>
                         </h5>
@@ -90,7 +117,7 @@
 
     <script>
         if (document.getElementById("total_price").innerHTML == "Total: 0 €") {
-            $("#payment_button").addClass("disabled").css( "cursor", "default" );
+            $("#payment_button").addClass("disabled").css("cursor", "default");
         }
         function Collapse(id) {
             $("#carrito_" + id).slideToggle();
@@ -116,7 +143,7 @@
                     document.getElementById("total_price").innerHTML = "Total: " + data['total'];
 
                     if (data['cant'] == '0') {
-                        $("#payment_button").addClass("disabled").css( "cursor", "default" );
+                        $("#payment_button").addClass("disabled").css("cursor", "default");
                     }
 
                     function delayedAlert() {
@@ -132,7 +159,22 @@
                 });
             }
         }
+    </script>
+    <script>
+        function Check(pk, price) {
+            var check = document.getElementById('quantity_' + pk);
+            var value = document.getElementById('precio_' + pk);
 
+            var parse = parseInt(check.value);
+            if (isNaN(parse))
+                check.value = "1";
+            else if (parse < 1)
+                check.value = "1";
+
+            value.innerText = (parseFloat(check.value) * price).toString() + "€";
+
+            var request = $.get("/eliminate/", {'pk': id});
+        }
     </script>
 
 

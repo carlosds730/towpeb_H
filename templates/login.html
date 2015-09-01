@@ -98,7 +98,7 @@
                                                 <input type="hidden" name="next" value="{{ next }}">
                                                 <input type="submit"
                                                        class="width-35 pull-left btn btn-sm btn-primary"
-                                                       value=" {% trans 'Logearse' %}"/>
+                                                       value=" {% trans 'Loguearse' %}"/>
                                             </div>
                                             <div class="space-4"></div>
                                         </fieldset>
@@ -111,6 +111,13 @@
                                         <a href="/register/"
                                            class="user-signup-link">
                                             {% trans 'Registrarme' %}
+
+                                        </a>
+                                    </div>
+                                    <div>
+                                        <a href="{{ next }}"
+                                           class="user-signup-link">
+                                            {% trans 'Regresar' %}
 
                                         </a>
                                     </div>

@@ -131,9 +131,18 @@ def register(request):
                                                        password=hash(password),
                                                        address=request.POST['address'])
                 client.save()
-                value = redirect(request.POST['next'])
-                tmp = set_cookies(value, client)
-                return tmp
+                try:
+                    next = request.POST['next']
+                    if '/login/' in next:
+                        value = redirect('/')
+                    else:
+                        value = redirect(request.POST['next'])
+                    tmp = set_cookies(value, client)
+                    return tmp
+                except KeyError:
+                    value = redirect('/')
+                    tmp = set_cookies(value, client)
+                    return tmp
         except KeyError:
             try:
                 name = request.POST['name']
@@ -334,7 +343,7 @@ def search(request):
             else:
                 return add_info_home(request, {'no_result': True}, 'search.html')
                 # return render(request, 'search.html',
-                #               {'results': selected_products, 'login': log, 'categories': categories_all,
+                # {'results': selected_products, 'login': log, 'categories': categories_all,
                 #                'purchases': cant})
         except KeyError:
             raise Http404('Wrong request!!!!!!!')

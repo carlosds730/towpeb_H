@@ -135,8 +135,8 @@ class Clients(models.Model):
         return str(self.name)
 
         # def save(self, *args, **kwargs):
-        #     if self.password:
-        #         self.password = hash(self.password)
+        # if self.password:
+        # self.password = hash(self.password)
         #     super(Clients, self).save(*args, **kwargs)
 
 
@@ -189,6 +189,9 @@ class Sale_Product(models.Model):
 
     def price(self):
         return str(self.attribute.price * self.amount) + ' €'
+
+    def valid(self):
+        return self.amount <= self.attribute.amount
 
     def to_show_old_cart(self):
         total = self.attribute.price * self.amount
