@@ -344,7 +344,7 @@ def search(request):
                 return add_info_home(request, {'no_result': True}, 'search.html')
                 # return render(request, 'search.html',
                 # {'results': selected_products, 'login': log, 'categories': categories_all,
-                #                'purchases': cant})
+                # 'purchases': cant})
         except KeyError:
             raise Http404('Wrong request!!!!!!!')
     if request.method == 'GET':
@@ -352,6 +352,38 @@ def search(request):
 
 
 def cart_shop(request):
+    if request.is_ajax():
+        try:
+            pk = int(request.GET['pk'])
+            amonut = int(request.GET['amonut'])
+
+            sale_prod = models.Sale_Product.objects.get(pk=pk)
+
+            my_car = None
+
+            cliente, _ = get_login(request.COOKIES)
+
+            for carrito in sale_prod.purchase.all():
+                if carrito.on_hold and cliente == carrito.client.pk:
+                    sale_prod.amount = amonut
+                    sale_prod.save()
+                    my_car = carrito
+                    break
+
+            if my_car:
+                return HttpResponse(json.dumps({'valid': sale_prod.valid(), 'total': my_car.total_price(), 'valid_com': my_car.is_valid()}), content_type='application/json')
+            else:
+                return HttpResponse(json.dumps({}), content_type='application/json')
+
+        except models.Sale_Product.DoesNotExist:
+            return HttpResponse(json.dumps({}), content_type='application/json')
+
+        except ValueError:
+            return HttpResponse(json.dumps({}), content_type='application/json')
+
+        except KeyError:
+            return HttpResponse(json.dumps({}), content_type='application/json')
+
     if request.method == 'GET':
         log = get_login(request.COOKIES)
         if log:

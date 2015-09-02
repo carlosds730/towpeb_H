@@ -137,7 +137,7 @@ class Clients(models.Model):
         # def save(self, *args, **kwargs):
         # if self.password:
         # self.password = hash(self.password)
-        #     super(Clients, self).save(*args, **kwargs)
+        # super(Clients, self).save(*args, **kwargs)
 
 
 class Purchase(models.Model):
@@ -165,6 +165,12 @@ class Purchase(models.Model):
 
     def __str__(self):
         return str(self.pk)
+
+    def is_valid(self):
+        for p in self.products.all():
+            if not p.valid():
+                return False
+        return True
 
     def total_price(self):
         total = 0

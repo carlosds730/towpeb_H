@@ -13,11 +13,19 @@
                 <div class="container_payments">
                     <a style="color: #004024"><strong id="total_price">Subtotal: {{ on_hold.total_price }}</strong></a>
                     <br>
-                    <a id="payment_button" class="remove btn-buy">
-                        <i class=" fa fa-shopping-cart">
-                        </i>
-                        Comprar
-                    </a>
+                    {% if on_hold.is_valid %}
+                        <a id="payment_button" class="remove btn-buy">
+                            <i class=" fa fa-shopping-cart">
+                            </i>
+                            Comprar
+                        </a>
+                    {% else %}
+                        <a id="payment_button" class="remove btn-buy disabled" style="cursor: default">
+                            <i class=" fa fa-shopping-cart">
+                            </i>
+                            Comprar
+                        </a>
+                    {% endif %}
                 </div>
                 <div class="carrito row clearfix">
                     {% for p in on_hold.products.all %}
@@ -173,7 +181,33 @@
 
             value.innerText = (parseFloat(check.value) * price).toString() + "€";
 
-            var request = $.get("/eliminate/", {'pk': id});
+            var request = $.get("/cart_shop/", {'pk': pk, 'amonut': check.value});
+
+            request.done(function (data) {
+                if (("total" in data) && ("valid" in data)) {
+                    document.getElementById("total_price").innerText = "Subtotal: " + data['total'];
+                    if (data['valid']) {
+                        document.getElementById("succes_" + pk).setAttribute("style", "");
+                        document.getElementById("error_" + pk).setAttribute("style", "display: none");
+                    }
+                    else {
+                        document.getElementById("error_" + pk).setAttribute("style", "");
+                        document.getElementById("succes_" + pk).setAttribute("style", "display: none");
+                    }
+
+                    if (data['valid_com'])
+                        $("#payment_button").removeClass("disabled").css("cursor", "pointer");
+                    else
+                        $("#payment_button").addClass("disabled").css("cursor", "default");
+                }
+                else {
+                    alert("Ha ocurrido un error. Inténtelo más tarde");
+                }
+            });
+
+            request.error(function (data) {
+                alert("Type something");
+            });
         }
     </script>
 
