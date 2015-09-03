@@ -183,7 +183,10 @@ class Purchase(models.Model):
 
     # TODO: Do this (it should return a tuple, the first element should be the price the € sign and the second the price as a number)
     def total_price_with_taxes(self):
-        return self.total_price_two()
+        total = 4
+        for p in self.products.all():
+            total += p.attribute.price * p.amount
+        return str(total) + ' €', str(total)
 
 
 class Sale_Product(models.Model):
