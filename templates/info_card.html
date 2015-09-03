@@ -1,0 +1,503 @@
+{% extends 'info_client.html' %}
+{% load thumbnail %}
+{% load staticfiles %}
+
+{% block breadcrumbs %}
+    <div class="breadcrumb clearfix">
+        <span itemscope itemtype="http://data-vocabulary.org/Breadcrumb">
+                                 <a href="/info_client/" title="All Products" itemprop="url">
+                                     <span itemprop="title">Información del cliente</span>
+                                 </a>
+                         </span>
+        <span class="arrow-space">&#62;</span>
+        <span itemscope itemtype="http://data-vocabulary.org/Breadcrumb">
+
+                                 <a href="/shipping_info/" title="All Products"
+                                    itemprop="url">
+                                     <span itemprop="title">Información del envío</span>
+                                 </a>
+                         </span>
+        <span class="arrow-space">&#62;</span>
+        <strong itemprop="title">Método de pago</strong>
+    </div>
+{% endblock %}
+{% block form_content %}
+    <form class="edit_checkout animate-floating-labels" action="/" accept-charset="UTF-8" method="post">
+        <div class="section" data-payment-method="">
+            <div class="section__header">
+                <h2 class="section__title">Método de pago</h2>
+                {#TODO: Find an page in spanish and see how they say this#}
+                <p class="section__text">
+                    Todas las transacciones son seguras y encriptadas. La información de la tarjeta de crédito nunca se guarda.
+                    {#                    All transactions are secure and encrypted. Credit card information is never stored.#}
+                </p>
+            </div>
+
+            <div class="section__content">
+
+                <div data-payment-subform="required">
+                    <div class="content-box">
+                        <div class="radio-wrapper content-box__row " data-select-gateway="5735017">
+                            <input value="5735017" size="30" type="hidden" name="checkout[payment_gateway]">
+
+                            <label class="radio__label content-box__emphasis" for="checkout_payment_gateway_5735017">
+                                Tarjeta de crédito
+                            </label>
+                        </div>
+
+                        <div class="radio-wrapper content-box__row content-box__row--secondary" data-subfields-for-gateway="5735017">
+                            <div class="fieldset " dir="ltr">
+
+                                <div class="field field--required field">
+
+                                    <div class="field__input-wrapper"><label class="field__label" for="checkout_credit_card_number">Card number</label>
+                                        <input type="tel" placeholder="Número de tarjeta" autocomplete="cc-number" value="" data-backup="credit_card_number" data-credit-card="number" data-autofocus="true" data-session-storage="false" class="field__input" size="30" name="checkout[credit_card][number]" id="checkout_credit_card_number">
+              <span id="credit_card_number_tooltip" class="field__icon icon icon--lock">
+    <span class="visually-hidden">Secure field</span>
+  </span>
+
+                                    </div>
+                                    <p class="field__message field__message--error">Por favor, inserte un número de tarje válido.</p></div>
+
+
+                                <div class="field--half field field--required field field--show-floating-label">
+
+                                    <div class="field__input-wrapper"><label class="field__label" for="checkout_credit_card_name">Nombre en la tarjeta</label>
+                                        <input placeholder="Nombre en la tarjeta" data-backup="credit_card_name" autocomplete="cc-name" class="field__input" size="30" type="text" value=" " name="checkout[credit_card][name]" id="checkout_credit_card_name">
+                                    </div>
+                                    <p class="field__message field__message--error">Por favor, inserte su nombre tal como sale en la tarjeta de crédito.</p></div>
+
+
+                                <div class="field field--required field visually-hidden">
+
+                                    <div class="field__input-wrapper field__input-wrapper--select"><label class="field__label" for="checkout_credit_card_month">Mes de expiración</label>
+                                        <select data-backup="credit_card_expiry_month" autocomplete="cc-exp-month" class="field__input field__input--select" name="checkout[credit_card][month]" id="checkout_credit_card_month" tabindex="-1">
+                                            <option value="">Fecha de expiración</option>
+                                            <option value="1">01</option>
+                                            <option value="2">02</option>
+                                            <option value="3">03</option>
+                                            <option value="4">04</option>
+                                            <option value="5">05</option>
+                                            <option value="6">06</option>
+                                            <option value="7">07</option>
+                                            <option value="8">08</option>
+                                            <option value="9">09</option>
+                                            <option value="10">10</option>
+                                            <option value="11">11</option>
+                                            <option value="12">12</option>
+                                        </select>
+                                    </div>
+                                    <p class="field__message field__message--error">Por favor, inserte un mes válido</p></div>
+
+
+                                <div class="field field--required field visually-hidden">
+
+                                    <div class="field__input-wrapper field__input-wrapper--select"><label class="field__label" for="checkout_credit_card_year">Año de expiración</label>
+                                        <select data-backup="credit_card_expire_year" autocomplete="cc-exp-year" class="field__input field__input--select" name="checkout[credit_card][year]" id="checkout_credit_card_year" tabindex="-1">
+                                            <option value="">Año de expiración</option>
+                                            <option value="2015">2015</option>
+                                            <option value="2016">2016</option>
+                                            <option value="2017">2017</option>
+                                            <option value="2018">2018</option>
+                                            <option value="2019">2019</option>
+                                            <option value="2020">2020</option>
+                                            <option value="2021">2021</option>
+                                            <option value="2022">2022</option>
+                                            <option value="2023">2023</option>
+                                            <option value="2024">2024</option>
+                                            <option value="2025">2025</option>
+                                        </select>
+                                    </div>
+                                    <p class="field__message field__message--error">Por favor, inserte un año válid</p></div>
+
+
+                                <div class="field--quarter field field--required field" data-debit-card-alternative-text="Expiry (MM / YY)">
+
+                                    <div class="field__input-wrapper"><label class="field__label" for="checkout_credit_card_expiry">MM / YY</label>
+                                        <input placeholder="MM / YY" class="field__input" autocomplete="cc-exp" data-backup="credit_card_expiry" data-payment-month="[name=&#39;checkout[credit_card][month]&#39;]" data-payment-year="[name=&#39;checkout[credit_card][year]&#39;]" data-credit-card-expiry="true" size="30" type="tel" id="checkout_credit_card_expiry">
+                                    </div>
+                                    <p class="field__message field__message--error">Por favor, inserte una fecha de expiración válida.</p></div>
+
+
+                                <div class="field--quarter field field--required field">
+
+                                    <div class="field__input-wrapper"><label class="field__label" for="checkout_credit_card_verification_value">CVV</label>
+                                        <input type="tel" placeholder="CVV" autocomplete="off" maxlength="4" data-backup="credit_card_cvv" data-credit-card="cvv" data-session-storage="false" aria-describedby="credit_card_verification_value_tooltip" class="field__input" size="30" name="checkout[credit_card][verification_value]" id="checkout_credit_card_verification_value">
+            <span id="credit_card_verification_value_tooltip" tabindex="0" class="field__icon icon icon--question has-tooltip" role="tooltip">
+              <span class="tooltip">
+                <span data-cvv-tooltip="unknown">
+                    Código de seguridad de 3 dígitos, usualmente se encuentra en el reverso de la tarjeta. Las tarjetas de American Express tienen un código de 4 dígitos ubicado en el frente.
+                </span>
+                <span data-cvv-tooltip="amex" class="hidden">
+                    Código de 4 dígitos en el frente de su tarjeta.
+                </span>
+                <span data-cvv-tooltip="other" class="hidden">
+                    Código de 3 dígitos en el reverso de su tarjeta
+                </span>
+              </span>
+            </span>
+                                    </div>
+                                    <p class="field__message field__message--error">Por favor, inserte el CVV</p></div>
+
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section" data-billing-address="">
+            <div class="section__header">
+                <h2 class="section__title">Dirección de facturación</h2>
+            </div>
+
+            <div class="section__content">
+                <div class="content-box">
+                    <div class="radio-wrapper content-box__row">
+                        <div class="radio__input">
+                            <input class="input-radio" data-backup="different_billing_address_false" type="radio" value="false" checked="checked" name="checkout[different_billing_address]" id="checkout_different_billing_address_false">
+                        </div>
+
+                        <label class="radio__label content-box__emphasis" for="checkout_different_billing_address_false">
+                            Usar la dirección de envío.
+                        </label></div>
+
+                    <div class="radio-wrapper content-box__row">
+                        <div class="radio__input">
+                            <input class="input-radio" data-backup="different_billing_address_true" type="radio" value="true" name="checkout[different_billing_address]" id="checkout_different_billing_address_true">
+                        </div>
+                        <label class="radio__label content-box__emphasis" for="checkout_different_billing_address_true">
+                            Usar una dirección de facturación diferente
+                        </label></div>
+
+                    <div class="radio-group__row content-box__row content-box__row--secondary hidden" data-billing-address-fields="">
+                        <div class="fieldset">
+
+
+                            <div class="field--half field field--optional field--show-floating-label">
+
+                                <div class="field__input-wrapper"><label class="field__label" for="checkout_billing_address_first_name">Nombre</label>
+                                    <input placeholder="Nombre" autocomplete="billing given-name" data-backup="first_name" class="field__input" size="30" type="text" value="Carlos" name="checkout[billing_address][first_name]" id="checkout_billing_address_first_name" disabled="">
+                                </div>
+                            </div>
+                            <div class="field--half field field--required field--show-floating-label">
+
+                                <div class="field__input-wrapper"><label class="field__label" for="checkout_billing_address_last_name">Apellidos</label>
+                                    <input placeholder="Apellidos" autocomplete="billing family-name" data-backup="last_name" class="field__input" size="30" type="text" value="Fernández" name="checkout[billing_address][last_name]" id="checkout_billing_address_last_name" disabled="">
+                                </div>
+                            </div>
+                            <div class="field field--optional">
+
+                                <div class="field__input-wrapper"><label class="field__label" for="checkout_billing_address_company">Compañía (opcional)</label>
+                                    <input placeholder="Compañía (opcional)" autocomplete="billing organization" data-backup="company" class="field__input" size="30" type="text" value="" name="checkout[billing_address][company]" id="checkout_billing_address_company" disabled="">
+                                </div>
+                            </div>
+                            <div class="field--two-thirds field field--required field--show-floating-label">
+
+                                <div class="field__input-wrapper"><label class="field__label" for="checkout_billing_address_address1">Dirección</label>
+                                    <input placeholder="Dirección" autocomplete="billing address-line1" data-backup="address1" class="field__input" size="30" type="text" value="30 street #3111, Playa" name="checkout[billing_address][address1]" id="checkout_billing_address_address1" disabled="">
+                                </div>
+                            </div>
+                            <div class="field--third field field--optional">
+
+                                <div class="field__input-wrapper"><label class="field__label" for="checkout_billing_address_address2">Apt, suite, etc. (opcional)</label>
+                                    <input placeholder="Apt, suite, etc. (opcional)" autocomplete="billing address-line2" data-backup="address2" class="field__input" size="30" type="text" value="" name="checkout[billing_address][address2]" id="checkout_billing_address_address2" disabled="">
+                                </div>
+                            </div>
+                            <div class="field field--required field--show-floating-label">
+
+                                <div class="field__input-wrapper"><label class="field__label" for="checkout_billing_address_city">Ciudad</label>
+                                    <input placeholder="Ciudad" autocomplete="billing address-level2" data-backup="city" class="field__input" size="30" type="text" value="Havana City" name="checkout[billing_address][city]" id="checkout_billing_address_city" disabled="">
+                                </div>
+                            </div>
+                            <div data-country-section="1" class="field field--required field--half field--show-floating-label">
+
+                                <div class="field__input-wrapper field__input-wrapper--select"><label class="field__label" for="checkout_billing_address_country">País</label>
+                                    <select size="1" autocomplete="billing country" data-backup="country" class="field__input field__input--select" name="checkout[billing_address][country]" id="checkout_billing_address_country" disabled="">
+                                        <option value="United States">United States</option>
+                                        <option value="United Kingdom">United Kingdom</option>
+                                        <option value="Italy">Italy</option>
+                                        <option value="Australia">Australia</option>
+                                        <option disabled="disabled" value="---">---</option>
+                                        <option value="Afghanistan">Afghanistan</option>
+                                        <option value="Aland Islands">Åland Islands</option>
+                                        <option value="Albania">Albania</option>
+                                        <option value="Algeria">Algeria</option>
+                                        <option value="Andorra">Andorra</option>
+                                        <option value="Angola">Angola</option>
+                                        <option value="Anguilla">Anguilla</option>
+                                        <option value="Antigua And Barbuda">Antigua &amp; Barbuda</option>
+                                        <option value="Argentina">Argentina</option>
+                                        <option value="Armenia">Armenia</option>
+                                        <option value="Aruba">Aruba</option>
+                                        <option value="Australia">Australia</option>
+                                        <option value="Austria">Austria</option>
+                                        <option value="Azerbaijan">Azerbaijan</option>
+                                        <option value="Bahamas">Bahamas</option>
+                                        <option value="Bahrain">Bahrain</option>
+                                        <option value="Bangladesh">Bangladesh</option>
+                                        <option value="Barbados">Barbados</option>
+                                        <option value="Belarus">Belarus</option>
+                                        <option value="Belgium">Belgium</option>
+                                        <option value="Belize">Belize</option>
+                                        <option value="Benin">Benin</option>
+                                        <option value="Bermuda">Bermuda</option>
+                                        <option value="Bhutan">Bhutan</option>
+                                        <option value="Bolivia">Bolivia</option>
+                                        <option value="Bosnia And Herzegovina">Bosnia &amp; Herzegovina</option>
+                                        <option value="Botswana">Botswana</option>
+                                        <option value="Bouvet Island">Bouvet Island</option>
+                                        <option value="Brazil">Brazil</option>
+                                        <option value="British Indian Ocean Territory">British Indian Ocean Territory</option>
+                                        <option value="Virgin Islands, British">British Virgin Islands</option>
+                                        <option value="Brunei">Brunei</option>
+                                        <option value="Bulgaria">Bulgaria</option>
+                                        <option value="Burkina Faso">Burkina Faso</option>
+                                        <option value="Burundi">Burundi</option>
+                                        <option value="Cambodia">Cambodia</option>
+                                        <option value="Republic of Cameroon">Cameroon</option>
+                                        <option value="Canada">Canada</option>
+                                        <option value="Cape Verde">Cape Verde</option>
+                                        <option value="Cayman Islands">Cayman Islands</option>
+                                        <option value="Central African Republic">Central African Republic</option>
+                                        <option value="Chad">Chad</option>
+                                        <option value="Chile">Chile</option>
+                                        <option value="China">China</option>
+                                        <option value="Christmas Island">Christmas Island</option>
+                                        <option value="Cocos (Keeling) Islands">Cocos (Keeling) Islands</option>
+                                        <option value="Colombia">Colombia</option>
+                                        <option value="Comoros">Comoros</option>
+                                        <option value="Congo">Congo - Brazzaville</option>
+                                        <option value="Congo, The Democratic Republic Of The">Congo - Kinshasa</option>
+                                        <option value="Cook Islands">Cook Islands</option>
+                                        <option value="Costa Rica">Costa Rica</option>
+                                        <option value="Croatia">Croatia</option>
+                                        <option selected="selected" value="Cuba">Cuba</option>
+                                        <option value="Curaçao">Curaçao</option>
+                                        <option value="Cyprus">Cyprus</option>
+                                        <option value="Czech Republic">Czech Republic</option>
+                                        <option value="Côte d&#39;Ivoire">Côte d’Ivoire</option>
+                                        <option value="Denmark">Denmark</option>
+                                        <option value="Djibouti">Djibouti</option>
+                                        <option value="Dominica">Dominica</option>
+                                        <option value="Dominican Republic">Dominican Republic</option>
+                                        <option value="Ecuador">Ecuador</option>
+                                        <option value="Egypt">Egypt</option>
+                                        <option value="El Salvador">El Salvador</option>
+                                        <option value="España">España</option>
+                                        <option value="Equatorial Guinea">Equatorial Guinea</option>
+                                        <option value="Eritrea">Eritrea</option>
+                                        <option value="Estonia">Estonia</option>
+                                        <option value="Ethiopia">Ethiopia</option>
+                                        <option value="Falkland Islands (Malvinas)">Falkland Islands</option>
+                                        <option value="Faroe Islands">Faroe Islands</option>
+                                        <option value="Fiji">Fiji</option>
+                                        <option value="Finland">Finland</option>
+                                        <option value="France">France</option>
+                                        <option value="French Guiana">French Guiana</option>
+                                        <option value="French Polynesia">French Polynesia</option>
+                                        <option value="French Southern Territories">French Southern Territories</option>
+                                        <option value="Gabon">Gabon</option>
+                                        <option value="Gambia">Gambia</option>
+                                        <option value="Georgia">Georgia</option>
+                                        <option value="Germany">Germany</option>
+                                        <option value="Ghana">Ghana</option>
+                                        <option value="Gibraltar">Gibraltar</option>
+                                        <option value="Greece">Greece</option>
+                                        <option value="Greenland">Greenland</option>
+                                        <option value="Grenada">Grenada</option>
+                                        <option value="Guadeloupe">Guadeloupe</option>
+                                        <option value="Guatemala">Guatemala</option>
+                                        <option value="Guernsey">Guernsey</option>
+                                        <option value="Guinea">Guinea</option>
+                                        <option value="Guinea Bissau">Guinea-Bissau</option>
+                                        <option value="Guyana">Guyana</option>
+                                        <option value="Haiti">Haiti</option>
+                                        <option value="Heard Island And Mcdonald Islands">Heard &amp; McDonald Islands</option>
+                                        <option value="Honduras">Honduras</option>
+                                        <option value="Hong Kong">Hong Kong SAR China</option>
+                                        <option value="Hungary">Hungary</option>
+                                        <option value="Iceland">Iceland</option>
+                                        <option value="India">India</option>
+                                        <option value="Indonesia">Indonesia</option>
+                                        <option value="Iran, Islamic Republic Of">Iran</option>
+                                        <option value="Iraq">Iraq</option>
+                                        <option value="Ireland">Ireland</option>
+                                        <option value="Isle Of Man">Isle of Man</option>
+                                        <option value="Israel">Israel</option>
+                                        <option value="Italy">Italy</option>
+                                        <option value="Jamaica">Jamaica</option>
+                                        <option value="Japan">Japan</option>
+                                        <option value="Jersey">Jersey</option>
+                                        <option value="Jordan">Jordan</option>
+                                        <option value="Kazakhstan">Kazakhstan</option>
+                                        <option value="Kenya">Kenya</option>
+                                        <option value="Kiribati">Kiribati</option>
+                                        <option value="Kosovo">Kosovo</option>
+                                        <option value="Kuwait">Kuwait</option>
+                                        <option value="Kyrgyzstan">Kyrgyzstan</option>
+                                        <option value="Lao People&#39;s Democratic Republic">Laos</option>
+                                        <option value="Latvia">Latvia</option>
+                                        <option value="Lebanon">Lebanon</option>
+                                        <option value="Lesotho">Lesotho</option>
+                                        <option value="Liberia">Liberia</option>
+                                        <option value="Libyan Arab Jamahiriya">Libya</option>
+                                        <option value="Liechtenstein">Liechtenstein</option>
+                                        <option value="Lithuania">Lithuania</option>
+                                        <option value="Luxembourg">Luxembourg</option>
+                                        <option value="Macao">Macau SAR China</option>
+                                        <option value="Macedonia, Republic Of">Macedonia</option>
+                                        <option value="Madagascar">Madagascar</option>
+                                        <option value="Malawi">Malawi</option>
+                                        <option value="Malaysia">Malaysia</option>
+                                        <option value="Maldives">Maldives</option>
+                                        <option value="Mali">Mali</option>
+                                        <option value="Malta">Malta</option>
+                                        <option value="Martinique">Martinique</option>
+                                        <option value="Mauritania">Mauritania</option>
+                                        <option value="Mauritius">Mauritius</option>
+                                        <option value="Mayotte">Mayotte</option>
+                                        <option value="Mexico">Mexico</option>
+                                        <option value="Moldova, Republic of">Moldova</option>
+                                        <option value="Monaco">Monaco</option>
+                                        <option value="Mongolia">Mongolia</option>
+                                        <option value="Montenegro">Montenegro</option>
+                                        <option value="Montserrat">Montserrat</option>
+                                        <option value="Morocco">Morocco</option>
+                                        <option value="Mozambique">Mozambique</option>
+                                        <option value="Myanmar">Myanmar (Burma)</option>
+                                        <option value="Namibia">Namibia</option>
+                                        <option value="Nauru">Nauru</option>
+                                        <option value="Nepal">Nepal</option>
+                                        <option value="Netherlands">Netherlands</option>
+                                        <option value="Netherlands Antilles">Netherlands Antilles</option>
+                                        <option value="New Caledonia">New Caledonia</option>
+                                        <option value="New Zealand">New Zealand</option>
+                                        <option value="Nicaragua">Nicaragua</option>
+                                        <option value="Niger">Niger</option>
+                                        <option value="Nigeria">Nigeria</option>
+                                        <option value="Niue">Niue</option>
+                                        <option value="Norfolk Island">Norfolk Island</option>
+                                        <option value="Korea, Democratic People&#39;s Republic Of">North Korea</option>
+                                        <option value="Norway">Norway</option>
+                                        <option value="Oman">Oman</option>
+                                        <option value="Pakistan">Pakistan</option>
+                                        <option value="Palestinian Territory, Occupied">Palestinian Territories</option>
+                                        <option value="Panama">Panama</option>
+                                        <option value="Papua New Guinea">Papua New Guinea</option>
+                                        <option value="Paraguay">Paraguay</option>
+                                        <option value="Peru">Peru</option>
+                                        <option value="Philippines">Philippines</option>
+                                        <option value="Pitcairn">Pitcairn Islands</option>
+                                        <option value="Poland">Poland</option>
+                                        <option value="Portugal">Portugal</option>
+                                        <option value="Qatar">Qatar</option>
+                                        <option value="Reunion">Réunion</option>
+                                        <option value="Romania">Romania</option>
+                                        <option value="Russia">Russia</option>
+                                        <option value="Rwanda">Rwanda</option>
+                                        <option value="Samoa">Samoa</option>
+                                        <option value="San Marino">San Marino</option>
+                                        <option value="Sao Tome And Principe">São Tomé &amp; Príncipe</option>
+                                        <option value="Saudi Arabia">Saudi Arabia</option>
+                                        <option value="Senegal">Senegal</option>
+                                        <option value="Serbia">Serbia</option>
+                                        <option value="Seychelles">Seychelles</option>
+                                        <option value="Sierra Leone">Sierra Leone</option>
+                                        <option value="Singapore">Singapore</option>
+                                        <option value="Sint Maarten">Sint Maarten</option>
+                                        <option value="Slovakia">Slovakia</option>
+                                        <option value="Slovenia">Slovenia</option>
+                                        <option value="Solomon Islands">Solomon Islands</option>
+                                        <option value="Somalia">Somalia</option>
+                                        <option value="South Africa">South Africa</option>
+                                        <option value="South Georgia And The South Sandwich Islands">South Georgia &amp; South Sandwich Islands</option>
+                                        <option value="South Korea">South Korea</option>
+                                        <option value="Sri Lanka">Sri Lanka</option>
+                                        <option value="Saint Barthélemy">St. Barthélemy</option>
+                                        <option value="Saint Helena">St. Helena</option>
+                                        <option value="Saint Kitts And Nevis">St. Kitts &amp; Nevis</option>
+                                        <option value="Saint Lucia">St. Lucia</option>
+                                        <option value="Saint Martin">St. Martin</option>
+                                        <option value="Saint Pierre And Miquelon">St. Pierre &amp; Miquelon</option>
+                                        <option value="St. Vincent">St. Vincent &amp; Grenadines</option>
+                                        <option value="Sudan">Sudan</option>
+                                        <option value="Suriname">Suriname</option>
+                                        <option value="Svalbard And Jan Mayen">Svalbard &amp; Jan Mayen</option>
+                                        <option value="Swaziland">Swaziland</option>
+                                        <option value="Sweden">Sweden</option>
+                                        <option value="Switzerland">Switzerland</option>
+                                        <option value="Syria">Syria</option>
+                                        <option value="Taiwan">Taiwan</option>
+                                        <option value="Tajikistan">Tajikistan</option>
+                                        <option value="Tanzania, United Republic Of">Tanzania</option>
+                                        <option value="Thailand">Thailand</option>
+                                        <option value="Timor Leste">Timor-Leste</option>
+                                        <option value="Togo">Togo</option>
+                                        <option value="Tokelau">Tokelau</option>
+                                        <option value="Tonga">Tonga</option>
+                                        <option value="Trinidad and Tobago">Trinidad &amp; Tobago</option>
+                                        <option value="Tunisia">Tunisia</option>
+                                        <option value="Turkey">Turkey</option>
+                                        <option value="Turkmenistan">Turkmenistan</option>
+                                        <option value="Turks and Caicos Islands">Turks &amp; Caicos Islands</option>
+                                        <option value="Tuvalu">Tuvalu</option>
+                                        <option value="United States Minor Outlying Islands">U.S. Outlying Islands</option>
+                                        <option value="Uganda">Uganda</option>
+                                        <option value="Ukraine">Ukraine</option>
+                                        <option value="United Arab Emirates">United Arab Emirates</option>
+                                        <option value="United Kingdom">United Kingdom</option>
+                                        <option value="United States">United States</option>
+                                        <option value="Uruguay">Uruguay</option>
+                                        <option value="Uzbekistan">Uzbekistan</option>
+                                        <option value="Vanuatu">Vanuatu</option>
+                                        <option value="Holy See (Vatican City State)">Vatican City</option>
+                                        <option value="Venezuela">Venezuela</option>
+                                        <option value="Vietnam">Vietnam</option>
+                                        <option value="Wallis And Futuna">Wallis &amp; Futuna</option>
+                                        <option value="Western Sahara">Western Sahara</option>
+                                        <option value="Yemen">Yemen</option>
+                                        <option value="Zambia">Zambia</option>
+                                        <option value="Zimbabwe">Zimbabwe</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <input class="visually-hidden" autocomplete="billing address-level1" tabindex="-1" data-autocomplete-field="province" size="30" type="text" name="checkout[billing_address][province]" disabled="">
+
+                            <div data-province-section="1" class="field field--required field--show-floating-label" style="display: none;">
+
+                                <div class="field__input-wrapper field__input-wrapper--select"><label class="field__label" for="checkout_billing_address_province">Región</label>
+                                    <input type="hidden" name="checkout[billing_address][province]" disabled=""><select placeholder="Región" data-backup="province" class="field__input field__input--select" name="checkout[billing_address][province]" id="checkout_billing_address_province" disabled=""></select>
+                                </div>
+                            </div>
+                            <div data-zip-section="1" class="field field--required field--half field--show-floating-label">
+
+                                <div class="field__input-wrapper"><label class="field__label" for="checkout_billing_address_zip">Código postal</label>
+                                    <input placeholder="Código postal" autocomplete="billing postal-code" data-backup="zip" class="field__input" size="30" type="text" value="11400" name="checkout[billing_address][zip]" id="checkout_billing_address_zip" disabled="">
+                                </div>
+                            </div>
+                            <div class="field field--optional field--show-floating-label">
+
+                                <div class="field__input-wrapper"><label class="field__label" for="checkout_billing_address_phone">Teléfono (opcional)</label>
+                                    <input placeholder="Teléfono (opcional)" autocomplete="billing tel" data-backup="phone" class="field__input" size="30" type="tel" value="+5353308829" name="checkout[billing_address][phone]" id="checkout_billing_address_phone" disabled="">
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="step__footer">
+            <input type="hidden" name="complete" value="1">
+            <button name="button" type="submit" class="step__footer__continue-btn btn ">
+                <span class="btn__content">Completar orden</span>
+                <i class="btn__spinner icon icon--button-spinner"></i>
+            </button>
+        </div>
+
+        <input type="hidden" name="checkout[client_details][browser_width]" value="1349"><input type="hidden" name="checkout[client_details][browser_height]" value="667"></form>
+{% endblock %}

@@ -1,0 +1,108 @@
+{% extends 'info_client.html' %}
+{% load thumbnail %}
+{% load staticfiles %}
+
+{% block breadcrumbs %}
+    <div class="breadcrumb clearfix">
+        <span itemscope itemtype="http://data-vocabulary.org/Breadcrumb">
+                                 <a href="/info_client/" title="All Products" itemprop="url">
+                                     <span itemprop="title">Información del cliente</span>
+                                 </a>
+                         </span>
+        <span class="arrow-space">&#62;</span>
+        <strong itemprop="title">Información del envío</strong>
+        <span class="arrow-space">&#62;</span>
+                        <span itemscope itemtype="http://data-vocabulary.org/Breadcrumb">
+                            <a title="All Products" itemprop="url">
+                                <span itemprop="title">Método de pago</span>
+                            </a>
+                         </span>
+    </div>
+{% endblock %}
+{% block form_content %}
+    <form class="edit_checkout animate-floating-labels" action="/shipping_info/" accept-charset="UTF-8" method="post">
+        {% csrf_token %}
+        <div class="step__sections">
+            {#TODO: This info should be loaded dynamically#}
+            <div class="section">
+                <div class="section__header">
+                    <h2 class="section__title">Dirección de envío</h2>
+                </div>
+                <div class="section__content">
+                    <p>
+                        Carlos Fernández<br>30 street #3111, Playa<br>11400, Havana City<br>Cuba<br>+5353308829
+                        <a class="edit-link edit-link--small" href="/info_client/">Editar dirección de envío</a>
+                    </p>
+                </div>
+            </div>
+            <!-- /.section -->
+
+            <div class="section">
+                <div class="section__header">
+                    <h2 class="section__title">Método de envío</h2>
+                </div>
+
+                <div class="section__content">
+                    <!-- Render errors -->
+
+                    <!-- We have your address -->
+
+                    <!-- We're loading shipping rates -->
+                    <div class="content-box" data-shipping-methods="">
+                        <div class="radio-wrapper content-box__row">
+                            <div class="checkbox-wrapper">
+                                <div class="checkbox__input">
+                                    {#                                    <input name="checkout[activate_customer_account]" type="hidden" value="0"/>#}
+                                    <input class="input-checkbox" onchange="Toogle(this)" type="checkbox" name="checkout[activate_customer_account]" id="checkout_activate_customer_account"/>
+                                </div>
+                                {#TODO: Ver qué tipo de envío poner#}
+                                <label class="checkbox__label" for="checkout_activate_customer_account">
+                                    Envío rápido
+                                </label>
+                            </div>
+                            <span class="radio__accessory content-box__emphasis">$20.00</span>
+                        </div>
+                        <!-- /radio-wrapper-->
+                    </div>
+                    <!-- We don't have your address yet -->
+                </div>
+                <!-- /.section__content -->
+            </div>
+            <!-- /.section -->
+        </div>
+
+
+        <div class="step__footer">
+            <button name="button" type="submit" class="step__footer__continue-btn btn ">
+                <span class="btn__content">Continuar al método de pago</span>
+                <i class="btn__spinner icon icon--button-spinner"></i>
+            </button>
+
+            <a class="step__footer__previous-link" href="https://checkout.shopify.com/1530847/checkouts/d96814cf02b04b9de8d7bad6058813c5?step=contact_information">
+                <svg class="previous-link__icon icon--chevron icon" xmlns="http://www.w3.org/2000/svg" width="6.7" height="11.3" viewBox="0 0 6.7 11.3">
+                    <path d="M6.7 1.1l-1-1.1-4.6 4.6-1.1 1.1 1.1 1 4.6 4.6 1-1-4.6-4.6z"></path>
+                </svg>
+                Regresar a Información del cliente</a>
+        </div>
+
+
+        <input type="hidden" name="checkout[client_details][browser_width]" value="1366"><input type="hidden" name="checkout[client_details][browser_height]" value="667">
+    </form>
+    <script>
+        function Toogle(node) {
+            var tax = document.getElementById("envio");
+            var total_price = document.getElementById("precio_total");
+            if (node.checked) {
+                tax.innerText = tax.getAttribute("data-money") + " €";
+                total_price.innerText = parseFloat(total_price.getAttribute("data-money")) + parseFloat(tax.getAttribute("data-money")) + " €";
+                document.getElementById("total__price__phone").innerText = parseFloat(total_price.getAttribute("data-money")) + parseFloat(tax.getAttribute("data-money")) + " €";
+
+            }
+            else {
+                tax.innerText = "—";
+                total_price.innerText = total_price.getAttribute("data-money") + " €";
+                document.getElementById("total__price__phone").innerText = total_price.getAttribute("data-money") + " €";
+            }
+        }
+    </script>
+{% endblock %}
