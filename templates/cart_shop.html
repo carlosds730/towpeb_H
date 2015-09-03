@@ -14,13 +14,13 @@
                     <a style="color: #004024"><strong id="total_price">Subtotal: {{ on_hold.total_price }}</strong></a>
                     <br>
                     {% if on_hold.is_valid %}
-                        <a id="payment_button" class="remove btn-buy">
+                        <a href="/info_client/" id="payment_button" class="remove btn-buy">
                             <i class=" fa fa-shopping-cart">
                             </i>
                             Comprar
                         </a>
                     {% else %}
-                        <a id="payment_button" class="remove btn-buy disabled" style="cursor: default">
+                        <a href="/info_client/" id="payment_button" class="remove btn-buy disabled" style="cursor: default">
                             <i class=" fa fa-shopping-cart">
                             </i>
                             Comprar
@@ -29,7 +29,7 @@
                 </div>
                 <div class="carrito row clearfix">
                     {% for p in on_hold.products.all %}
-                        <div class="row clearfix" id="product_{{ p.pk }}">
+                        <div class="row clearfix product_list_pc" id="product_{{ p.pk }}">
                             <div class="span2" style="text-align: center">
                                 {% thumbnail p.product.image "100x100" as imagen %}
                                     <a href="/product/{{ p.product.pk }}/">
@@ -47,7 +47,6 @@
                                 </h5>
                                 <a class="remove btn-delete" style="cursor: pointer" onclick="Eliminate({{ p.pk }})">
                                     <i class=" fa fa-trash-o">
-
                                     </i>
                                     Eliminar
                                 </a>
@@ -81,6 +80,63 @@
                                         Es posible realizar la compra
                                     </a>
                                     <a class="my_error" id="error_{{ p.pk }}">
+                                        <i class="fa fa-times"></i>
+                                        No existen tal disponibilidad.
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="mobile-wrapper mobile_product">
+                            <div class="span2" style="text-align: center">
+                                {% thumbnail p.product.image "100x100" as imagen %}
+                                    <a href="/product/{{ p.product.pk }}/">
+                                        <img src="{{ imagen.url }}">
+                                    </a>
+                                {% endthumbnail %}
+                            </div>
+                            <div class="span3 properties">
+                                <h5>
+                                    Producto: <a style="color: #004024" id="dscrptn_{{ p.pk }}"
+                                                 href="/product/{{ p.product.pk }}/">{{ p.product.name }}</a>
+                                </h5>
+                                <h5>
+                                    {{ p.attribute }}
+                                </h5>
+                            </div>
+                            <div class="span2">
+                                <div class="selector-wrapper quantity_holder" style="text-align: left">
+                                    <a style="margin-top: 5px;float: left; margin-right: 10px; color: black">Cantidad: </a>
+                                    <label for="quantity_{{ p.pk }}_mobile" style="display: none">Cantidad</label>
+                                    <input id="quantity_{{ p.pk }}_mobile" style="width: 41px; height: 17px;" type="number" onchange="CheckMobile({{ p.pk }}, {{ p.attribute.price|safe }})" name="quantity" value="{{ p.amount }}" min="1"
+                                           class="tc item-quantity quantity_select"/>
+                                    <a class="remove btn-delete" style="cursor: pointer; float: right; margin-top: 4px" onclick="Eliminate({{ p.pk }})">
+                                        <i class=" fa fa-trash-o">
+                                        </i>
+                                        Eliminar
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="span2 precio_total" style="margin-top: 7px">
+                                <a class="precio_holder">Precio Total: </a>
+                                <a class="precio" id="precio_{{ p.pk }}_mobile">{{ p.price }}</a>
+                            </div>
+                            <div class="span2 properties validation" id="my_msg_{{ p.pk }}_mobile" style="margin-top: 7px">
+                                {% if p.valid %}
+                                    <a class="my_success" id="succes_{{ p.pk }}_mobile">
+                                        <i class="fa fa-check"></i>
+                                        Es posible realizar la compra
+                                    </a>
+                                    <a style="display: none" class="my_error" id="error_{{ p.pk }}_mobile">
+                                        <i class="fa fa-times"></i>
+                                        No existen tal disponibilidad.
+                                    </a>
+                                {% else %}
+                                    {#TODO: Poner un texto de error que esté bueno#}
+                                    <a style="display: none" class="my_success" id="succes_{{ p.pk }}_mobile">
+                                        <i class="fa fa-check"></i>
+                                        Es posible realizar la compra
+                                    </a>
+                                    <a class="my_error" id="error_{{ p.pk }}_mobile">
                                         <i class="fa fa-times"></i>
                                         No existen tal disponibilidad.
                                     </a>
@@ -169,17 +225,25 @@
         }
     </script>
     <script>
-        function Check(pk, price) {
-            var check = document.getElementById('quantity_' + pk);
-            var value = document.getElementById('precio_' + pk);
-
+        function CheckBoth(pk, price, check) {
             var parse = parseInt(check.value);
-            if (isNaN(parse))
-                check.value = "1";
-            else if (parse < 1)
-                check.value = "1";
+            if (isNaN(parse)) {
+                document.getElementById('quantity_' + pk).value = "1";
+                document.getElementById('quantity_' + pk + '_mobile').value = "1";
+            }
+            else if (parse < 1) {
+                document.getElementById('quantity_' + pk).value = "1";
+                document.getElementById('quantity_' + pk + '_mobile').value = "1";
+            }
+            else {
+                document.getElementById('quantity_' + pk).value = check.value;
+                document.getElementById('quantity_' + pk + '_mobile').value = check.value;
+            }
 
-            value.innerText = (parseFloat(check.value) * price).toString() + "€";
+            var new_price = (parseFloat(check.value) * price).toString() + "€";
+
+            document.getElementById('precio_' + pk).innerText = new_price;
+            document.getElementById('precio_' + pk + '_mobile').innerText = new_price;
 
             var request = $.get("/cart_shop/", {'pk': pk, 'amonut': check.value});
 
@@ -188,9 +252,13 @@
                     document.getElementById("total_price").innerText = "Subtotal: " + data['total'];
                     if (data['valid']) {
                         document.getElementById("succes_" + pk).setAttribute("style", "");
+                        document.getElementById("succes_" + pk + '_mobile').setAttribute("style", "");
+                        document.getElementById("error_" + pk + '_mobile').setAttribute("style", "display: none");
                         document.getElementById("error_" + pk).setAttribute("style", "display: none");
                     }
                     else {
+                        document.getElementById("error_" + pk + '_mobile').setAttribute("style", "");
+                        document.getElementById("succes_" + pk + '_mobile').setAttribute("style", "display: none");
                         document.getElementById("error_" + pk).setAttribute("style", "");
                         document.getElementById("succes_" + pk).setAttribute("style", "display: none");
                     }
@@ -208,6 +276,16 @@
             request.error(function (data) {
                 alert("Type something");
             });
+        }
+        function Check(pk, price) {
+            var check = document.getElementById('quantity_' + pk);
+
+            CheckBoth(pk, price, check);
+        }
+
+        function CheckMobile(pk, price) {
+            var check = document.getElementById('quantity_' + pk + '_mobile');
+            CheckBoth(pk, price, check);
         }
     </script>
 

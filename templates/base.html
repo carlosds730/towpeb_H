@@ -1,4 +1,5 @@
 {% load staticfiles %}
+
 <!DOCTYPE html>
 <!--[if lt IE 7]><html class="no-js ie6 oldie" lang="en"><![endif]-->
 <!--[if IE 7]><html class="no-js ie7 oldie" lang="en"><![endif]-->
@@ -82,7 +83,6 @@
                         <a href="/shutdown/" id="customer_register_link">Cerrar sesión</a>
                     {% else %}
                         <a href="/login/" id="customer_login_link">Iniciar sesión</a>
-
                         <span class="or">&nbsp;o&nbsp;</span>
                         <a href="/register/" id="customer_register_link">Crear un usuario</a>
                     {% endif %}
@@ -126,7 +126,7 @@
                             <ul class="sub-menu">
                                 <li class="customer-links"><a id="customer_login_link">{{ login.1 }}</a>
                                 </li>
-                                <span class="or">&nbsp;|&nbsp;</span>
+{#                                <span class="or">&nbsp;|&nbsp;</span>#}
                                 <li class="customer-links"><a href="/shutdown/" id="customer_register_link">Cerrar
                                     sesión</a>
                                 </li>
@@ -345,7 +345,7 @@
                         {#  TODO: Que hacer con esto q se supone q se haga con ese correo                      #}
                         <form action="#" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form"
                               target="_blank">
-                            <input type="email" value="" placeholder="Email" name="EMAIL" id="mail"/><input
+                            <input class="email_holder" type="email" value="" placeholder="Email" name="EMAIL" id="mail"/><input
                                 type="submit" class="btn newsletter" value="Suscribirse" name="subscribe"
                                 id="subscribe"/>
                         </form>

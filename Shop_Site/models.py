@@ -78,8 +78,8 @@ class Attribute(models.Model):
     product = models.ForeignKey('Products', related_name='attributes', verbose_name='Producto',
                                 help_text='Producto a la venta')
 
-    price = models.FloatField(verbose_name='Precio', default=0, help_text='Precio del producto',
-                              validators=[validate])
+    price = models.DecimalField(verbose_name='Precio', default=0, max_digits=10, decimal_places=2,
+                                help_text='Precio del producto', validators=[validate])
 
     amount = models.IntegerField(verbose_name='Cantidad de existencias', default=0, validators=[validate],
                                  help_text='Cantidad de existencias del producto')
@@ -123,10 +123,7 @@ class Clients(models.Model):
 
     name = models.CharField(verbose_name='Nombre', max_length=200, help_text='Nombre del cliente')
 
-    address = models.CharField(verbose_name='Dirección', max_length=400, help_text='Dirección del cliente', blank=True,
-                               null=True)
-
-    email = models.EmailField(verbose_name="Email")
+    email = models.EmailField(verbose_name="Email", help_text="Correo del cliente")
 
     password = models.CharField(verbose_name='Password', max_length=400,
                                 help_text='Password del cliente, NO SE PUEDE EDITAR')
@@ -178,6 +175,16 @@ class Purchase(models.Model):
             total += p.attribute.price * p.amount
         return str(total) + ' €'
 
+    def total_price_two(self):
+        total = 0
+        for p in self.products.all():
+            total += p.attribute.price * p.amount
+        return str(total) + ' €', str(total)
+
+    # TODO: Do this (it should return a tuple, the first element should be the price the € sign and the second the price as a number)
+    def total_price_with_taxes(self):
+        return self.total_price_two()
+
 
 class Sale_Product(models.Model):
     class Meta:
@@ -217,3 +224,29 @@ class Pictures(models.Model):
 
     def __str__(self):
         return str(self.image.name)
+
+
+class Address(models.Model):
+    class Meta:
+        verbose_name = 'Dirección'
+        verbose_name_plural = 'Direcciones'
+
+    cliente = models.ForeignKey('Clients', verbose_name='Cliente', related_name='addresses', blank=True, null=True)
+
+    first_name = models.CharField(verbose_name='Nombre', blank=True, null=True, max_length=100)
+
+    last_name = models.CharField(verbose_name='Apellidos', blank=True, null=True, max_length=200)
+
+    address = models.CharField(verbose_name='Dirección', blank=True, null=True, max_length=400)
+
+    company = models.CharField(verbose_name='Compañía', blank=True, null=True, max_length=100)
+
+    apt_suite = models.CharField(verbose_name='Apartamento/Suite', blank=True, null=True, max_length=50)
+
+    city = models.CharField(verbose_name='Ciudad', blank=True, null=True, max_length=50)
+
+    country = models.CharField(verbose_name='País', blank=True, null=True, max_length=100)
+
+    postal_code = models.CharField(verbose_name='Código Postal', blank=True, null=True, max_length=50)
+
+    phone = models.CharField(verbose_name='Télefono', blank=True, null=True, max_length=50)

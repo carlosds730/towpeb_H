@@ -441,3 +441,58 @@ def eliminate(request):
             raise Http404('')
         except models.Sale_Product.DoesNotExist:
             raise Http404('')
+
+
+def info_client(request):
+    if request.method == 'GET':
+        log = get_login(request.COOKIES)
+        if log:
+            on_hold = None
+            shops = []
+            for purchase in models.Purchase.objects.filter(client__pk=log[0]):
+                if purchase.on_hold:
+                    on_hold = purchase
+                else:
+                    shops.append(purchase)
+            return add_info_home(request, {'on_hold': on_hold, 'shops': shops}, 'info_client.html')
+        else:
+            return HttpResponseRedirect('/login/')
+
+    # TODO: Do this POST method. Right now it goes where it should but it doesn't verify anything
+    if request.method == 'POST':
+        return HttpResponseRedirect('/shipping_info/')
+
+
+def shipping_info(request):
+    if request.method == 'GET':
+        log = get_login(request.COOKIES)
+        if log:
+            on_hold = None
+            shops = []
+            for purchase in models.Purchase.objects.filter(client__pk=log[0]):
+                if purchase.on_hold:
+                    on_hold = purchase
+                else:
+                    shops.append(purchase)
+            return add_info_home(request, {'on_hold': on_hold, 'shops': shops}, 'shipping_info.html')
+        else:
+            return HttpResponseRedirect('/login/')
+    # TODO: Do this POST method. Right now it goes where it should but it doesn't verify anything
+    if request.method == 'POST':
+        return HttpResponseRedirect('/info_card/')
+
+
+def info_card(request):
+    if request.method == 'GET':
+        log = get_login(request.COOKIES)
+        if log:
+            on_hold = None
+            shops = []
+            for purchase in models.Purchase.objects.filter(client__pk=log[0]):
+                if purchase.on_hold:
+                    on_hold = purchase
+                else:
+                    shops.append(purchase)
+            return add_info_home(request, {'on_hold': on_hold, 'shops': shops}, 'info_card.html')
+        else:
+            return HttpResponseRedirect('/login/')

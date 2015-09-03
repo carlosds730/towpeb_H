@@ -11,12 +11,17 @@ from Shop_Site import models
 
 class AttributeAdminInline(admin.StackedInline):
     model = models.Attribute
-    extra = 2
+    extra = 1
+
+
+class AddressAdminInline(admin.StackedInline):
+    model = models.Address
+    extra = 1
 
 
 class PicturesInline(AdminImageMixin, admin.StackedInline):
     model = models.Pictures
-    extra = 3
+    extra = 1
 
 
 class LogEntryAdmin(admin.ModelAdmin):
@@ -25,7 +30,7 @@ class LogEntryAdmin(admin.ModelAdmin):
 
 class ProductsAdmin(AdminImageMixin, admin.ModelAdmin):
     model = models.Products
-    inlines = [PicturesInline, AttributeAdminInline]
+    inlines = [AttributeAdminInline, PicturesInline]
     list_display = ['name', 'cod_ref', 'short_description', 'label']
     search_fields = ['name', 'cod_ref', 'label']
     list_filter = ['name', 'label']
@@ -40,6 +45,7 @@ class CategoryAdmin(AdminImageMixin, admin.ModelAdmin):
 
 class ClientAdmin(admin.ModelAdmin):
     models = models.Clients
+    inlines = [AddressAdminInline]
     list_display = ['name', 'email']
     search_fields = ['name', 'address', 'email']
     list_filter = ['name', 'email']
