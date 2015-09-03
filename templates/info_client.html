@@ -141,10 +141,10 @@
                                 </tr>
 
                                 <tr class="total-line total-line--taxes">
-                                    <td class="total-line__name">Impuestos (IVA incluido)</td>
+                                    <td class="total-line__name">Impuestos</td>
                                     <td class="total-line__price">
                                         {#TODO: Here goes the cost of the taxes#}
-                                        <span class="order-summary__emphasis" id="taxes" data-money="0">0.00 €</span>
+                                        <span class="order-summary__emphasis" id="taxes" data-money="0">-</span>
                                     </td>
                                 </tr>
 
@@ -309,7 +309,10 @@
                                         <div class="section__content">
                                             <div class="checkbox-wrapper">
                                                 <div class="checkbox__input">
-                                                    <input name="checkout[activate_customer_account]" type="hidden" value="0"/><input class="input-checkbox" data-backup="activate_customer_account" type="checkbox" value="1" name="checkout[activate_customer_account]" id="checkout_activate_customer_account"/>
+                                                    <input class="input-checkbox"
+                                                           data-backup="activate_customer_account" type="checkbox"
+                                                           value="1" name="checkout"
+                                                           id="checkout_activate_customer_account"/>
                                                 </div>
                                                 <label class="checkbox__label" for="checkout_activate_customer_account">
                                                     Guardar esta información para futuras compras

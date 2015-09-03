@@ -5,21 +5,6 @@ from django.core.exceptions import ValidationError
 from sorl.thumbnail import ImageField
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 # TODO: Terminar de poner la tallas q faltan, estas fueron la unicas que se me ocurrieron
 sizes = [('S', 'S'), ('M', 'M'), ('L', 'L'), ('XL', 'XL')]
 
@@ -93,7 +78,7 @@ class Attribute(models.Model):
                             blank=True, null=True)
 
     def __str__(self):
-        return 'Talla: ' + str(self.size + ' - ' 'Color: ' + self.color + ' - ' + 'Precio: ' + str(self.price) + '€')
+        return 'Talla: ' + str(self.size + ' - ' 'Color: ' + self.color + ' - ' + 'Precio*: ' + str(self.price) + '€')
 
 
 class Category(models.Model):
@@ -234,7 +219,8 @@ class Address(models.Model):
         verbose_name = 'Dirección'
         verbose_name_plural = 'Direcciones'
 
-    cliente = models.ForeignKey('Clients', verbose_name='Cliente', related_name='addresses', blank=True, null=True)
+    client = models.OneToOneField('Clients', verbose_name='Clientes', related_name='address', blank=True,
+                                  null=True)
 
     first_name = models.CharField(verbose_name='Nombre', blank=True, null=True, max_length=100)
 
@@ -246,10 +232,15 @@ class Address(models.Model):
 
     apt_suite = models.CharField(verbose_name='Apartamento/Suite', blank=True, null=True, max_length=50)
 
-    city = models.CharField(verbose_name='Ciudad', blank=True, null=True, max_length=50)
+    city = models.CharField(verbose_name='Ciudad', blank=True, null=True, max_length=100)
+
+    province = models.CharField(verbose_name='Provincia', blank=True, null=True, max_length=100)
 
     country = models.CharField(verbose_name='País', blank=True, null=True, max_length=100)
 
     postal_code = models.CharField(verbose_name='Código Postal', blank=True, null=True, max_length=50)
 
     phone = models.CharField(verbose_name='Télefono', blank=True, null=True, max_length=50)
+
+    def __str__(self):
+        return self.last_name + ', ' + self.first_name + ' ' + self.province + ', ' + self.country

@@ -17,7 +17,7 @@
                                                                                                 itemprop="url"><span
                                     itemprop="title">Inicio</span></a></span>
 
-                         <span class="arrow-space">&#62;</span>
+                        <span class="arrow-space">&#62;</span>
                          <span itemscope itemtype="http://data-vocabulary.org/Breadcrumb">
 
                                  <a href="/categories/{{ product.category.pk }}/" title="All Products"
@@ -97,8 +97,7 @@
                             <div class="select clearfix">
                                 <div class="selector-wrapper">
                                     <label for="product-select">Atributos</label>
-                                    <select class="single-option-selector" name="attr_pk" data-option="option1"
-                                            id="product-select-option-0">
+                                    <select class="single-option-selector" name="attr_pk" data-option="option1" id="product-select-option-0">
                                         {% for attr in product.attributes.all %}
                                             <option value="{{ attr.pk }}">{{ attr }}</option>
                                         {% endfor %}
@@ -127,9 +126,10 @@
                                         <a href="/login/" id="add-to-cart"
                                            class="btn" name="add"
                                                 >Debe iniciar sesión primero</a>
-
                                     {% endif %}
+
                                 </div>
+                                <a style="color: #555555; padding-top: 10px; display: inline-block">* Los precios de los productos incluyen IVA</a>
                             </div>
                         </div>
                         <!-- End product options -->

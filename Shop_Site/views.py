@@ -173,8 +173,8 @@ def get_all_products(products):
         for attr in p.attributes.all():
             if attr.price not in prices:
                 res_prod.append((p.pk, p.name, p.short_description, p.image.url, attr.size, attr.color, attr.amount,
-                                 attr.price, attr.especial_offer, attr.pk))
-                prices.append(attr.price)
+                                 str(attr.price), attr.especial_offer, attr.pk))
+                prices.append(str(attr.price))
     return res_prod
 
 
@@ -454,13 +454,110 @@ def info_client(request):
                     on_hold = purchase
                 else:
                     shops.append(purchase)
-            return add_info_home(request, {'on_hold': on_hold, 'shops': shops}, 'info_client.html')
+            try:
+                client = models.Clients.objects.get(pk=log[0])
+                try:
+                    _ = client.address
+                    return add_info_home(request,
+                                         {
+                                             'on_hold': on_hold,
+                                             'shops': shops,
+                                             'name': client.address.first_name,
+                                             'last_name': client.address.last_name,
+                                             'company': client.address.company,
+                                             'address': client.address.address,
+                                             'country': client.address.country,
+                                             'city': client.address.city,
+                                             'province': client.address.province,
+                                             'zip_code': client.address.postal_code,
+                                             'apto': client.address.apt_suite,
+                                             'phone': client.address.phone,
+                                         }, 'info_client.html')
+                except Exception:
+                    return add_info_home(request, {'on_hold': on_hold, 'shops': shops}, 'info_client.html')
+            except models.Clients.DoesNotExist:
+                return HttpResponseRedirect('/login/')
         else:
             return HttpResponseRedirect('/login/')
-
     # TODO: Do this POST method. Right now it goes where it should but it doesn't verify anything
     if request.method == 'POST':
-        return HttpResponseRedirect('/info_card/')
+        log = get_login(request.COOKIES)
+        if log:
+            on_hold = None
+            shops = []
+            for purchase in models.Purchase.objects.filter(client__pk=log[0]):
+                if purchase.on_hold:
+                    on_hold = purchase
+                else:
+                    shops.append(purchase)
+        else:
+            return HttpResponseRedirect('/login/')
+        try:
+            save = request.POST['checkout']
+        except KeyError:
+            save = None
+        try:
+            company = request.POST['company']
+        except KeyError:
+            company = ''
+        try:
+            name = request.POST['name']
+            last_name = request.POST['last_name']
+            company = request.POST['company']
+            address = request.POST['address']
+            country = request.POST['country']
+            city = request.POST['city']
+            province = request.POST['province']
+            zip_code = request.POST['zip_code']
+            apto = request.POST['apartment']
+            phone = request.POST['phone']
+            if save:
+                try:
+                    client = models.Clients.objects.get(pk=log[0])
+                    try:
+                        client.address.first_name = name
+                        client.address.last_name = last_name
+                        client.address.company = company
+                        client.address.address = address
+                        client.address.country = country
+                        client.address.city = city
+                        client.address.province = province
+                        client.address.postal_code = zip_code
+                        client.address.apt_suite = apto
+                        client.address.phone = phone
+                        client.address.save()
+                    except Exception:
+                        add = models.Address.objects.create(first_name=name, last_name=last_name,
+                                                            company=company,
+                                                            address=address, country=country, city=city,
+                                                            province=province,
+                                                            postal_code=zip_code, apt_suite=apto, phone=phone)
+                        add.save()
+                        add.client = client
+                        add.save()
+                    client.save()
+                    return HttpResponseRedirect('/payment/payments-billing/')
+                except models.Clients.DoesNotExist:
+                    return HttpResponseRedirect('/login/')
+            else:
+                return HttpResponseRedirect('/payment/payments-billing/')
+        except KeyError:
+            return add_info_home(request,
+                                 {
+                                     'error': True,
+                                     'on_hold': on_hold,
+                                     'shops': shops,
+                                     'name': request.POST['name'],
+                                     'last_name': request.POST['last_name'],
+                                     'company': request.POST['company'],
+                                     'address': request.POST['address'],
+                                     'country': request.POST['country'],
+                                     'city': request.POST['city'],
+                                     'province': request.POST['province'],
+                                     'zip_code': request.POST['zip_code'],
+                                     'apto': request.POST['apartment'],
+                                     'phone': request.POST['phone'],
+                                 }, 'info_client.html')
 
 
 def info_card(request):
