@@ -1,0 +1,158 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block content %}
+
+    <section id="content" class="clearfix">
+        <div id="collection">
+            <!-- Begin collection info -->
+            <div class="row">
+                <div class="span12">
+                    <!-- Begin breadcrumb -->
+                    <div class="breadcrumb clearfix">
+                        {% if login %}
+                            <span itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a
+                                    href="/?pk_l={{ login.0 }}" title="Hutton" itemprop="url"><span
+                                    itemprop="title">Inicio</span></a></span>
+                        {% else %}
+                            <span itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="/" title="Hutton"
+                                                                                            itemprop="url"><span
+                                itemprop="title">Inicio</span></a></span>
+                        {% endif %}
+
+                        <span class="arrow-space">&#62;</span>
+                        <span itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a
+                                style="cursor: auto"
+                                title="Productos"
+                                itemprop="url"><span
+                                itemprop="title">Productos</span></a></span>
+                        <span class="arrow-space">&#62;</span> <strong>Todos los productos</strong>
+                    </div>
+                    <!-- End breadcrumb -->
+
+                    <!-- Begin sort collection -->
+                    <div class="clearfix">
+                        <h1 class="collection-title">Productos</h1>
+
+                        <div class="browse-tags">
+                            <label>Ordenar por:</label>
+                            <select id="select" onchange="order();" class="sort-by">
+                                <option value="created-descending">Últimos diseños</option>
+                                <option value="created-ascending">Diseños más antiguos</option>
+                                <option value="price-ascending">Precio: Menos a más</option>
+                                <option value="price-descending">Precio: Más a menos</option>
+                                <option value="title-ascending">A-Z</option>
+                                <option value="title-descending">Z-A</option>
+{#                                <option value="best-selling">Más vendidos</option>#}
+                            </select>
+                        </div>
+
+                    </div>
+                    <!-- End sort collection -->
+
+                    <!-- Begin collection description -->
+
+                    <!-- End collection description -->
+
+                </div>
+            </div>
+            <!-- End collection info -->
+
+            <!-- Begin no products -->
+            <div id="general" class="row products">
+
+                {#DONE: Each product takes a div like the one above. Add as many as products as there are, the design takes care of showing it in rows#}
+                {% for p in products %}
+                    <div class="product span3 adaptive-grid">
+                        {% if not p.4 %}
+                            <span class="circle sold-out">Agotado</span>
+                        {% elif p.6 %}
+                            <span class="circle sale">Oferta Especial!</span>
+                        {% endif %}
+                        <div class="image">
+                            <a href="/product/{{ p.0 }}/">
+                                <img src="{{ p.3 }}"
+                                     alt="{{ p.2 }}"/>
+                            </a>
+                        </div>
+                        <div class="details">
+                            <a href="/product/{{ p.0 }}/" class="clearfix">
+                                <h4 class="title">{{ p.1 }}</h4>
+                                <span class="vendor">{{ p.2 }}</span>
+                              <span class="price">
+                                {{ p.5 }}€
+                              </span>
+                            </a>
+                        </div>
+                    </div>
+                {% endfor %}
+
+            </div>
+        </div>
+    </section>
+    <script>
+        function order() {
+            var request = $.get('/categories/{{ category.pk }}/', {'order': $('#select').val()});
+            request.done(function (data) {
+                $('#general').remove();
+                var new_div = document.createElement("div");
+                new_div.setAttribute('id', 'general');
+                new_div.setAttribute('class', 'row products');
+                for (var i = 0; i < data['products'].length; i++) {
+                    p = data['products'][i];
+                    var container = document.createElement("div");
+                    container.setAttribute('class', 'product span3 adaptive-grid');
+                    if (p[4] == 0) {
+                        var span_sold_out = document.createElement("span");
+                        span_sold_out.setAttribute('class', 'circle sold-out');
+                        span_sold_out.innerText = 'Agotado';
+                        container.appendChild(span_sold_out);
+                    }
+                    else if (p[6]) {
+                        var span_sale = document.createElement("span");
+                        span_sale.setAttribute('class', 'circle sale');
+                        span_sale.innerText = 'Oferta Especial!';
+                        container.appendChild(span_sale);
+                    }
+                    var image_div = document.createElement('div');
+                    image_div.setAttribute('class', 'image');
+                    var a_1 = document.createElement('a');
+                    a_1.setAttribute('href', '/product/' + p[0].toString());
+                    var image = document.createElement('img');
+                    image.setAttribute('src', p[3].toString());
+                    image.setAttribute('alt', p[2].toString());
+                    a_1.appendChild(image);
+                    image_div.appendChild(a_1);
+                    container.appendChild(image_div);
+
+                    var detail_div = document.createElement('div');
+                    detail_div.setAttribute('class', 'details');
+
+                    var a_2 = document.createElement('a');
+                    a_2.setAttribute('href', '/product/' + p[0].toString());
+                    a_2.setAttribute('class', 'clearfix');
+                    var h_4 = document.createElement('h4');
+                    h_4.setAttribute('class', 'title');
+                    h_4.innerText = p[1].toString();
+                    var span_name = document.createElement('span');
+                    span_name.setAttribute('class', 'vendor');
+                    span_name.innerText = p[2].toString();
+                    var span_price = document.createElement('span');
+                    span_price.setAttribute('class', 'price');
+                    span_price.innerText = '$' + p[5].toString();
+
+                    a_2.appendChild(h_4);
+                    a_2.appendChild(span_name);
+                    a_2.appendChild(span_price);
+                    detail_div.appendChild(a_2);
+                    container.appendChild(detail_div);
+                    new_div.appendChild(container);
+                }
+                $('#collection').append(new_div);
+            });
+            request.error(function (error) {
+                alert('error.message');
+            });
+        }
+    </script>
+{% endblock %}

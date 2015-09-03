@@ -1,0 +1,314 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block content %}
+    <section id="content" class="clearfix">
+        <div id="product" class="theatre-marquis-letter" itemscope itemtype="http://schema.org/Product">
+            <meta itemprop="url" content="http://minimal-vintage.myshopify.com/products/theatre-marquis-letter"/>
+            <meta itemprop="image" content="//cdn.shopify.com/s/files/1/0153/0847/products/DSC_0078_grande.jpeg?v=1404682281"/>
+
+            <div class="row clearfix">
+
+                <!-- Begin breadcrumb -->
+                <div class="span12">
+                    <div class="breadcrumb clearfix">
+                        {% if login %}
+                            <span itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a
+                                    href="/?pk_l={{ login.0 }}" title="Vintage" itemprop="url"><span itemprop="title">Inicio</span></a></span>
+                        {% else %}
+                            <span itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="/" title="Vintage"
+                                                                                                itemprop="url"><span
+                                    itemprop="title">Inicio</span></a></span>
+                        {% endif %}
+
+                        <span class="arrow-space">&#62;</span>
+                         <span itemscope itemtype="http://data-vocabulary.org/Breadcrumb">
+                             {% if login %}
+                                 <a href="/categories/{{ product.category.pk }}/?pk_l={{ login.0 }}"
+                                    title="All Products" itemprop="url">
+                                     <span itemprop="title">Productos</span>
+                                 </a>
+                             {% else %}
+                                 <a href="/categories/{{ product.product.category.pk }}/" title="All Products"
+                                    itemprop="url">
+                                <span itemprop="title">Productos</span>
+                            </a>
+                             {% endif %}
+
+                         </span>
+                        <span class="arrow-space">&#62;</span>
+                        <span itemscope itemtype="http://data-vocabulary.org/Breadcrumb">
+                            <a style="cursor: auto" title="All Products" itemprop="url">
+                                <span itemprop="title">Camisas</span>
+                            </a>
+                         </span>
+                        <span class="arrow-space">&#62;</span>
+                        <strong>{{ product.product.name }}</strong>
+                    </div>
+                </div>
+                <!-- End breadcrumb -->
+                <!-- Begin product photos -->
+                <div class="span5">
+                    <!-- Begin featured image -->
+                    <div class="image featured">
+                        {#DONE:Here goes the main image of the product#}
+                        <a href="{{ product.product.image.url }}" id="placeholder" data-image-id="960818456">
+                            <img src="{{ product.product.image.url }}" alt="{{ product.product.short_description }}"/>
+                        </a>
+
+                        <ul id="lightbox" class="hidden">
+                            {#DONE:Foreach image in the product set an li. Every data-image-id must be unique#}
+                            {#DONE: The main image should be here too#}
+                            <li>
+                                <a href="{{ product.product.image.url }}" class="fancy" rel="gallery"
+                                   data-image-id="100"></a>
+                            </li>
+                            {% for img in product.product.pictures.all %}
+                            <li>
+                                <a href="{{ img.image.url }}" class="fancy" rel="gallery"
+                                   data-image-id="{{ img.pk }}"></a>
+                            </li>
+                            {% endfor %}
+
+                            {#                            <li>#}
+                            {#                                <a href="{% static 'img/single_product/otras/catálogo_hutton_017-600x830.jpg' %}" class="fancy" rel="gallery" data-image-id="960818458"></a>#}
+                            {#                            </li>#}
+                            {#                            <li>#}
+                            {#                                <a href="{% static 'img/single_product/otras/catálogo_hutton_018-600x830.jpg' %}" class="fancy" rel="gallery" data-image-id="960818459"></a>#}
+                            {#                            </li>#}
+                        </ul>
+                    </div>
+                    <!-- End product image -->
+                </div>
+                <!-- End product photos -->
+
+                <!-- Begin thumbnails -->
+                <div class="span1">
+                    <div class="thumbs clearfix">
+
+                        <div class="image">
+                            <a href="{{ product.product.image.url }}" data-image-id="100">
+                                <img src="{{ product.product.image.url }}"
+                                     alt="{{ product.product.short_description }}"/>
+                            </a>
+                        </div>
+                        {% for img in product.product.pictures.all %}
+                        <div class="image">
+                            <a href="{{ img.image.url }}" data-image-id="{{ img.pk }}">
+                                <img src="{{ img.image.url }}" alt="Picture"/>
+                            </a>
+                        </div>
+                        {% endfor %}
+                        {#                        <div class="image">#}
+                        {#                            <a href="{% static 'img/single_product/otras/catálogo_hutton_021-600x830.jpg' %}" data-image-id="960818457">#}
+                        {#                                <img src="{% static 'img/single_product/otras/catálogo_hutton_021-600x830.jpg' %}" alt="Broadway Theatre Marquis Lettering"/>#}
+                        {#                            </a>#}
+                        {#                        </div>#}
+                    </div>
+                </div>
+                <!-- End thumbnails -->
+
+
+                <!-- Begin description -->
+                <div class="span6">
+
+                    <h1 class="title" itemprop="name">{{ product.name }}</h1>
+
+                    <div class="purchase" itemprop="offers" itemscope itemtype="http://schema.org/Offer">
+                        <meta itemprop="priceCurrency" content="EUR"/>
+
+                        <link itemprop="availability" href="http://schema.org/InStock"/>
+                        <h2 class="price" id="price-preview">
+                            <span itemprop="price">{{ product.price }}€</span>
+                        </h2>
+                    </div>
+
+                    <form id="add-item-form" action="#" method="post" class="variants clearfix">
+                        <!-- Begin product options -->
+                        <div class="product-options">
+                            <div class="select clearfix">
+                                <div class="selector-wrapper">
+                                    <label for="product-select">Talla</label>
+                                    <select class="single-option-selector" data-option="option1" id="product-select-option-0">
+                                        {% for size in sizes %}
+                                            <option value="{{ size }}">{{ size }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="select clearfix">
+                                <div class="selector-wrapper">
+                                    <label for="product-select">Color</label>
+                                    <select class="single-option-selector" data-option="option1"
+                                            id="product-select-option-0">
+                                        {% for color in colors %}
+                                            <option value="{{ color }}">{{ color }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="selector-wrapper">
+                                <label>Cantidad</label>
+                                <input id="quantity" type="number" name="quantity" value="1" min="1" class="tc item-quantity"/>
+                            </div>
+                            <div class="purchase-section multiple">
+                                <div class="purchase">
+                                    <input type="submit" id="add-to-cart" class="btn" name="add" value="Añadir al carrito"/>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- End product options -->
+                    </form>
+
+                    <div class="description">
+                        <p>{{ product.product.description }}</p>
+                    </div>
+
+
+                    <!-- Begin social buttons -->
+                    <div class="social">
+
+
+                        <div class="social-sharing " data-permalink="http://minimal-vintage.myshopify.com/products/theatre-marquis-letter">
+
+
+                            <a target="_blank" href="http://www.facebook.com/sharer.php?u=http://minimal-vintage.myshopify.com/products/theatre-marquis-letter" class="share-facebook">
+                                <span class="icon icon-facebook"></span>
+                                <span class="share-title">Share</span>
+
+                                <span class="share-count">0</span>
+
+                            </a>
+
+
+                            <a target="_blank" href="http://twitter.com/share?url=http://minimal-vintage.myshopify.com/products/theatre-marquis-letter&amp;text=Broadway%20Theatre%20Marquis%20Lettering" class="share-twitter">
+                                <span class="icon icon-twitter"></span>
+                                <span class="share-title">Tweet</span>
+
+                                <span class="share-count">0</span>
+
+                            </a>
+
+
+                            <a target="_blank" href="../../pinterest.com/pin/create/button/index7a05.html?url=http://minimal-vintage.myshopify.com/products/theatre-marquis-letter&amp;media=http://cdn.shopify.com/s/files/1/0153/0847/products/DSC_0078_1024x1024.jpeg?v=1404682281&amp;description=Broadway%20Theatre%20Marquis%20Lettering" class="share-pinterest">
+                                <span class="icon icon-pinterest"></span>
+                                <span class="share-title">Pin it</span>
+
+                                <span class="share-count">0</span>
+
+                            </a>
+
+
+                            <a target="_blank" href="http://fancy.com/fancyit/login?next=http%3A//fancy.com/fancyit%3FItemURL%3Dhttp%3A//minimal-vintage.myshopify.com/products/theatre-marquis-letter%26Title%3DBroadway%2520Theatre%2520Marquis%2520Lettering%26Category%3DOther%26ImageURL%3D//cdn.shopify.com/s/files/1/0153/0847/products/DSC_0078_1024x1024.jpeg%3Fv%3D1404682281" class="share-fancy">
+                                <span class="icon icon-fancy"></span>
+                                <span class="share-title">Fancy</span>
+                            </a>
+                        </div>
+
+                    </div>
+                    <!-- End social buttons -->
+
+                </div>
+                <!-- End description -->
+            </div>
+
+            <!-- Begin related product -->
+            {#        TODO: Aqui dice productos relacionados q se supone q sea eso y si son otros productos de la misma categoria x donde los ordeno#}
+            <div class="row">
+                <div class="span12">
+                    <h3 class="collection-title">Productos similares</h3>
+                </div>
+            </div>
+
+            {% block related_prod %}
+                <div class="row products">
+                    {#TODO: Each related product has a div like this one (remove the first span to remove the "Agotado" sign)#}
+                    <div class="product span3 ">
+                        <span class="circle sold-out">Agotado</span>
+
+                        <div class="image">
+                            <a href="#">
+                                <img src="{% static 'img/productos/paramostrar/camisas/calibrado_20150525_hutton_026-300x300.jpg' %}" alt="Eye exam"/>
+                            </a>
+                        </div>
+                        <div class="details">
+                            <a href="#" class="clearfix">
+                                <h4 class="title">Nombre del producto</h4>
+                                <span class="vendor">Descrpción corta</span>
+                          <span class="price">
+                            <em>From</em> 70.00€
+                          </span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="product span3 ">
+                        <span class="circle sale">Oferta Especial!</span>
+
+                        <div class="image">
+                            <a href="#">
+                                <img src="{% static 'img/productos/paramostrar/camisas/catálogo_hutton_029-300x300.jpg' %}" alt="Eye exam"/>
+                            </a>
+                        </div>
+
+                        <div class="details">
+                            <a href="#" class="clearfix">
+                                <h4 class="title">Nombre del producto</h4>
+                                <span class="vendor">Descrpción corta</span>
+                          <span class="price">
+                            <em>From</em> 70.00€
+                          </span>
+                            </a>
+                        </div>
+                    </div>
+
+
+                    <div class="product span3 ">
+
+                        <div class="image">
+                            <a href="#">
+                                <img src="{% static 'img/productos/paramostrar/camisas/catálogo_hutton_021-300x300.jpg' %}" alt="Eye exam"/>
+                            </a>
+                        </div>
+
+                        <div class="details">
+                            <a href="#" class="clearfix">
+                                <h4 class="title">Nombre del producto</h4>
+                                <span class="vendor">Descrpción corta</span>
+                          <span class="price">
+                            <em>From</em> 70.00€
+                          </span>
+                            </a>
+                        </div>
+                    </div>
+
+
+                    <div class="product span3 ">
+
+                        <div class="image">
+                            <a href="#">
+                                <img src="{% static 'img/productos/paramostrar/camisas/catálogo_hutton_069-300x300.jpg' %}" alt="Eye exam"/>
+                            </a>
+                        </div>
+
+                        <div class="details">
+                            <a href="#" class="clearfix">
+                                <h4 class="title">Nombre del producto</h4>
+                                <span class="vendor">Descrpción corta</span>
+                          <span class="price">
+                            <em>From</em> 70.00€
+                          </span>
+                            </a>
+                        </div>
+                    </div>
+
+
+                    <div style="clear:both;"></div>
+                </div>
+            {% endblock %}
+
+
+        </div>
+
+    </section>
+{% endblock %}

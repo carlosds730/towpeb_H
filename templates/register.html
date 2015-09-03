@@ -1,0 +1,139 @@
+{% load staticfiles %}
+{% load i18n %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>{% trans 'Register Page' %} - Hutton</title>
+
+    <meta name="description" content="Client's register page"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <!--Here goes the icon-->
+    <link rel="shortcut icon" href="{% static 'img/logo_w.png' %}" type="image/png"/>
+    <!--[if IE]><meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'><![endif]-->
+    <link rel="shortcut icon" href="{% static 'img/logo_w.png' %}" type="image/png"/>
+    <!-- basic styles -->
+
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet"/>
+    <link rel="stylesheet" href="{% static 'css/font-awesome.min.css' %}"/>
+
+    <!--[if IE 7]>
+		  <link rel="stylesheet" href="{% static 'css/font-awesome-ie7.min.css' %}" />
+		<![endif]-->
+
+    <!-- page specific plugin styles -->
+
+    <!-- fonts -->
+
+    <link rel="stylesheet" href="{% static 'css/ace-fonts.css' %}"/>
+
+    <!-- ace styles -->
+
+    <link rel="stylesheet" href="{% static 'css/ace.min.css' %}"/>
+    <link rel="stylesheet" href="{% static 'css/ace-rtl.min.css' %}"/>
+
+    <!--[if lte IE 8]>
+		  <link rel="stylesheet" href="{% static 'css/ace-ie.min.css' %}" />
+		<![endif]-->
+
+    <!-- inline styles related to this page -->
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+
+    <!--[if lt IE 9]>
+		<script src="{% static 'js/html5shiv.js' %}"></script>
+		<script src="{% static 'js/respond.min.js' %}"></script>
+		<![endif]-->
+</head>
+
+<body class="login-layout">
+<div class="main-container">
+    <div class="main-content">
+        <div class="row">
+            <div class="col-sm-10 col-sm-offset-1">
+                <div class="login-container">
+                    <div class="center">
+                        <h2 style="color: #004024">Hutton</h2>
+                    </div>
+
+                    <div class="space-6"></div>
+
+                    <div class="position-relative">
+                        <div id="login-box" class="login-box visible widget-box no-border">
+                            <div class="widget-body">
+                                <div class="widget-main">
+                                    <h4 class="header my-green lighter bigger">
+                                        {% trans 'Registrarse' %}
+                                    </h4>
+
+                                    <div class="space-6"></div>
+
+                                    <form method="post" action="{% url 'register' %}">{% csrf_token %}
+                                        <fieldset>
+                                            <label class="block clearfix">
+														<span class="block input-icon input-icon-right">
+															<input type="email" required name="email"
+                                                                   value="{{ email }}" class="form-control"
+                                                                   placeholder="Email"/>
+														</span>
+                                            </label>
+
+                                            <label class="block clearfix">
+														<span class="block input-icon input-icon-right">
+															<input type="text" name="name" value="{{ name }}"
+                                                                   class="form-control"
+                                                                   placeholder="Nombre"/>
+														</span>
+                                            </label>
+
+                                            <label class="block clearfix">
+														<span class="block input-icon input-icon-right">
+															<input type="password" name="password" required
+                                                                   value="{{ password }}" class="form-control"
+                                                                   placeholder="Contraseña"/>
+
+														</span>
+                                            </label>
+                                            <label class="block clearfix">
+														<span class="block input-icon input-icon-right">
+															<input type="text" name="address"
+                                                                   value="{{ address }}"
+                                                                   class="form-control"
+                                                                   placeholder="Dirección"/>
+														</span>
+                                            </label>
+
+                                            <div class="space"></div>
+                                            <div class="clearfix">
+                                                <input type="hidden" name="next" value="{{ next }}">
+                                                <input type="submit"
+                                                       class="width-35 pull-left btn btn-sm btn-primary"
+                                                       value=" {% trans 'Registrar' %}">
+                                            </div>
+                                            <div class="space-4"></div>
+                                        </fieldset>
+                                    </form>
+                                </div>
+                                <!-- /widget-main -->
+                            </div>
+                            <!-- /widget-body -->
+                        </div>
+                        <!-- /login-box -->
+
+
+                        <!-- /signup-box -->
+                    </div>
+                    <!-- /position-relative -->
+                </div>
+            </div>
+            <!-- /.col -->
+        </div>
+        <!-- /.row -->
+    </div>
+</div>
+<!-- /.main-container -->
+
+
+</body>
+</html>
