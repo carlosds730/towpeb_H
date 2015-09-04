@@ -93,9 +93,9 @@
                                     <span class="vendor">{{ p.2 }}</span>
                                     {% if p.8 %}
                                         <span class="price">
-                                            {{ p.7 }} € <del>50.00 €</del>
+                                            {{ p.7 }} € <del>{{ p.8 }} €</del>
                                         </span>
-                                        <span class="price_percent_reduction">-50%</span>
+                                        <span class="price_percent_reduction">-{{ p.10 }}%</span>
                                     {% else %}
                                         <span class="price">
                                                 {{ p.7 }} €
@@ -175,17 +175,24 @@
 
                             if (p[8]) {
                                 var del_tag = document.createElement('del');
-                                del_tag.innerHTML = "Precio viejo";
+                                del_tag.innerHTML = p[8] + " €";
                                 span_price.appendChild(del_tag);
                                 var price_reduction = document.createElement('span');
                                 price_reduction.setAttribute('class', 'price_percent_reduction');
-                                price_reduction.innerText = "-50%";
+                                price_reduction.innerText = "-" + p[10] + "%";
                                 span_price.appendChild(price_reduction);
                             }
+                            else {
+                                var price_reduction = document.createElement('span');
+                                price_reduction.setAttribute('class', 'price_percent_reduction_blank');
+                                price_reduction.innerHTML = "&nbsp;";
+                            }
+
                             a_2.appendChild(h_4);
-                            a_2.appendChild(span_name);
-                            a_2.appendChild(span_price);
                             detail_div.appendChild(a_2);
+                            detail_div.appendChild(span_name);
+                            detail_div.appendChild(span_price);
+                            detail_div.appendChild(price_reduction);
                             container.appendChild(detail_div);
                             new_div.appendChild(container);
                         }

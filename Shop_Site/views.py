@@ -165,8 +165,12 @@ def get_all_products(products):
         prices = []
         for attr in p.attributes.all():
             if attr.price not in prices:
-                res_prod.append((p.pk, p.name, p.short_description, p.image.url, attr.size, attr.color, attr.amount,
-                                 str(attr.price), attr.old_price, attr.pk, attr.percent))
+                if attr.old_price:
+                    res_prod.append((p.pk, p.name, p.short_description, p.image.url, attr.size, attr.color, attr.amount,
+                                     str(attr.price), str(attr.old_price), attr.pk, attr.percent))
+                else:
+                    res_prod.append((p.pk, p.name, p.short_description, p.image.url, attr.size, attr.color, attr.amount,
+                                     str(attr.price), None, attr.pk, attr.percent))
                 prices.append(attr.price)
     return res_prod
 
