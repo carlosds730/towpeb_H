@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load thumbnail %}
 {% load staticfiles %}
-{#TODO: It doesn't look good on the phone#}
+{#DONE: It doesn't look good on the phone#}
 {% block content %}
     {% if on_hold or shops %}
         {% if on_hold %}
@@ -289,7 +289,6 @@
             CheckBoth(pk, price, check);
         }
     </script>
-
 
 {% endblock %}
 

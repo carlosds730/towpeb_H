@@ -123,13 +123,11 @@ def register(request):
                     'name': request.POST['name'],
                     'email': request.POST['email'],
                     'password': request.POST['password'],
-                    'address': request.POST['address'],
                     'next': request.POST['next']
                 })
             except models.Clients.DoesNotExist:
                 client = models.Clients.objects.create(name=request.POST['name'], email=email,
-                                                       password=hash(password),
-                                                       address=request.POST['address'])
+                                                       password=hash(password))
                 client.save()
                 try:
                     next = request.POST['next']
@@ -148,16 +146,11 @@ def register(request):
                 name = request.POST['name']
             except KeyError:
                 name = ''
-            try:
-                address = request.POST['address']
-            except KeyError:
-                address = ''
             return render(request, 'register.html', {
                 'error': 'Error en el envio',
                 'name': name,
                 'email': request.POST['email'],
                 'password': request.POST['password'],
-                'address': address,
                 'next': request.POST['next']
             })
 
@@ -173,8 +166,8 @@ def get_all_products(products):
         for attr in p.attributes.all():
             if attr.price not in prices:
                 res_prod.append((p.pk, p.name, p.short_description, p.image.url, attr.size, attr.color, attr.amount,
-                                 str(attr.price), attr.especial_offer, attr.pk))
-                prices.append(str(attr.price))
+                                 str(attr.price), attr.old_price, attr.pk, attr.percent))
+                prices.append(attr.price)
     return res_prod
 
 
@@ -195,9 +188,9 @@ def categories(request, pk):
         else:
             return HttpResponse(json.dumps({}), content_type='application/json')
         if order == 'price-ascending':
-            result.sort(key=lambda x: x[7])
+            result.sort(key=lambda x: float(x[7]))
         elif order == 'price-descending':
-            result.sort(key=lambda x: x[7], reverse=True)
+            result.sort(key=lambda x: float(x[7]), reverse=True)
         elif order == 'created-ascending':
             result.sort(key=lambda x: x[0])
         elif order == 'created-descending':
@@ -217,10 +210,18 @@ def categories(request, pk):
             category = None
         except ValueError:
             category = None
+
+        try:
+            purchase = models.Products.objects.get(pk=int(request.GET['pk_product']))
+        except KeyError:
+            purchase = None
+        except models.Products.DoesNotExist:
+            purchase = None
+
         if category:
             products = models.Products.objects.filter(category__pk=category.pk, is_available=True)
             return add_info_home(request,
-                                 {'category': category, 'products': get_all_products(products)},
+                                 {'category': category, 'products': get_all_products(products), 'notification': purchase},
                                  'products_collection.html')
         else:
             raise Http404('Esa categoría no existe')
@@ -289,8 +290,9 @@ def add_to_cart(request):
                 purchase.products.add(sale_product)
                 purchase.amount += 1
             purchase.save()
+
             return HttpResponseRedirect(
-                '/categories/' + request.POST['category_pk'] + '/')
+                '/categories/' + request.POST['category_pk'] + '/?pk_product=' + str(product.pk))
         else:
             try:
                 if log:

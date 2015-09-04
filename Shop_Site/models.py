@@ -63,19 +63,24 @@ class Attribute(models.Model):
     product = models.ForeignKey('Products', related_name='attributes', verbose_name='Producto',
                                 help_text='Producto a la venta')
 
-    price = models.DecimalField(verbose_name='Precio', default=0, max_digits=10, decimal_places=2,
-                                help_text='Precio del producto', validators=[validate])
+    price = models.DecimalField(verbose_name='Precio actual', default=0, max_digits=10, decimal_places=2,
+                                help_text='Precio real del producto', validators=[validate])
 
     amount = models.IntegerField(verbose_name='Cantidad de existencias', default=0, validators=[validate],
                                  help_text='Cantidad de existencias del producto')
-
-    especial_offer = models.BooleanField(verbose_name='Oferta Especial', default=False,
-                                         help_text='Define si este precio es una oferta especial')
 
     color = models.CharField(verbose_name='Color', max_length=50, help_text='Color del producto', blank=True, null=True)
 
     size = models.CharField(verbose_name='Talla', choices=sizes, max_length=50, help_text='Talla del producto',
                             blank=True, null=True)
+
+    old_price = models.DecimalField(verbose_name='Precio antiguo de oferta', default=None, max_digits=10,
+                                    decimal_places=2, null=True, blank=True,
+                                    help_text='Precio anterior del producto si esta en oferta, sino dejar en blanco',
+                                    validators=[validate])
+
+    percent = models.IntegerField(verbose_name='Porciento', default=None, null=True, blank=True,
+                                  help_text='Porciento de la oferta, sino dejar en blanco')
 
     def __str__(self):
         return 'Talla: ' + str(self.size + ' - ' 'Color: ' + self.color + ' - ' + 'Precio*: ' + str(self.price) + '€')
@@ -244,3 +249,11 @@ class Address(models.Model):
 
     def __str__(self):
         return self.last_name + ', ' + self.first_name + ' ' + self.province + ', ' + self.country
+
+
+class Newsletter_Clients(models.Model):
+    class Meta:
+        verbose_name = 'Cliente de noticias'
+        verbose_name_plural = 'Clientes de noticias'
+
+    email = models.EmailField(verbose_name='Email', help_text='Email al que mandar las noticias')

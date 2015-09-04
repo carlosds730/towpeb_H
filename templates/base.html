@@ -55,6 +55,14 @@
 </head>
 
 <body>
+{% if notification %}
+    <div class="notification_zone">
+        <div class="text_notification">
+            <h5>{{ notification.name }} se ha añadido al carrito</h5>
+            <a href="/cart_shop/">Ir al carrito</a>
+        </div>
+    </div>
+{% endif %}
 {% block toolbar %}
     <!-- Begin toolbar -->
     <div class="toolbar-wrapper">
@@ -72,9 +80,9 @@
                             class="fa fa-shopping-cart"></i>Carrito: {{ purchases }} Items
                     </a></li>
                 {% else %}
-                <li class="fr"><a class="cart" title="Cart"><i
-                        class="fa fa-shopping-cart"></i>Carrito: {{ purchases }} Items
-                </a></li>
+                    <li class="fr"><a class="cart" title="Cart"><i
+                            class="fa fa-shopping-cart"></i>Carrito: {{ purchases }} Items
+                    </a></li>
                 {% endif %}
                 <li class="customer-links">
                     {% if login %}
@@ -126,7 +134,7 @@
                             <ul class="sub-menu">
                                 <li class="customer-links"><a id="customer_login_link">{{ login.1 }}</a>
                                 </li>
-{#                                <span class="or">&nbsp;|&nbsp;</span>#}
+                                {#                                <span class="or">&nbsp;|&nbsp;</span>#}
                                 <li class="customer-links"><a href="/shutdown/" id="customer_register_link">Cerrar
                                     sesión</a>
                                 </li>
@@ -164,7 +172,9 @@
             <div class="span12 border-bottom">
                 <div class="span4 inner-left logo-wrapper">
                     <div class="logo">
-                        <img src="{% static 'img/logo_w.png' %}">
+                        <a href="/">
+                            <img src="{% static 'img/logo_w.png' %}">
+                        </a>
                     </div>
                 </div>
                 <section id="nav">
@@ -382,6 +392,27 @@
 {% endblock %}
 
 {% block other_js %}
+    {% if notification %}
+        <script>
+            {#            $(".notification_zone").fadeIn(250);#}
+            var timeoutID;
+
+            function delayedAlert() {
+                timeoutID = window.setTimeout(function () {
+                    $(".notification_zone").fadeIn(250);
+                }, 500);
+            }
+
+            function delayedAlert1() {
+                timeoutID = window.setTimeout(function () {
+                    $(".notification_zone").fadeOut(250);
+                }, 5000);
+            }
+
+            delayedAlert();
+            delayedAlert1();
+        </script>
+    {% endif %}
     <script>
         function getCookie(name) {
             var cookieValue = null;

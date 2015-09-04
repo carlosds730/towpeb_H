@@ -121,7 +121,7 @@
                             <div class="purchase-section multiple">
                                 <div class="purchase">
                                     {% if login %}
-                                        <input type="submit" id="add-to-cart" class="btn" name="add" value="Añadir al carrito"/>
+                                        <input type="submit" onclick="ShowTooltip();" id="add-to-cart" class="btn" name="add" value="Añadir al carrito"/>
                                     {% else %}
                                         <a href="/login/" id="add-to-cart"
                                            class="btn" name="add"

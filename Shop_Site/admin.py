@@ -9,6 +9,7 @@ from Shop_Site import models
 
 # Register your models here.
 
+
 class AttributeAdminInline(admin.StackedInline):
     model = models.Attribute
     extra = 1
@@ -60,6 +61,11 @@ class PurchaseAdmin(admin.ModelAdmin):
     filter_horizontal = ['products']
 
 
+class NewsletterClientsAdmin(admin.ModelAdmin):
+    model = models.Newsletter_Clients
+    list_display = ['email']
+    search_fields = ['email']
+    list_filter = ['email']
 
 
 
@@ -68,3 +74,4 @@ admin.site.register(models.Products, ProductsAdmin)
 admin.site.register(models.Category, CategoryAdmin)
 admin.site.register(models.Clients, ClientAdmin)
 admin.site.register(models.Purchase, PurchaseAdmin)
+admin.site.register(models.Newsletter_Clients, NewsletterClientsAdmin)
