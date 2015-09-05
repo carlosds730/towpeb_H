@@ -285,3 +285,6 @@ class Newsletter_Clients(models.Model):
 
     def __str__(self):
         return str(self.email)
+
+
+

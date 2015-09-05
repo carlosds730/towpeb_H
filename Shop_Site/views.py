@@ -3,12 +3,11 @@ import json
 
 from django.http import HttpResponseRedirect, Http404, HttpResponse
 from django.shortcuts import render, redirect
+from django.core.validators import validate_email
 
 from Shop_Site.extra_functions import hash
 from Shop_Site import models
 from Shop_Site import stopwords
-
-
 
 
 
@@ -669,10 +668,13 @@ def add_mail(request):
     if request.is_ajax():
         try:
             mail = request.POST['mail']
+
+            validate_email(mail)
+
             m = models.Newsletter_Clients.objects.create(email=mail)
             m.save()
-            return HttpResponse(json.dumps({}), content_type='application/json')
+            return HttpResponse(json.dumps({'status': 1}), content_type='application/json')
         except KeyError:
-            return HttpResponse(json.dumps({}), content_type='application/json')
+            return HttpResponse(json.dumps({'status': 0}), content_type='application/json')
         except Exception:
-            return HttpResponse(json.dumps({}), content_type='application/json')
+            return HttpResponse(json.dumps({'status': 0}), content_type='application/json')

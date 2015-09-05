@@ -59,12 +59,12 @@
 
 <body>
 {% if notification %}
-    <div class="notification_zone">
+    <div class="notification_zone" id="product_added">
         <div style="position: absolute; width: 100%;height: 100%;background-color: #004024;opacity: 0.85;filter: alpha(opacity=85); border-radius: 31px">
 
         </div>
         <div class="alert alert-danger-new alert-dismissable fade in" style="margin-bottom: 0px; padding-top: 20px; padding-right: 20px; position: relative; border-radius: 31px">
-            <button type="button" class="close" data-dismiss="alert" aria-hidden="true" onclick="Close()">&times;</button>
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true" onclick="Close(1)">&times;</button>
             <div class="text_notification">
                 <h5 style="margin-bottom: 7px">{{ message }}</h5>
 
@@ -77,8 +77,18 @@
             </div>
         </div>
     </div>
-
 {% endif %}
+<div class="notification_zone" id="email_added">
+    <div id="email_added_holder" style="position: absolute; width: 100%;height: 100%;background-color: #004024;opacity: 0.85;filter: alpha(opacity=85); border-radius: 31px">
+
+    </div>
+    <div class="alert alert-danger-new alert-dismissable fade in" style="margin-bottom: 0px; padding-top: 15px; padding-right: 20px; position: relative; border-radius: 31px">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true" onclick="Close(0)" style="top: -11px; right: 0px">&times;</button>
+        <div class="text_notification" id="email_notify_text" style="color: white">
+            Su email se ha añadido satisfactoriamente.
+        </div>
+    </div>
+</div>
 {% block toolbar %}
     <!-- Begin toolbar -->
     <div class="toolbar-wrapper">
@@ -418,13 +428,13 @@
 
             function delayedAlert() {
                 timeoutID = window.setTimeout(function () {
-                    $(".notification_zone").fadeIn();
+                    $("#product_added").fadeIn();
                 }, 500);
             }
 
             function delayedAlert1() {
                 timeoutID = window.setTimeout(function () {
-                    $(".notification_zone").fadeOut();
+                    $("#product_added").fadeOut();
                 }, 60000);
             }
 
@@ -462,8 +472,8 @@
                     if (cookie.substring(0, name.length + 1) == (name + '=')) {
                         cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
                         break;
-            }
-        }
+                    }
+                }
             }
             return cookieValue;
         }
@@ -477,21 +487,56 @@
                     // Send the token only if the method warrants CSRF protection
                     // Using the CSRFToken value acquired earlier
                     xhr.setRequestHeader("X-CSRFToken", csrftoken);
-        }
+                }
             }
         });
 
 
         function Save() {
+            $("#email_added").fadeOut(0);
+            document.getElementById("email_added_holder").style.backgroundColor = "#004024";
+            document.getElementById("email_notify_text").innerText = "Su email se ha añadido satisfactoriamente.";
+
             var mail = document.getElementById('mail');
             if (mail.value) {
                 var request = $.post('/add_mail/', {'mail': mail.value});
 
                 request.done(function (data) {
-                    mail.setAttribute('value', "");
+                    mail.value = "";
+                    var timeoutID1;
+
+                    if (data['status'] == "1") {
+                        $("#email_added").fadeIn();
+                    }
+                    else {
+                        document.getElementById("email_added_holder").style.backgroundColor = "red";
+                        document.getElementById("email_notify_text").innerText = "No hemos podido añadir su correo. Inténtelo más tarde";
+                        $("#email_added").fadeIn();
+                    }
+
+                    function removeAlert() {
+                        timeoutID1 = window.setTimeout(function () {
+                            $("#email_added").fadeOut();
+                        }, 7000);
+                    }
+
+                    removeAlert();
                 });
                 request.error(function (data) {
-                    alert('Server Error');
+                    mail.value = "";
+                    $("#email_added").fadeIn();
+
+                    var timeoutID1;
+
+                    function removeAlert() {
+                        timeoutID1 = window.setTimeout(function () {
+                            $("#email_added").fadeOut();
+                            document.getElementById("email_added_holder").style.backgroundColor = "#004024";
+                        }, 7000);
+                    }
+
+                    removeAlert();
+
                 });
 
             }
@@ -509,8 +554,11 @@
 
     <script src="{% static 'js/social-buttons87ea.js' %}" type="text/javascript"></script>
     <script>
-        function Close() {
-            $(".notification_zone").fadeOut();
+        function Close(num) {
+            if (num == 1)
+                $("#product_added").fadeOut();
+            else
+                $("#email_added").fadeOut();
         }
     </script>
 {% endblock %}
