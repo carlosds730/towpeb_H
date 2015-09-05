@@ -2,7 +2,6 @@
 import json
 
 from django.http import HttpResponseRedirect, Http404, HttpResponse
-
 from django.shortcuts import render
 
 from Shop_Site.extra_functions import hash
@@ -99,25 +98,51 @@ def register(request):
             })
 
 
+def order_by_price(products):
+    pass
+
+
+def get_all_products(products):
+    res_prod = []
+    for p in products.order_by('-pk'):
+        prices = []
+        for attr in p.attributes.all():
+            if attr.price not in prices:
+                res_prod.append((p.pk, p.name, p.short_description, p.image.url, attr.size, attr.color, attr.amount,
+                                 attr.price, attr.especial_offer, attr.pk))
+                prices.append(attr.price)
+    return res_prod
+
+
 def categories(request, pk):
     if request.is_ajax():
-        order = request.GET['order']
+        try:
+            order = request.GET['order']
+        except KeyError:
+            return HttpResponse(json.dumps({}), content_type='application/json')
         result = []
+        try:
+            product = models.Products.objects.filter(category__pk=int(pk), is_available=True)
+        except Exception:
+            return HttpResponse(json.dumps({}), content_type='application/json')
+        if product:
+            result = get_all_products(product)
+        else:
+            return HttpResponse(json.dumps({}), content_type='application/json')
         if order == 'price-ascending':
-            result = models.Sale_Product.objects.order_by('price')
+            result.sort(key=lambda x: x[7])
         elif order == 'price-descending':
-            result = models.Sale_Product.objects.order_by('-price')
+            result.sort(key=lambda x: x[7], reverse=True)
         elif order == 'created-ascending':
-            result = models.Sale_Product.objects.order_by('pk')
+            result.sort(key=lambda x: x[0])
         elif order == 'created-descending':
-            result = models.Sale_Product.objects.order_by('-pk')
+            result.sort(key=lambda x: x[0], reverse=True)
         elif order == 'title-ascending':
-            result = models.Sale_Product.objects.order_by('product__name')
+            result.sort(key=lambda x: x[1])
         elif order == 'title-descending':
-            result = models.Sale_Product.objects.order_by('-product__name')
+            result.sort(key=lambda x: x[1], reverse=True)
         response_data = {
-            'products': [(p.pk, p.product.name, p.product.short_description, p.product.image.url, p.amount, p.price,
-                          p.especial_offer) for p in result]}
+            'products': result}
         return HttpResponse(json.dumps(response_data), content_type='application/json')
     elif request.method == 'GET':
         try:
@@ -140,10 +165,9 @@ def categories(request, pk):
         except ValueError:
             category = None
         if category:
-            products = models.Sale_Product.objects.filter(product__category__pk=category.pk)
-            products = [(p.pk, p.product.name, p.product.short_description, p.product.image.url, p.amount, p.price,
-                         p.especial_offer) for p in products.order_by('-pk')]
-            return add_info_home(request, {'category': category, 'products': products, 'login': log},
+            products = models.Products.objects.filter(category__pk=category.pk, is_available=True)
+            return add_info_home(request,
+                                 {'category': category, 'products': get_all_products(products), 'login': log},
                                  'products_collection.html')
         else:
             return Http404('Esa categoría no existe')
@@ -164,23 +188,37 @@ def products(request, pk):
     except ValueError:
         log = None
     try:
-        product = models.Sale_Product.objects.get(pk=int(pk))
-    except models.Sale_Product.DoesNotExist:
+        product = models.Products.objects.get(pk=int(pk), is_available=True)
+    except models.Products.DoesNotExist:
         product = None
     except ValueError:
         product = None
-    p = models.Sale_Product.objects.filter(product__name=product.product.name)
-    sizes = add_items_no_repeated(p)
-    colors = add_items_no_repeated(p, 'color')
-    return add_info_home(request, {'product': product, 'login': log, 'colors': colors, 'sizes': sizes},
-                         'single_product.html')
+    if product:
+
+        return add_info_home(request, {'product': product, 'login': log},
+                             'single_product.html')
+    else:
+        return Http404('Ese producto no existe')
 
 
 def add_items_no_repeated(collection, _property='size'):
     res = []
-    for e in collection:
-        if _property == 'size' and e.attribute.size not in res:
-            res.append(e.attribute.size)
-        elif _property != 'size' and e.attribute.color not in res:
-            res.append(e.attribute.color)
+    for e in collection.attributes.all():
+        if _property == 'size' and e.size not in res:
+            res.append(e.size)
+        elif _property != 'size' and e.color not in res:
+            res.append(e.color)
     return res
+
+
+def add_to_cart(request):
+    if request.method == 'POST':
+        try:
+            purchase_pk = request.POST['purchase']
+            purchase = models.Purchase.objects.get(pk=int(purchase_pk))
+        except KeyError:
+            purchase = None
+        except models.Purchase.DoesNotExist:
+            purchase = None
+    else:
+        return Http404('Este url no tiene página')

@@ -8,7 +8,8 @@ from Shop_Site.extra_functions import hash
 
 
 
-
+# TODO: Terminar de poner la tallas q faltan, estas fueron la unicas que se me ocurrieron
+sizes = [('S', 'S'), ('M', 'M'), ('L', 'L'), ('XL', 'XL')]
 
 
 # Create your models here.
@@ -32,6 +33,8 @@ class Products(models.Model):
     category = models.ForeignKey('Category', verbose_name='Categoría a la que pertenece', blank=True, null=True,
                                  help_text='La categoría a la que pertenece el producto')
 
+    mark = models.CharField(verbose_name='Marca', max_length=200, help_text='Marca del producto', blank=True, null=True)
+
     description = models.TextField(verbose_name='Descripción', max_length=300,
                                    help_text='Descripción del producto', null=True, blank=True)
 
@@ -42,7 +45,11 @@ class Products(models.Model):
                        help_text='Foto del principal producto', null=True, blank=True)
 
     label = models.CharField(verbose_name='Etiquetas', max_length=200, blank=True, null=True,
-                             help_text='Palabras claves que describan al producto que lo ayuden a ser encontrado facilmente por los buscadores')
+                             help_text='Palabras claves que describan al producto que lo ayuden a ser encontrado '
+                                       'fácilmente por los buscadores')
+
+    is_available = models.BooleanField(verbose_name='Disponible', default=True,
+                                       help_text='Define si un producto se puede sacar en la tienda')
 
     def __repr__(self):
         return self._type + ':' + str(self.price)
@@ -50,39 +57,15 @@ class Products(models.Model):
     def __str__(self):
         return self.name + ': ' + str(self.cod_ref)
 
-# TODO: Terminar de poner la tallas q faltan, estas fueron la unicas que se me ocurrieron
-sizes = [('S', 'S'), ('M', 'M'), ('L', 'L'), ('XL', 'XL')]
-
 
 class Attribute(models.Model):
     class Meta:
         verbose_name = 'Atributo'
         verbose_name_plural = 'Atributos'
 
-    color = models.CharField(verbose_name='Color', max_length=50, help_text='Color del producto', blank=True, null=True)
+    product = models.ForeignKey('Products', related_name='attributes', verbose_name='Producto',
+                                help_text='Producto a la venta')
 
-    size = models.CharField(verbose_name='Talla', choices=sizes, max_length=50, help_text='Talla del producto',
-                            blank=True, null=True)
-
-    def __str__(self):
-        return str(self.size + ': ' + self.color)
-
-
-class Sale_Product(models.Model):
-    class Meta:
-        verbose_name = 'Producto en venta'
-        verbose_name_plural = 'Productos en venta'
-
-    product = models.ForeignKey('Products', verbose_name='Producto', help_text='Producto a la venta')
-
-    attribute = models.ForeignKey('Attribute', verbose_name='Atributos', help_text='Atributos del productos')
-
-    # TODO: Analizar, en el caso de un producto rebajado, ahora como se hace es creando dos productos en venta y
-    # la pagina se da cuenta y lo pone como rebaja pero el trabajador tiene q saber q se pone asi, la otra manera podria ser
-    # poner una lista de precios al producto en venta, y cdo sea rebaja le anhade el precio la pag lo muestra como rebaja
-    # y cdo se acabe le quita el precio y el producto vuelve al anterior. La primera manera tiene la ventaja de que al crear los
-    # dos, cdo se acabe la rebaja pone la cantidad en cero y ya no sale rebaja, y la proxima vez q quiera hacer rebaja solo
-    # en cambiarle la cantidad.
     price = models.FloatField(verbose_name='Precio', default=0, help_text='Precio del producto',
                               validators=[validate])
 
@@ -92,14 +75,13 @@ class Sale_Product(models.Model):
     especial_offer = models.BooleanField(verbose_name='Oferta Especial', default=False,
                                          help_text='Define si este precio es una oferta especial')
 
+    color = models.CharField(verbose_name='Color', max_length=50, help_text='Color del producto', blank=True, null=True)
+
+    size = models.CharField(verbose_name='Talla', choices=sizes, max_length=50, help_text='Talla del producto',
+                            blank=True, null=True)
+
     def __str__(self):
-        return str(self.product.name)
-
-    def size(self):
-        return str(self.attribute.size)
-
-    def color(self):
-        return str(self.attribute.color)
+        return 'Talla: ' + str(self.size + ' - ' 'Color: ' + self.color + ' - ' + 'Precio: ' + str(self.price) + '€')
 
 
 class Category(models.Model):
@@ -151,7 +133,7 @@ class Purchase(models.Model):
         verbose_name = 'Carrito'
         verbose_name_plural = 'Carritos'
 
-    products = models.ManyToManyField('Sale_Product', blank=True, verbose_name='Productos',
+    products = models.ManyToManyField('Products', related_name='purchase', blank=True, verbose_name='Productos',
                                       help_text='Los productos que pertenecen a una compra')
 
     delivery_address = models.CharField(verbose_name='Dirección de entrega', max_length=400,

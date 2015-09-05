@@ -29,7 +29,7 @@
                                      <span itemprop="title">Productos</span>
                                  </a>
                              {% else %}
-                                 <a href="/categories/{{ product.product.category.pk }}/" title="All Products"
+                                 <a href="/categories/{{ product.category.pk }}/" title="All Products"
                                     itemprop="url">
                                 <span itemprop="title">Productos</span>
                             </a>
@@ -43,7 +43,7 @@
                             </a>
                          </span>
                         <span class="arrow-space">&#62;</span>
-                        <strong>{{ product.product.name }}</strong>
+                        <strong>{{ product.name }}</strong>
                     </div>
                 </div>
                 <!-- End breadcrumb -->
@@ -52,18 +52,18 @@
                     <!-- Begin featured image -->
                     <div class="image featured">
                         {#DONE:Here goes the main image of the product#}
-                        <a href="{{ product.product.image.url }}" id="placeholder" data-image-id="960818456">
-                            <img src="{{ product.product.image.url }}" alt="{{ product.product.short_description }}"/>
+                        <a href="{{ product.image.url }}" id="placeholder" data-image-id="960818456">
+                            <img src="{{ product.image.url }}" alt="{{ product.short_description }}"/>
                         </a>
 
                         <ul id="lightbox" class="hidden">
                             {#DONE:Foreach image in the product set an li. Every data-image-id must be unique#}
                             {#DONE: The main image should be here too#}
                             <li>
-                                <a href="{{ product.product.image.url }}" class="fancy" rel="gallery"
+                                <a href="{{ product.image.url }}" class="fancy" rel="gallery"
                                    data-image-id="100"></a>
                             </li>
-                            {% for img in product.product.pictures.all %}
+                            {% for img in product.pictures.all %}
                             <li>
                                 <a href="{{ img.image.url }}" class="fancy" rel="gallery"
                                    data-image-id="{{ img.pk }}"></a>
@@ -87,12 +87,12 @@
                     <div class="thumbs clearfix">
 
                         <div class="image">
-                            <a href="{{ product.product.image.url }}" data-image-id="100">
-                                <img src="{{ product.product.image.url }}"
-                                     alt="{{ product.product.short_description }}"/>
+                            <a href="{{ product.image.url }}" data-image-id="100">
+                                <img src="{{ product.image.url }}"
+                                     alt="{{ product.short_description }}"/>
                             </a>
                         </div>
-                        {% for img in product.product.pictures.all %}
+                        {% for img in product.pictures.all %}
                         <div class="image">
                             <a href="{{ img.image.url }}" data-image-id="{{ img.pk }}">
                                 <img src="{{ img.image.url }}" alt="Picture"/>
@@ -114,46 +114,64 @@
 
                     <h1 class="title" itemprop="name">{{ product.name }}</h1>
 
-                    <div class="purchase" itemprop="offers" itemscope itemtype="http://schema.org/Offer">
-                        <meta itemprop="priceCurrency" content="EUR"/>
+                    <h3 class="title" itemprop="name"> De: {{ product.mark }}</h3>
 
-                        <link itemprop="availability" href="http://schema.org/InStock"/>
-                        <h2 class="price" id="price-preview">
-                            <span itemprop="price">{{ product.price }}€</span>
-                        </h2>
-                    </div>
+                    {#                    <div class="purchase" itemprop="offers" itemscope itemtype="http://schema.org/Offer">#}
+                    {#                        <meta itemprop="priceCurrency" content="EUR"/>#}
+                    {##}
+                    {#                        <link itemprop="availability" href="http://schema.org/InStock"/>#}
+                    {#                        <h2 class="price" id="price-preview">#}
+                    {#                            <span itemprop="price">{{ price }} €</span>#}
+                    {#                        </h2>#}
+                    {#                    </div>#}
 
-                    <form id="add-item-form" action="#" method="post" class="variants clearfix">
+                    <form id="add-item-form" action="/add_to_cart/" method="post"
+                          class="variants clearfix">{% csrf_token %}
                         <!-- Begin product options -->
                         <div class="product-options">
                             <div class="select clearfix">
                                 <div class="selector-wrapper">
-                                    <label for="product-select">Talla</label>
-                                    <select class="single-option-selector" data-option="option1" id="product-select-option-0">
-                                        {% for size in sizes %}
-                                            <option value="{{ size }}">{{ size }}</option>
-                                        {% endfor %}
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="select clearfix">
-                                <div class="selector-wrapper">
-                                    <label for="product-select">Color</label>
-                                    <select class="single-option-selector" data-option="option1"
+                                    <label for="product-select">Atributos</label>
+                                    <select class="single-option-selector" name="size" data-option="option1"
                                             id="product-select-option-0">
-                                        {% for color in colors %}
-                                            <option value="{{ color }}">{{ color }}</option>
+                                        {% for attr in product.attributes.all %}
+                                            <option name="attr" value="{{ attr.pk }}">{{ attr }}</option>
                                         {% endfor %}
                                     </select>
                                 </div>
                             </div>
+                            {#                            <div class="select clearfix">#}
+                            {#                                <div class="selector-wrapper">#}
+                            {#                                    <label for="product-select">Color</label>#}
+                            {#                                    <select class="single-option-selector" name="color" data-option="option1"#}
+                            {#                                            id="product-select-option-0">#}
+                            {#                                        {% for color in colors %}#}
+                            {#                                            <option value="{{ color }}">{{ color }}</option>#}
+                            {#                                        {% endfor %}#}
+                            {#                                    </select>#}
+                            {#                                </div>#}
+                            {#                            </div>#}
                             <div class="selector-wrapper">
                                 <label>Cantidad</label>
                                 <input id="quantity" type="number" name="quantity" value="1" min="1" class="tc item-quantity"/>
+                                <input type="hidden" name="login" value="{{ login.0 }}" class="tc item-quantity"/>
+                                <input type="hidden" name="purchase" value="{{ purchase.pk }}"
+                                       class="tc item-quantity"/>
+                                <input type="hidden" name="product_pk" value="{{ product.pk }}"
+                                       class="tc item-quantity"/>
+                                <input type="hidden" name="category_pk" value="{{ product.category.pk }}"
+                                       class="tc item-quantity"/>
                             </div>
                             <div class="purchase-section multiple">
                                 <div class="purchase">
+                                    {% if login %}
                                     <input type="submit" id="add-to-cart" class="btn" name="add" value="Añadir al carrito"/>
+                                    {% else %}
+                                        <a href="/login/" id="add-to-cart"
+                                           class="btn" name="add"
+                                                >Debe iniciar sesión primero</a>
+
+                                    {% endif %}
                                 </div>
                             </div>
                         </div>
@@ -161,7 +179,8 @@
                     </form>
 
                     <div class="description">
-                        <p>{{ product.product.description }}</p>
+                        <p>{{ product.description }}</p>
+
                     </div>
 
 
@@ -311,4 +330,5 @@
         </div>
 
     </section>
+
 {% endblock %}

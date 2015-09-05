@@ -14,9 +14,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  url(r'^blog/', include(blog_urls))
 """
 from django.conf.urls import include, url
-
 from django.contrib import admin
-
 from django.conf.urls.static import static
 
 from Shop_Site import views
@@ -28,5 +26,6 @@ urlpatterns = static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + [
     url(r'^categories/(?P<pk>\d+)/?$', views.categories, name='categories'),
     url(r'^product/(?P<pk>\d+)/?$', views.products, name='product'),
     url(r'^register/?$', views.register, name='register'),
+    url(r'^add_to_cart/?$', views.add_to_cart, name='add_to_cart'),
     url(r'^$', views.home)
 ]

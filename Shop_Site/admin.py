@@ -1,10 +1,18 @@
 from django.contrib import admin
-from Shop_Site import models
 from sorl.thumbnail.admin import AdminImageMixin
 from django.contrib.admin.models import LogEntry
 
+from Shop_Site import models
+
+
+
 
 # Register your models here.
+
+class AttributeAdminInline(admin.StackedInline):
+    model = models.Attribute
+    extra = 2
+
 
 
 class PicturesInline(AdminImageMixin, admin.StackedInline):
@@ -18,7 +26,7 @@ class LogEntryAdmin(admin.ModelAdmin):
 
 class ProductsAdmin(AdminImageMixin, admin.ModelAdmin):
     model = models.Products
-    inlines = [PicturesInline]
+    inlines = [PicturesInline, AttributeAdminInline]
     list_display = ['name', 'cod_ref', 'short_description', 'label']
     search_fields = ['name', 'cod_ref', 'label']
     list_filter = ['name', 'label']
@@ -47,18 +55,7 @@ class PurchaseAdmin(admin.ModelAdmin):
     filter_horizontal = ['products']
 
 
-class Sale_ProductAdmin(admin.ModelAdmin):
-    models = models.Sale_Product
-    list_display = ['__str__', 'price', 'amount', 'size', 'color']
-    search_fields = ['__str__', 'price', 'amount', 'size', 'color']
-    list_filter = ['price', 'amount', 'attribute__size', 'attribute__color']
 
-
-class AttributeAdmin(admin.ModelAdmin):
-    models = models.Attribute
-    list_display = ['size', 'color']
-    search_fileds = ['size', 'color']
-    list_filter = ['size', 'color']
 
 
 admin.site.register(LogEntry, LogEntryAdmin)
@@ -66,5 +63,3 @@ admin.site.register(models.Products, ProductsAdmin)
 admin.site.register(models.Category, CategoryAdmin)
 admin.site.register(models.Clients, ClientAdmin)
 admin.site.register(models.Purchase, PurchaseAdmin)
-admin.site.register(models.Sale_Product, Sale_ProductAdmin)
-admin.site.register(models.Attribute, AttributeAdmin)
