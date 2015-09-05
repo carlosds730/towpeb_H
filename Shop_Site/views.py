@@ -9,6 +9,9 @@ from Shop_Site import models
 from Shop_Site import stopwords
 
 
+
+
+
 # Create your views here.
 
 
@@ -308,7 +311,18 @@ def products(request, pk):
     except ValueError:
         product = None
     if product:
-        return add_info_home(request, {'product': product},
+        related_products = []
+        for x in models.Category.objects.all():
+            if x.pk == product.category.pk:
+                a, b = x.get_random_product(), x.get_random_product()
+                if a.pk == b.pk:
+                    related_products.append(a)
+                else:
+                    related_products.append(a)
+                    related_products.append(b)
+            else:
+                related_products.append(x.get_random_product())
+        return add_info_home(request, {'product': product, 'related_products': related_products},
                              'single_product.html')
     else:
         raise Http404('Ese producto no existe')
@@ -649,3 +663,16 @@ def info_card(request):
             return add_info_home(request, {'on_hold': on_hold, 'shops': shops}, 'info_card.html')
         else:
             return HttpResponseRedirect('/login/')
+
+
+def add_mail(request):
+    if request.is_ajax():
+        try:
+            mail = request.POST['mail']
+            m = models.Newsletter_Clients.objects.create(email=mail)
+            m.save()
+            return HttpResponse(json.dumps({}), content_type='application/json')
+        except KeyError:
+            return HttpResponse(json.dumps({}), content_type='application/json')
+        except Exception:
+            return HttpResponse(json.dumps({}), content_type='application/json')

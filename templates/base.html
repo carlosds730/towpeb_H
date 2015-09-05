@@ -369,10 +369,13 @@
                     <div class="p30">
                         <h4>Recibe todas nuestras novedades</h4>
                         {#  TODO: Que hacer con esto q se supone q se haga con ese correo                      #}
-                        <form action="#" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form"
+                        <form action="/" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form"
                               target="_blank">
-                            <input class="email_holder" type="email" value="" placeholder="Email" name="EMAIL" id="mail"/><input
-                                type="submit" class="btn newsletter" value="Suscribirse" name="subscribe"
+                            <input class="email_holder" type="email" value="" placeholder="Email" name="EMAIL"
+                                   id="mail"/><input
+                                type="submit" onclick="Save(); return false;" class="btn newsletter"
+                                value="Suscribirse"
+                                name="subscribe"
                                 id="subscribe"/>
                         </form>
                     </div>
@@ -430,6 +433,25 @@
         </script>
     {% endif %}
     <script>
+        function csrfSafeMethod(method) {
+            // these HTTP methods do not require CSRF protection
+            return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+        }
+
+        function sameOrigin(url) {
+            // test that a given url is a same-origin URL
+            // url could be relative or scheme relative or absolute
+            var host = document.location.host; // host + port
+            var protocol = document.location.protocol;
+            var sr_origin = '//' + host;
+            var origin = protocol + sr_origin;
+            // Allow absolute or scheme relative URLs to same origin
+            return (url == origin || url.slice(0, origin.length + 1) == origin + '/') ||
+                    (url == sr_origin || url.slice(0, sr_origin.length + 1) == sr_origin + '/') ||
+                        // or any other URL that isn't scheme relative or absolute i.e relative.
+                    !(/^(\/\/|http:|https:).*/.test(url));
+        }
+
         function getCookie(name) {
             var cookieValue = null;
             if (document.cookie && document.cookie != '') {
@@ -440,15 +462,14 @@
                     if (cookie.substring(0, name.length + 1) == (name + '=')) {
                         cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
                         break;
-                    }
-                }
+            }
+        }
             }
             return cookieValue;
         }
-        function csrfSafeMethod(method) {
-            // these HTTP methods do not require CSRF protection
-            return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
-        }
+
+        var csrftoken = getCookie('csrftoken');
+
         $.ajaxSetup({
             beforeSend: function (xhr, settings) {
                 if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
@@ -456,10 +477,25 @@
                     // Send the token only if the method warrants CSRF protection
                     // Using the CSRFToken value acquired earlier
                     xhr.setRequestHeader("X-CSRFToken", csrftoken);
-                }
+        }
             }
         });
-        var csrftoken = getCookie('csrftoken');
+
+
+        function Save() {
+            var mail = document.getElementById('mail');
+            if (mail.value) {
+                var request = $.post('/add_mail/', {'mail': mail.value});
+
+                request.done(function (data) {
+                    mail.setAttribute('value', "");
+                });
+                request.error(function (data) {
+                    alert('Server Error');
+                });
+
+            }
+        }
     </script>
     <script src="{% static 'js/jquery.flexslider-min87ea.js' %}" type="text/javascript"></script>
 

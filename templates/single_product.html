@@ -199,84 +199,86 @@
             {% block related_prod %}
                 <div class="row products">
                     {#DONE: Each related product has a div like this one (remove the first span to remove the "Agotado" sign)#}
+                    {% for x in related_products %}
+                        {% if x %}
                     <div class="product span3 ">
-                        <span class="circle sold-out">Agotado</span>
-
                         <div class="image">
                             <a href="#">
-                                <img src="{% static 'img/productos/paramostrar/camisas/calibrado_20150525_hutton_026-300x300.jpg' %}" alt="Eye exam"/>
+                                <img src="{{ x.image.url }}" alt="{{ x.short_description }}"/>
                             </a>
                         </div>
                         <div class="details">
                             <a href="#" class="clearfix">
-                                <h4 class="title">Nombre del producto</h4>
-                                <span class="vendor">Descrpción corta</span>
+                                <h4 class="title">{{ x.name }}</h4>
+                                <span class="vendor">{{ x.short_description }}</span>
                           <span class="price">
-                            <em>Desde</em> 70.00€
+                            <em>Desde</em> {{ x.min_price }} €
                           </span>
                             </a>
                         </div>
                     </div>
+                        {% endif %}
+                    {% endfor %}
 
-                    <div class="product span3 ">
-                        <span class="circle sale">Oferta Especial!</span>
-
-                        <div class="image">
-                            <a href="#">
-                                <img src="{% static 'img/productos/paramostrar/camisas/catálogo_hutton_029-300x300.jpg' %}" alt="Eye exam"/>
-                            </a>
-                        </div>
-
-                        <div class="details">
-                            <a href="#" class="clearfix">
-                                <h4 class="title">Nombre del producto</h4>
-                                <span class="vendor">Descrpción corta</span>
-                          <span class="price">
-                            <em>From</em> 70.00€
-                          </span>
-                            </a>
-                        </div>
-                    </div>
-
-
-                    <div class="product span3 ">
-
-                        <div class="image">
-                            <a href="#">
-                                <img src="{% static 'img/productos/paramostrar/camisas/catálogo_hutton_021-300x300.jpg' %}" alt="Eye exam"/>
-                            </a>
-                        </div>
-
-                        <div class="details">
-                            <a href="#" class="clearfix">
-                                <h4 class="title">Nombre del producto</h4>
-                                <span class="vendor">Descrpción corta</span>
-                          <span class="price">
-                            <em>From</em> 70.00€
-                          </span>
-                            </a>
-                        </div>
-                    </div>
-
-
-                    <div class="product span3 ">
-
-                        <div class="image">
-                            <a href="#">
-                                <img src="{% static 'img/productos/paramostrar/camisas/catálogo_hutton_069-300x300.jpg' %}" alt="Eye exam"/>
-                            </a>
-                        </div>
-
-                        <div class="details">
-                            <a href="#" class="clearfix">
-                                <h4 class="title">Nombre del producto</h4>
-                                <span class="vendor">Descrpción corta</span>
-                          <span class="price">
-                            <em>From</em> 70.00€
-                          </span>
-                            </a>
-                        </div>
-                    </div>
+                    {#                    <div class="product span3 ">#}
+                    {#                        <span class="circle sale">Oferta Especial!</span>#}
+                    {##}
+                    {#                        <div class="image">#}
+                    {#                            <a href="#">#}
+                    {#                                <img src="{% static 'img/productos/paramostrar/camisas/catálogo_hutton_029-300x300.jpg' %}" alt="Eye exam"/>#}
+                    {#                            </a>#}
+                    {#                        </div>#}
+                    {##}
+                    {#                        <div class="details">#}
+                    {#                            <a href="#" class="clearfix">#}
+                    {#                                <h4 class="title">Nombre del producto</h4>#}
+                    {#                                <span class="vendor">Descrpción corta</span>#}
+                    {#                          <span class="price">#}
+                    {#                            <em>From</em> 70.00€#}
+                    {#                          </span>#}
+                    {#                            </a>#}
+                    {#                        </div>#}
+                    {#                    </div>#}
+                    {##}
+                    {##}
+                    {#                    <div class="product span3 ">#}
+                    {##}
+                    {#                        <div class="image">#}
+                    {#                            <a href="#">#}
+                    {#                                <img src="{% static 'img/productos/paramostrar/camisas/catálogo_hutton_021-300x300.jpg' %}" alt="Eye exam"/>#}
+                    {#                            </a>#}
+                    {#                        </div>#}
+                    {##}
+                    {#                        <div class="details">#}
+                    {#                            <a href="#" class="clearfix">#}
+                    {#                                <h4 class="title">Nombre del producto</h4>#}
+                    {#                                <span class="vendor">Descrpción corta</span>#}
+                    {#                          <span class="price">#}
+                    {#                            <em>From</em> 70.00€#}
+                    {#                          </span>#}
+                    {#                            </a>#}
+                    {#                        </div>#}
+                    {#                    </div>#}
+                    {##}
+                    {##}
+                    {#                    <div class="product span3 ">#}
+                    {##}
+                    {#                        <div class="image">#}
+                    {#                            <a href="#">#}
+                    {#                                <img src="{% static 'img/productos/paramostrar/camisas/catálogo_hutton_069-300x300.jpg' %}" alt="Eye exam"/>#}
+                    {#                            </a>#}
+                    {#                        </div>#}
+                    {##}
+                    {#                        <div class="details">#}
+                    {#                            <a href="#" class="clearfix">#}
+                    {#                                <h4 class="title">Nombre del producto</h4>#}
+                    {#                                <span class="vendor">Descrpción corta</span>#}
+                    {#                          <span class="price">#}
+                    {#                            <em>From</em> 70.00€#}
+                    {#                          </span>#}
+                    {#                            </a>#}
+                    {#                        </div>#}
+                    {#                    </div>#}
 
 
                     <div style="clear:both;"></div>

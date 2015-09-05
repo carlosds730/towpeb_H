@@ -1,4 +1,6 @@
 # -*- coding: utf8 -*-
+import random
+
 import django.utils.timezone as tz
 from django.db import models
 from django.core.exceptions import ValidationError
@@ -119,6 +121,14 @@ class Category(models.Model):
                 if attr.price < _min:
                     _min = attr.price
         return _min if _min != 10000000 else 0
+
+    def get_random_product(self):
+        cant_product = self.products_set.all().count()
+        if cant_product > 0:
+            choice = random.randint(1, cant_product)
+            return self.products_set.all()[choice - 1]
+        else:
+            return None
 
 
 class Clients(models.Model):
@@ -271,4 +281,7 @@ class Newsletter_Clients(models.Model):
         verbose_name = 'Cliente de noticias'
         verbose_name_plural = 'Clientes de noticias'
 
-    email = models.EmailField(verbose_name='Email', help_text='Email al que mandar las noticias')
+    email = models.EmailField(verbose_name='Email', unique=True, help_text='Email al que mandar las noticias')
+
+    def __str__(self):
+        return str(self.email)

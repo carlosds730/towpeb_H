@@ -14,9 +14,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  url(r'^blog/', include(blog_urls))
 """
 from django.conf.urls import include, url
-
 from django.contrib import admin
-
 from django.conf.urls.static import static
 
 from Shop_Site import views
@@ -42,6 +40,7 @@ urlpatterns = static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + [
     url(r'^info_client/?$', views.info_client, name='info_client'),
     # url(r'^shipping_info/?$', views.shipping_info, name='shipping_info'),
     url(r'^info_card/?$', views.info_card, name='info_card'),
+    url(r'^add_mail/?$', views.add_mail, name='add_mail'),
     url(r'^$', views.home)
 
 ]
