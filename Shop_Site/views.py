@@ -323,7 +323,7 @@ def add_items_no_repeated(collection, _property='size'):
             res.append(e.color)
     return res
 
-# TODO: This method is now useless
+
 def add_to_cart(request):
     if request.method == 'POST':
         log = None
