@@ -87,10 +87,10 @@
 
                     <h1 class="title" itemprop="name">{{ product.name }}</h1>
 
-                    <h3 class="title" itemprop="name"> De: {{ product.mark }}</h3>
+{#                    <h3 class="title" itemprop="name"> De Hutton</h3>#}
 
 
-                    <form id="add-item-form" action="/add_to_cart/" method="post"
+                    <form id="add-item-form" action="/categories/{{ product.category.pk }}/" method="post"
                           class="variants clearfix">{% csrf_token %}
                         <!-- Begin product options -->
                         <div class="product-options">

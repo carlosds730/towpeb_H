@@ -54,6 +54,13 @@ class Products(models.Model):
     def __str__(self):
         return self.name
 
+    def min_price(self):
+        _min = 10000000
+        for attr in self.attributes.all():
+            if attr.price < _min:
+                _min = attr.price
+        return _min if _min != 10000000 else 0
+
 
 class Attribute(models.Model):
     class Meta:
@@ -104,6 +111,14 @@ class Category(models.Model):
 
     def __str__(self):
         return str(self.name)
+
+    def min_price(self):
+        _min = 10000000
+        for x in self.products_set.all():
+            for attr in x.attributes.all():
+                if attr.price < _min:
+                    _min = attr.price
+        return _min if _min != 10000000 else 0
 
 
 class Clients(models.Model):

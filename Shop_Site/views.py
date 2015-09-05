@@ -215,20 +215,89 @@ def categories(request, pk):
         except ValueError:
             category = None
 
-        try:
-            purchase = models.Products.objects.get(pk=int(request.GET['pk_product']))
-        except KeyError:
-            purchase = None
-        except models.Products.DoesNotExist:
-            purchase = None
-
         if category:
             products = models.Products.objects.filter(category__pk=category.pk, is_available=True)
-            return add_info_home(request,
-                                 {'category': category, 'products': get_all_products(products), 'notification': purchase},
+            return add_info_home(request, {'category': category, 'products': get_all_products(products)},
                                  'products_collection.html')
         else:
             raise Http404('Esa categoría no existe')
+
+    elif request.method == 'POST':
+        log = None
+        try:
+            log = get_login(request.COOKIES)
+            if log:
+                purchase = models.Purchase.objects.get(client__pk=int(log[0]), on_hold=True)
+            else:
+                purchase = None
+        except KeyError:
+            purchase = None
+        except models.Purchase.DoesNotExist:
+            purchase = None
+        try:
+            product_pk = request.POST['product_pk']
+            attr_pk = request.POST['attr_pk']
+            quantity = int(request.POST['quantity'])
+        except KeyError:
+            raise Http404('Not Found')
+        try:
+            product = models.Products.objects.get(pk=int(product_pk))
+        except models.Products.DoesNotExist:
+            raise Http404('Not Found')
+        try:
+            attr = models.Attribute.objects.get(pk=int(attr_pk))
+        except models.Attribute.DoesNotExist:
+            raise Http404('Not Found')
+
+        try:
+            category = models.Category.objects.get(pk=int(pk))
+        except models.Category.DoesNotExist:
+            category = None
+            raise Http404('Not Found')
+        except ValueError:
+            category = None
+            raise Http404('Not Found')
+
+        if purchase:
+            try:
+                sale_product = purchase.products.get(product=product, attribute=attr)
+                sale_product.amount += quantity
+                sale_product.save()
+            except:
+                sale_product = models.Sale_Product.objects.create(product=product, attribute=attr)
+                sale_product.amount += quantity
+                sale_product.save()
+                purchase.products.add(sale_product)
+                purchase.amount += 1
+            purchase.save()
+
+        else:
+            try:
+                if log:
+                    client = models.Clients.objects.get(pk=log[0])
+                else:
+                    raise Http404('Client Not Found')
+            except models.Clients.DoesNotExist:
+                raise Http404('Client Not Found')
+            sale_product = models.Sale_Product.objects.create(product=product, attribute=attr)
+            sale_product.amount += quantity
+            sale_product.save()
+            purchase = models.Purchase.objects.create()
+            purchase.products.add(sale_product)
+            purchase.client = client
+            purchase.amount = 1
+            purchase.save()
+
+        products = models.Products.objects.filter(category__pk=category.pk, is_available=True)
+
+        if quantity == 1:
+            to_send = "1 " + product.name + " se ha añadido al carrito"
+        else:
+            to_send = str(quantity) + " " + product.name + " se han añadido al carrito"
+
+        return add_info_home(request,
+                             {'category': category, 'products': get_all_products(products), 'notification': product, 'message': to_send},
+                             'products_collection.html')
 
 
 def products(request, pk):
@@ -254,7 +323,7 @@ def add_items_no_repeated(collection, _property='size'):
             res.append(e.color)
     return res
 
-
+# TODO: This method is now useless
 def add_to_cart(request):
     if request.method == 'POST':
         log = None
@@ -296,7 +365,7 @@ def add_to_cart(request):
             purchase.save()
 
             return HttpResponseRedirect(
-                '/categories/' + request.POST['category_pk'] + '/?pk_product=' + str(product.pk))
+                '/categories/' + request.POST['category_pk'] + '/?pk_product=' + str(product.pk) + '&pk_ammnt=' + str(quantity))
         else:
             try:
                 if log:
@@ -314,7 +383,7 @@ def add_to_cart(request):
             purchase.amount = 1
             purchase.save()
         return HttpResponseRedirect(
-            '/categories/' + request.POST['category_pk'] + '/')
+            '/categories/' + request.POST['category_pk'] + '/?pk_product=' + str(product.pk) + '&pk_ammnt=' + str(purchase.amount))
     else:
         raise Http404('Este url no tiene página')
 

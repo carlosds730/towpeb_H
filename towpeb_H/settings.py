@@ -59,9 +59,9 @@ MIDDLEWARE_CLASSES = (
 )
 
 # BRAINTREE_ENV = braintree.Environment.Sandbox
-BRAINTREE_MERCHANT = 'your_merchant_key'
-BRAINTREE_PUBLIC_KEY = 'your_public_key'
-BRAINTREE_PRIVATE_KEY = 'your_private_key'
+BRAINTREE_MERCHANT = 'rgrr3976xdtj9r9x'
+BRAINTREE_PUBLIC_KEY = 'wp9wm59tpzg5ht43'
+BRAINTREE_PRIVATE_KEY = '223d029cad5b5aa6dbcb93b3fba280a0'
 
 Configuration.configure(
     Environment.Sandbox,
