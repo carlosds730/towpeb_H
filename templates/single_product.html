@@ -132,10 +132,10 @@
                             <div class="select clearfix">
                                 <div class="selector-wrapper">
                                     <label for="product-select">Atributos</label>
-                                    <select class="single-option-selector" name="size" data-option="option1"
+                                    <select class="single-option-selector" name="attr_pk" data-option="option1"
                                             id="product-select-option-0">
                                         {% for attr in product.attributes.all %}
-                                            <option name="attr" value="{{ attr.pk }}">{{ attr }}</option>
+                                            <option  value="{{ attr.pk }}">{{ attr }}</option>
                                         {% endfor %}
                                     </select>
                                 </div>
@@ -160,6 +160,8 @@
                                 <input type="hidden" name="product_pk" value="{{ product.pk }}"
                                        class="tc item-quantity"/>
                                 <input type="hidden" name="category_pk" value="{{ product.category.pk }}"
+                                       class="tc item-quantity"/>
+                                <input type="hidden" name="login" value="{{ login.0 }}"
                                        class="tc item-quantity"/>
                             </div>
                             <div class="purchase-section multiple">

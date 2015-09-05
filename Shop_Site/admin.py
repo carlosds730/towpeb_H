@@ -14,7 +14,6 @@ class AttributeAdminInline(admin.StackedInline):
     extra = 2
 
 
-
 class PicturesInline(AdminImageMixin, admin.StackedInline):
     model = models.Pictures
     extra = 3

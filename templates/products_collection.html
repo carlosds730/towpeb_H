@@ -75,10 +75,17 @@
                                      alt="{{ p.2 }}"/>
                             </a>
                             {% else %}
-                                <a href="/product/{{ p.0 }}/">
+                                {% if login %}
+                                    <a href="/product/{{ p.0 }}/?pk_l={{ login.0 }}">
                                     <img src="{{ p.3 }}"
                                          alt="{{ p.2 }}"/>
                                 </a>
+                                {% else %}
+                                    <a href="/product/{{ p.0 }}/">
+                                        <img src="{{ p.3 }}"
+                                             alt="{{ p.2 }}"/>
+                                    </a>
+                                {% endif %}
                             {% endif %}
                         </div>
                         <div class="details">
@@ -91,13 +98,23 @@
                               </span>
                             </a>
                             {% else %}
-                                <a href="/product/{{ p.0 }}/" class="clearfix">
+                                {% if login %}
+                                    <a href="/product/{{ p.0 }}/?pk_l={{ login.0 }}" class="clearfix">
                                     <h4 class="title">{{ p.1 }}</h4>
                                     <span class="vendor">{{ p.2 }}</span>
                               <span class="price">
                                 {{ p.7 }} €
                               </span>
                                 </a>
+                                {% else %}
+                                    <a href="/product/{{ p.0 }}/" class="clearfix">
+                                        <h4 class="title">{{ p.1 }}</h4>
+                                        <span class="vendor">{{ p.2 }}</span>
+                              <span class="price">
+                                {{ p.7 }} €
+                              </span>
+                                    </a>
+                                {% endif %}
                             {% endif %}
                         </div>
                     </div>
@@ -108,7 +125,10 @@
     </section>
     <script>
         function order() {
-            var request = $.get('/categories/{{ category.pk }}/', {'order': $('#select').val()});
+            var request = $.get('/categories/{{ category.pk }}/', {
+                'order': $('#select').val(),
+                'pk_l': '{{ login.0 }}'
+            });
             request.done(function (data) {
                 $('#general').remove();
                 var new_div = document.createElement("div");
@@ -133,7 +153,14 @@
                     var image_div = document.createElement('div');
                     image_div.setAttribute('class', 'image');
                     var a_1 = document.createElement('a');
-                    a_1.setAttribute('href', '/product/' + p[0].toString() + '/');
+                    if (p[6] != 0) {
+                        if (data['login']) {
+                            a_1.setAttribute('href', '/product/' + p[0].toString() + '/?pk_l=' + data['login'][0].toString());
+                        }
+                        else {
+                            a_1.setAttribute('href', '/product/' + p[0].toString() + '/');
+                        }
+                    }
                     var image = document.createElement('img');
                     image.setAttribute('src', p[3].toString());
                     image.setAttribute('alt', p[2].toString());
@@ -145,7 +172,14 @@
                     detail_div.setAttribute('class', 'details');
 
                     var a_2 = document.createElement('a');
-                    a_2.setAttribute('href', '/product/' + p[0].toString() + '/');
+                    if (p[6] != 0) {
+                        if (data['login']) {
+                            a_2.setAttribute('href', '/product/' + p[0].toString() + '/?pk_l=' + data['login'][0].toString());
+                        }
+                        else {
+                            a_2.setAttribute('href', '/product/' + p[0].toString() + '/');
+                        }
+                    }
                     a_2.setAttribute('class', 'clearfix');
                     var h_4 = document.createElement('h4');
                     h_4.setAttribute('class', 'title');

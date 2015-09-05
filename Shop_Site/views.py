@@ -32,8 +32,18 @@ def home(request):
 
 def add_info_home(request, data, url='base.html'):
     categories = models.Category.objects.all()
+    try:
+        log = request.GET['pk_l']
+        cant = 0
+        p = models.Purchase.objects.get(client__pk=int(log), on_hold=True)
+        cant = p.amount
+    except KeyError:
+        cant = 0
+    except models.Purchase.DoesNotExist:
+        cant = 0
     data.update({
-        'categories': categories
+        'categories': categories,
+        'purchases': cant
     })
     return render(request, url, data)
 
@@ -117,6 +127,19 @@ def get_all_products(products):
 def categories(request, pk):
     if request.is_ajax():
         try:
+            log = request.GET['pk_l']
+            log = models.Clients.objects.get(pk=int(log))
+            if log.name:
+                log = (log.pk, log.name)
+            else:
+                log = (log.pk, log.email)
+        except KeyError:
+            log = None
+        except models.Clients.DoesNotExist:
+            log = None
+        except ValueError:
+            log = None
+        try:
             order = request.GET['order']
         except KeyError:
             return HttpResponse(json.dumps({}), content_type='application/json')
@@ -142,7 +165,8 @@ def categories(request, pk):
         elif order == 'title-descending':
             result.sort(key=lambda x: x[1], reverse=True)
         response_data = {
-            'products': result}
+            'products': result,
+            'login': log}
         return HttpResponse(json.dumps(response_data), content_type='application/json')
     elif request.method == 'GET':
         try:
@@ -170,7 +194,7 @@ def categories(request, pk):
                                  {'category': category, 'products': get_all_products(products), 'login': log},
                                  'products_collection.html')
         else:
-            return Http404('Esa categoría no existe')
+            raise Http404('Esa categoría no existe')
 
 
 def products(request, pk):
@@ -198,7 +222,7 @@ def products(request, pk):
         return add_info_home(request, {'product': product, 'login': log},
                              'single_product.html')
     else:
-        return Http404('Ese producto no existe')
+        raise Http404('Ese producto no existe')
 
 
 def add_items_no_repeated(collection, _property='size'):
@@ -214,11 +238,49 @@ def add_items_no_repeated(collection, _property='size'):
 def add_to_cart(request):
     if request.method == 'POST':
         try:
-            purchase_pk = request.POST['purchase']
-            purchase = models.Purchase.objects.get(pk=int(purchase_pk))
+            log = request.POST['login']
+            if log:
+                purchase = models.Purchase.objects.get(client__pk=int(log), on_hold=True)
+            else:
+                purchase = None
         except KeyError:
             purchase = None
         except models.Purchase.DoesNotExist:
             purchase = None
+        try:
+            product_pk = request.POST['product_pk']
+            attr_pk = request.POST['attr_pk']
+            quantity = int(request.POST['quantity'])
+        except KeyError:
+            raise Http404('Not Found')
+        try:
+            product = models.Products.objects.get(pk=int(product_pk))
+        except models.Products.DoesNotExist:
+            raise Http404('Not Found')
+        try:
+            attr = models.Attribute.objects.get(pk=int(attr_pk))
+        except models.Attribute.DoesNotExist:
+            raise Http404('Not Found')
+        sale_product = models.Sale_Product.objects.create(product=product, attribute=attr)
+        sale_product.save()
+        if purchase:
+            purchase.products.add(sale_product)
+            purchase.amount += 1
+            purchase.save()
+            return HttpResponseRedirect(
+                '/categories/' + request.POST['category_pk'] + '/?pk_l=' + request.POST['login'])
+        else:
+            try:
+                client = models.Clients.objects.get(pk=int(request.POST['login']))
+            except models.Clients.DoesNotExist:
+                raise Http404('Client Not Found')
+            purchase = models.Purchase.objects.create()
+            purchase.products.add(sale_product)
+            purchase.client = client
+            purchase.amount = quantity
+            purchase.amount = 1
+            purchase.save()
+        return HttpResponseRedirect(
+            '/categories/' + request.POST['category_pk'] + '/?pk_l=' + request.POST['login'])
     else:
-        return Http404('Este url no tiene página')
+        raise Http404('Este url no tiene página')

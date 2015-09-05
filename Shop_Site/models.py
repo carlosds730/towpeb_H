@@ -8,6 +8,11 @@ from Shop_Site.extra_functions import hash
 
 
 
+
+
+
+
+
 # TODO: Terminar de poner la tallas q faltan, estas fueron la unicas que se me ocurrieron
 sizes = [('S', 'S'), ('M', 'M'), ('L', 'L'), ('XL', 'XL')]
 
@@ -55,7 +60,7 @@ class Products(models.Model):
         return self._type + ':' + str(self.price)
 
     def __str__(self):
-        return self.name + ': ' + str(self.cod_ref)
+        return self.name
 
 
 class Attribute(models.Model):
@@ -133,10 +138,10 @@ class Purchase(models.Model):
         verbose_name = 'Carrito'
         verbose_name_plural = 'Carritos'
 
-    products = models.ManyToManyField('Products', related_name='purchase', blank=True, verbose_name='Productos',
+    products = models.ManyToManyField('Sale_Product', related_name='purchase', blank=True, verbose_name='Productos',
                                       help_text='Los productos que pertenecen a una compra')
 
-    delivery_address = models.CharField(verbose_name='Dirección de entrega', max_length=400,
+    delivery_address = models.CharField(verbose_name='Dirección de entrega', max_length=400, blank=True, null=True,
                                         help_text='Dirección de entrega de la compra')
 
     client = models.ForeignKey('Clients', verbose_name='Cliente', blank=True, null=True,
@@ -150,6 +155,19 @@ class Purchase(models.Model):
 
     def __str__(self):
         return str(self.pk)
+
+
+class Sale_Product(models.Model):
+    class Meta:
+        verbose_name = 'Producto vendido'
+        verbose_name_plural = 'Productos vendidos'
+
+    product = models.ForeignKey('Products', verbose_name='Producto', blank=True, null=True)
+
+    attribute = models.ForeignKey('Attribute', verbose_name='Atributo', blank=True, null=True)
+
+    def __str__(self):
+        return str(self.product) + ' ' + str(self.attribute)
 
 
 class Pictures(models.Model):

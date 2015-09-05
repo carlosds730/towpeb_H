@@ -65,7 +65,8 @@
                         <input type="text" name="q" class="search_box" placeholder="Buscar" value=""/>
                     </form>
                 </li>
-                <li class="fr"><a href="#" class="cart" title="Cart"><i class="fa fa-shopping-cart"></i>Carrito: 0 Items
+                <li class="fr"><a href="/cart_shop/{{ login.0 }}/" class="cart" title="Cart"><i
+                        class="fa fa-shopping-cart"></i>Carrito: {{ purchases }} Items
                 </a></li>
                 <li class="customer-links">
                     {% if login %}
