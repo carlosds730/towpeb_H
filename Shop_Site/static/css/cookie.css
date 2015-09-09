@@ -1,0 +1,65 @@
+#cookieMessageWrapper
+{
+/* Este Es My Estilo que le Agrege :D*/
+	/*width: 100%;*/
+	/*border-top: 1px solid #aaaaaa;*/
+	/*background: #f6f6f6;*/
+	/*position: fixed;*/
+	/*left: 0;*/
+	/*bottom: 0px;*/
+	/*text-align: center;*/
+	/*padding: 0px;*/
+	/*display: none;*/
+	
+
+	/*Este Es El Que Viene por Defecto*/
+	background: #fd8;
+	font-family: "Segoe UI",Verdana,Arial,Helvetica,Sans-Serif;
+	font-size: 11pt;
+	font-weight: normal;
+	color: #333;
+	padding: 0;
+	margin: 0;
+	display: none;
+	border-bottom: solid 1px #f80;
+}
+#cookieMessage
+{
+	/*width: 100%; /!* this needs to be set to the width of the centre container *!/*/
+	padding: 3px 0 3px 0;
+	margin: 0 auto;
+	position: relative;
+}
+#cookieMessage:after
+{
+	content: "."; 
+	display: block; 
+	height: 0; 
+	clear: both; 
+	visibility: hidden;
+}
+#cookieMessage p
+{
+	margin: 5px 0 0;
+}
+#cookieClose
+{
+	float: right;
+	display: block;
+	padding: 0px 5px;
+	text-decoration: none;
+	background: #f80;
+	border: solid 1px #000;
+	border-radius: 2px;
+	color: #fff;
+	font-size: 100%;
+	margin-top: 0px;
+	font-weight: bold;
+}
+
+@media only screen and (min-width: 996px) {
+    #cookieMessage
+    {
+        width: 674px; /* this needs to be set to the width of the centre container */
+    }
+}
