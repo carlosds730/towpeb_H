@@ -509,6 +509,10 @@ def conditions(request):
     return finish_views(request, 'conditions.html')
 
 
+def shop(request):
+    return finish_views(request, 'tienda.html')
+
+
 def cookies(request):
     return finish_views(request, 'cookies.html')
 

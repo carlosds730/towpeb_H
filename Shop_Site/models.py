@@ -92,7 +92,12 @@ class Attribute(models.Model):
                                   help_text='Porciento de la oferta, sino dejar en blanco')
 
     def __str__(self):
-        return 'Talla: ' + str(self.size + ' - ' 'Color: ' + self.color + ' - ' + 'Precio*: ' + str(self.price) + '€')
+
+        if (self.size and self.color and self.price):
+            return 'Talla: ' + str(self.size + ' - ' 'Color: ' + self.color + ' - ' + 'Precio*: ' + str(self.price) + '€')
+        # TODO: Fix this, it shouldn't get in here
+        else:
+            return "There is nothing here for you"
 
 
 class Category(models.Model):

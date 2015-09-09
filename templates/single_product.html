@@ -31,161 +31,169 @@
                     </div>
                 </div>
                 <!-- End breadcrumb -->
-                <!-- Begin product photos -->
-                <div class="span5">
-                    <!-- Begin featured image -->
-                    <div class="image featured">
-                        {#DONE:Here goes the main image of the product#}
-                        <a href="{{ product.image.url }}" id="placeholder" data-image-id="-1">
-                            <img src="{{ product.image.url }}" alt="{{ product.short_description }}"/>
-                        </a>
-
-                        <ul id="lightbox" class="hidden">
-                            {#DONE:Foreach image in the product set an li. Every data-image-id must be unique#}
-                            {#DONE: The main image should be here too#}
-                            <li>
-                                <a href="{{ product.image.url }}" class="fancy" rel="gallery"
-                                   data-image-id="-1"></a>
-                            </li>
-                            {% for img in product.pictures.all %}
-                                <li>
-                                    <a href="{{ img.image.url }}" class="fancy" rel="gallery"
-                                       data-image-id="{{ img.pk }}"></a>
-                                </li>
-                            {% endfor %}
-                        </ul>
-                    </div>
-                    <!-- End product image -->
-                </div>
-                <!-- End product photos -->
-
-                <!-- Begin thumbnails -->
-                <div class="span1">
-                    <div class="thumbs clearfix">
-
-                        <div class="image">
-                            <a href="{{ product.image.url }}" data-image-id="-1">
-                                <img src="{{ product.image.url }}"
-                                     alt="{{ product.short_description }}"/>
+                <div class="spann12 row clearfix">
+                    <!-- Begin product photos -->
+                    <div class="span5">
+                        <!-- Begin featured image -->
+                        <div class="image featured">
+                            {#DONE:Here goes the main image of the product#}
+                            <a href="{{ product.image.url }}" id="placeholder" data-image-id="-1">
+                                <img src="{{ product.image.url }}" alt="{{ product.short_description }}"/>
                             </a>
+
+                            <ul id="lightbox" class="hidden">
+                                {#DONE:Foreach image in the product set an li. Every data-image-id must be unique#}
+                                {#DONE: The main image should be here too#}
+                                <li>
+                                    <a href="{{ product.image.url }}" class="fancy" rel="gallery"
+                                       data-image-id="-1"></a>
+                                </li>
+                                {% for img in product.pictures.all %}
+                                    <li>
+                                        <a href="{{ img.image.url }}" class="fancy" rel="gallery"
+                                           data-image-id="{{ img.pk }}"></a>
+                                    </li>
+                                {% endfor %}
+                            </ul>
                         </div>
-                        {% for img in product.pictures.all %}
+                        <!-- End product image -->
+                    </div>
+                    <!-- End product photos -->
+
+                    <!-- Begin thumbnails -->
+                    <div class="span1">
+                        <div class="thumbs clearfix">
+
                             <div class="image">
-                                <a href="{{ img.image.url }}" data-image-id="{{ img.pk }}">
-                                    <img src="{{ img.image.url }}" alt="Picture"/>
+                                <a href="{{ product.image.url }}" data-image-id="-1">
+                                    <img src="{{ product.image.url }}"
+                                         alt="{{ product.short_description }}"/>
                                 </a>
                             </div>
-                        {% endfor %}
+                            {% for img in product.pictures.all %}
+                                <div class="image">
+                                    <a href="{{ img.image.url }}" data-image-id="{{ img.pk }}">
+                                        <img src="{{ img.image.url }}" alt="Picture"/>
+                                    </a>
+                                </div>
+                            {% endfor %}
 
+                        </div>
                     </div>
-                </div>
-                <!-- End thumbnails -->
+                    <!-- End thumbnails -->
 
 
-                <!-- Begin description -->
-                <div class="span6">
+                    <!-- Begin description -->
+                    <div class="span6">
 
-                    <h1 class="title" itemprop="name">{{ product.name }}</h1>
+                        <h1 class="title" itemprop="name">{{ product.name }}</h1>
 
-{#                    <h3 class="title" itemprop="name"> De Hutton</h3>#}
+                        {#                    <h3 class="title" itemprop="name"> De Hutton</h3>#}
 
 
-                    <form id="add-item-form" action="/categories/{{ product.category.pk }}/" method="post"
-                          class="variants clearfix">{% csrf_token %}
-                        <!-- Begin product options -->
-                        <div class="product-options">
-                            <div class="select clearfix">
+                        <form id="add-item-form" action="/categories/{{ product.category.pk }}/" method="post"
+                              class="variants clearfix">{% csrf_token %}
+                            <!-- Begin product options -->
+                            <div class="product-options">
+                                <div class="select clearfix">
+                                    <div class="selector-wrapper">
+                                        <label for="product-select">Atributos</label>
+                                        <select class="single-option-selector" name="attr_pk" data-option="option1" id="product-select-option-0">
+                                            {% for attr in product.attributes.all %}
+                                                <option value="{{ attr.pk }}">{{ attr }}</option>
+                                            {% endfor %}
+                                        </select>
+                                        <br>
+                                        <a href="/sizes/#{{ product.category.name }}" target="_blank">
+                                            <strong>Ver guía de tallas</strong>
+                                        </a>
+                                    </div>
+
+                                </div>
                                 <div class="selector-wrapper">
-                                    <label for="product-select">Atributos</label>
-                                    <select class="single-option-selector" name="attr_pk" data-option="option1" id="product-select-option-0">
-                                        {% for attr in product.attributes.all %}
-                                            <option value="{{ attr.pk }}">{{ attr }}</option>
-                                        {% endfor %}
-                                    </select>
+                                    <label>Cantidad</label>
+                                    <input id="quantity" type="number" onchange="Check()" name="quantity" value="1" min="1"
+                                           class="tc item-quantity"/>
+
+                                    <input type="hidden" name="purchase" value="{{ purchase.pk }}"
+                                           class="tc item-quantity"/>
+                                    <input type="hidden" name="product_pk" value="{{ product.pk }}"
+                                           class="tc item-quantity"/>
+                                    <input type="hidden" name="category_pk" value="{{ product.category.pk }}"
+                                           class="tc item-quantity"/>
+                                    <input type="hidden" name="login" value="{{ login.0 }}"
+                                           class="tc item-quantity"/>
+                                </div>
+                                <div class="purchase-section multiple">
+                                    <div class="purchase">
+                                        {% if login %}
+                                            <input type="submit" onclick="ShowTooltip();" id="add-to-cart" class="btn" name="add" value="Añadir al carrito"/>
+                                        {% else %}
+                                            <a href="/login/" id="add-to-cart"
+                                               class="btn" name="add"
+                                                    >Debe iniciar sesión primero</a>
+                                        {% endif %}
+
+                                    </div>
+                                    <a style="color: #555555; padding-top: 10px; display: inline-block">* Los precios de los productos incluyen IVA</a>
                                 </div>
                             </div>
-                            <div class="selector-wrapper">
-                                <label>Cantidad</label>
-                                <input id="quantity" type="number" onchange="Check()" name="quantity" value="1" min="1"
-                                       class="tc item-quantity"/>
+                            <!-- End product options -->
+                        </form>
 
-                                <input type="hidden" name="purchase" value="{{ purchase.pk }}"
-                                       class="tc item-quantity"/>
-                                <input type="hidden" name="product_pk" value="{{ product.pk }}"
-                                       class="tc item-quantity"/>
-                                <input type="hidden" name="category_pk" value="{{ product.category.pk }}"
-                                       class="tc item-quantity"/>
-                                <input type="hidden" name="login" value="{{ login.0 }}"
-                                       class="tc item-quantity"/>
-                            </div>
-                            <div class="purchase-section multiple">
-                                <div class="purchase">
-                                    {% if login %}
-                                        <input type="submit" onclick="ShowTooltip();" id="add-to-cart" class="btn" name="add" value="Añadir al carrito"/>
-                                    {% else %}
-                                        <a href="/login/" id="add-to-cart"
-                                           class="btn" name="add"
-                                                >Debe iniciar sesión primero</a>
-                                    {% endif %}
+                        <div class="description">
+                            <p>{{ product.description }}</p>
 
-                                </div>
-                                <a style="color: #555555; padding-top: 10px; display: inline-block">* Los precios de los productos incluyen IVA</a>
-                            </div>
-                        </div>
-                        <!-- End product options -->
-                    </form>
-
-                    <div class="description">
-                        <p>{{ product.description }}</p>
-
-                    </div>
-
-
-                    <!-- Begin social buttons -->
-                    <div class="social">
-
-
-                        <div class="social-sharing " data-permalink="http://minimal-vintage.myshopify.com/products/theatre-marquis-letter">
-
-
-                            <a target="_blank" href="http://www.facebook.com/sharer.php?u=http://minimal-vintage.myshopify.com/products/theatre-marquis-letter" class="share-facebook">
-                                <span class="icon icon-facebook"></span>
-                                <span class="share-title">Share</span>
-
-                                <span class="share-count">0</span>
-
-                            </a>
-
-
-                            <a target="_blank" href="http://twitter.com/share?url=http://minimal-vintage.myshopify.com/products/theatre-marquis-letter&amp;text=Broadway%20Theatre%20Marquis%20Lettering" class="share-twitter">
-                                <span class="icon icon-twitter"></span>
-                                <span class="share-title">Tweet</span>
-
-                                <span class="share-count">0</span>
-
-                            </a>
-
-
-                            <a target="_blank" href="../../pinterest.com/pin/create/button/index7a05.html?url=http://minimal-vintage.myshopify.com/products/theatre-marquis-letter&amp;media=http://cdn.shopify.com/s/files/1/0153/0847/products/DSC_0078_1024x1024.jpeg?v=1404682281&amp;description=Broadway%20Theatre%20Marquis%20Lettering" class="share-pinterest">
-                                <span class="icon icon-pinterest"></span>
-                                <span class="share-title">Pin it</span>
-
-                                <span class="share-count">0</span>
-
-                            </a>
-
-
-                            <a target="_blank" href="http://fancy.com/fancyit/login?next=http%3A//fancy.com/fancyit%3FItemURL%3Dhttp%3A//minimal-vintage.myshopify.com/products/theatre-marquis-letter%26Title%3DBroadway%2520Theatre%2520Marquis%2520Lettering%26Category%3DOther%26ImageURL%3D//cdn.shopify.com/s/files/1/0153/0847/products/DSC_0078_1024x1024.jpeg%3Fv%3D1404682281" class="share-fancy">
-                                <span class="icon icon-fancy"></span>
-                                <span class="share-title">Fancy</span>
-                            </a>
                         </div>
 
-                    </div>
-                    <!-- End social buttons -->
 
+                        <!-- Begin social buttons -->
+                        <div class="social">
+
+
+                            <div class="social-sharing " data-permalink="http://minimal-vintage.myshopify.com/products/theatre-marquis-letter">
+
+
+                                <a target="_blank" href="http://www.facebook.com/sharer.php?u=http://minimal-vintage.myshopify.com/products/theatre-marquis-letter" class="share-facebook">
+                                    <span class="icon icon-facebook"></span>
+                                    <span class="share-title">Share</span>
+
+                                    <span class="share-count">0</span>
+
+                                </a>
+
+
+                                <a target="_blank" href="http://twitter.com/share?url=http://minimal-vintage.myshopify.com/products/theatre-marquis-letter&amp;text=Broadway%20Theatre%20Marquis%20Lettering" class="share-twitter">
+                                    <span class="icon icon-twitter"></span>
+                                    <span class="share-title">Tweet</span>
+
+                                    <span class="share-count">0</span>
+
+                                </a>
+
+
+                                <a target="_blank" href="../../pinterest.com/pin/create/button/index7a05.html?url=http://minimal-vintage.myshopify.com/products/theatre-marquis-letter&amp;media=http://cdn.shopify.com/s/files/1/0153/0847/products/DSC_0078_1024x1024.jpeg?v=1404682281&amp;description=Broadway%20Theatre%20Marquis%20Lettering" class="share-pinterest">
+                                    <span class="icon icon-pinterest"></span>
+                                    <span class="share-title">Pin it</span>
+
+                                    <span class="share-count">0</span>
+
+                                </a>
+
+
+                                <a target="_blank" href="http://fancy.com/fancyit/login?next=http%3A//fancy.com/fancyit%3FItemURL%3Dhttp%3A//minimal-vintage.myshopify.com/products/theatre-marquis-letter%26Title%3DBroadway%2520Theatre%2520Marquis%2520Lettering%26Category%3DOther%26ImageURL%3D//cdn.shopify.com/s/files/1/0153/0847/products/DSC_0078_1024x1024.jpeg%3Fv%3D1404682281"
+                                   class="share-fancy">
+                                    <span class="icon icon-fancy"></span>
+                                    <span class="share-title">Fancy</span>
+                                </a>
+                            </div>
+
+                        </div>
+                        <!-- End social buttons -->
+
+                    </div>
+                    <!-- End description -->
                 </div>
-                <!-- End description -->
             </div>
 
             <!-- Begin related product -->
@@ -201,22 +209,22 @@
                     {#DONE: Each related product has a div like this one (remove the first span to remove the "Agotado" sign)#}
                     {% for x in related_products %}
                         {% if x %}
-                    <div class="product span3 ">
-                        <div class="image">
-                            <a href="#">
-                                <img src="{{ x.image.url }}" alt="{{ x.short_description }}"/>
-                            </a>
-                        </div>
-                        <div class="details">
-                            <a href="#" class="clearfix">
-                                <h4 class="title">{{ x.name }}</h4>
-                                <span class="vendor">{{ x.short_description }}</span>
+                            <div class="product span3 ">
+                                <div class="image">
+                                    <a href="/product/{{ x.pk }}/">
+                                        <img src="{{ x.image.url }}" alt="{{ x.short_description }}"/>
+                                    </a>
+                                </div>
+                                <div class="details">
+                                    <a href="/product/{{ x.pk }}/" class="clearfix">
+                                        <h4 class="title">{{ x.name }}</h4>
+                                        <span class="vendor">{{ x.short_description }}</span>
                           <span class="price">
                             <em>Desde</em> {{ x.min_price }} €
                           </span>
-                            </a>
-                        </div>
-                    </div>
+                                    </a>
+                                </div>
+                            </div>
                         {% endif %}
                     {% endfor %}
 
