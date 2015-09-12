@@ -568,7 +568,7 @@ em {
 }
 
 .border-bottom {
-    border-bottom: 1px solid #dddddd
+    border-bottom: 1px solid #004024
 }
 
 .border-left {
@@ -797,6 +797,7 @@ ul.expanded > li, ol.expanded > li {
 
 .email_holder {
     height: 24px;
+    border: 1px solid #cccccc;
 }
 
 .go {
@@ -3538,6 +3539,10 @@ button.close {
     }
 }
 
+.fancy_text {
+    display: none;
+}
+
 @media only screen and (min-width: 996px) {
     .main_menu {
         width: inherit;
@@ -3545,7 +3550,7 @@ button.close {
     }
 
     .logo-wrapper {
-        border-bottom: 1px solid #dddddd;
+        border-bottom: 1px solid #004024;
         margin: 0px;
     }
 
@@ -3555,7 +3560,7 @@ button.close {
 
     #big_pict {
         text-align: center;
-
+        margin-bottom: 10px;
     }
 
     #big_pict > img {
@@ -3598,15 +3603,15 @@ button.close {
     }
 
     .crazy_pics > img, .crazy_pic_img {
-        width: 100%;
+        /*width: 100%;*/
     }
 
     .crazy_pics_span7 {
-        width: 60%;
+        width: 74%;
     }
 
     .crazy_pics_span5 {
-        width: 38%;
+        width: 25%;
     }
 
     .crazy_pics_span10 {
@@ -3616,6 +3621,10 @@ button.close {
 
     .crazy_pics > a:hover {
         opacity: 0.9;
+    }
+
+    .pic_at_left {
+        width: 100%;
     }
 
     .spann12 {
@@ -3635,6 +3644,22 @@ button.close {
 
     .selector-wrapper {
         margin-bottom: 10px;
+    }
+
+    .text_right {
+        text-align: right;
+        float: right;
+        padding-top: 19px;
+    }
+
+    .fancy_text {
+        padding-top: 17%;
+        text-align: center;
+        display: block;
+    }
+
+    .fancy_text > a {
+        color: #004024;
     }
 }
 

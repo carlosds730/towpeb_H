@@ -75,8 +75,10 @@
         <div style="position: absolute; width: 100%;height: 100%;background-color: #004024;opacity: 0.85;filter: alpha(opacity=85); border-radius: 31px">
 
         </div>
-        <div class="alert alert-danger-new alert-dismissable fade in" style="margin-bottom: 0px; padding-top: 20px; padding-right: 20px; position: relative; border-radius: 31px">
-            <button type="button" class="close" data-dismiss="alert" aria-hidden="true" onclick="Close(1)">&times;</button>
+        <div class="alert alert-danger-new alert-dismissable fade in"
+             style="margin-bottom: 0px; padding-top: 20px; padding-right: 20px; position: relative; border-radius: 31px">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true"
+                    onclick="Close(1)">&times;</button>
             <div class="text_notification">
                 <h5 style="margin-bottom: 7px">{{ message }}</h5>
 
@@ -91,11 +93,14 @@
     </div>
 {% endif %}
 <div class="notification_zone" id="email_added">
-    <div id="email_added_holder" style="position: absolute; width: 100%;height: 100%;background-color: #004024;opacity: 0.85;filter: alpha(opacity=85); border-radius: 31px">
+    <div id="email_added_holder"
+         style="position: absolute; width: 100%;height: 100%;background-color: #004024;opacity: 0.85;filter: alpha(opacity=85); border-radius: 31px">
 
     </div>
-    <div class="alert alert-danger-new alert-dismissable fade in" style="margin-bottom: 0px; padding-top: 15px; padding-right: 20px; position: relative; border-radius: 31px">
-        <button type="button" class="close" data-dismiss="alert" aria-hidden="true" onclick="Close(0)" style="top: -11px; right: 0px">&times;</button>
+    <div class="alert alert-danger-new alert-dismissable fade in"
+         style="margin-bottom: 0px; padding-top: 15px; padding-right: 20px; position: relative; border-radius: 31px">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true" onclick="Close(0)"
+                style="top: -11px; right: 0px">&times;</button>
         <div class="text_notification" id="email_notify_text" style="color: white">
             Su email se ha añadido satisfactoriamente.
         </div>
@@ -219,6 +224,7 @@
                     <div class="span12">
                         <nav class="main">
                             <div class="inner_text_menu">
+                                <a href="#">Hutton111</a>
                                 {% for c in categories %}
                                     <a href="/categories/{{ c.pk }}/">{{ c.name }}</a>
                                 {% endfor %}
@@ -247,37 +253,26 @@
                     <!-- End big picture -->
                 {% endblock %}
 
-                {% block text %}
-                    <!-- Begin intro -->
-                    <div class="span12">
-                        <div class="intro clearfix">
-                            {#  TODO: Lo q hay q poner aqui#}
-                            <h2>Lorem Ipsum</h2>
-
-                            <div><p>Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum
-                                Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum
-                                Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum
-                                Lorem Ipsum Lorem Ipsum Lorem Ipsum</p></div>
-                        </div>
-                    </div>
-                    <!-- End intro -->
-                {% endblock %}
-
                 {% block products %}
                     <div class="span12">
                         <div class="row products">
                             {#TODO: Estas imágenes no pueden tener fondo blanco porque se ve muy feo#}
-                            <div class="crazy_pics_span5 crazy_pics right_margin">
+                            <div class="crazy_pics_span7 crazy_pics right_margin">
+                                <a href="/product/4/">
+                                    <img class="crazy_pic_img pic_at_left"
+                                         src="{% static 'img/slideshow/fcalderon_corbatas0051-373x195.jpg' %}">
+                                </a>
+                            </div>
+                            <div class="crazy_pics_span5  crazy_pics text_right">
                                 <a href="/shop/#home">
                                     <img class="crazy_pic_img" src="{% static 'img/Carbones Hutton.jpg' %}">
                                 </a>
+
+{#                                <div class="fancy_text">#}
+{#                                    <img src="{% static 'img/hutton_texto.png' %}">#}
+{#                                </div>#}
                             </div>
-                            <div class="crazy_pics_span7 crazy_pics float_right">
-                                <a href="/product/4/">
-                                    <img class="crazy_pic_img" src="{% static 'img/slideshow/fcalderon_corbatas0051-373x195.jpg' %}">
-                                </a>
-                            </div>
-                            <div style="clear:both; margin-bottom: 29px "></div>
+                            <div style="clear:both; margin-bottom: 10px"></div>
                             <div class="crazy_pics_span10 crazy_pics">
                                 <a href="/product/7/">
                                     <img class="crazy_pic_img" src="{% static 'img/slideshow/timthumbec00.jpg' %}">
