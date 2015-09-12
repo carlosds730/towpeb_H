@@ -93,8 +93,9 @@ class Attribute(models.Model):
 
     def __str__(self):
 
-        if (self.size and self.color and self.price):
-            return 'Talla: ' + str(self.size + ' - ' 'Color: ' + self.color + ' - ' + 'Precio: ' + str(self.price) + '€')
+        if self.size and self.color and self.price:
+            return 'Talla: ' + str(
+                self.size + ' - ' 'Color: ' + self.color + ' - ' + 'Precio: ' + str(self.price) + '€')
         # TODO: Fix this, it shouldn't get in here
         else:
             return "There is nothing here for you"
@@ -290,6 +291,3 @@ class Newsletter_Clients(models.Model):
 
     def __str__(self):
         return str(self.email)
-
-
-

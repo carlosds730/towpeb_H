@@ -20,7 +20,8 @@
                             Comprar
                         </a>
                     {% else %}
-                        <a href="/info_client/" id="payment_button" class="remove btn-buy disabled" style="cursor: default">
+                        <a href="/info_client/" id="payment_button" class="remove btn-buy disabled"
+                           style="cursor: default">
                             <i class=" fa fa-shopping-cart">
                             </i>
                             Comprar
@@ -53,7 +54,9 @@
                             </div>
                             <div class="span2">
                                 <div class="selector-wrapper quantity_holder">
-                                    <input id="quantity_{{ p.pk }}" style="width: 41px; height: 17px; margin-top: 15px" type="number" onchange="Check({{ p.pk }}, {{ p.attribute.price|safe }})" name="quantity" value="{{ p.amount }}" min="1"
+                                    <input id="quantity_{{ p.pk }}" style="width: 41px; height: 17px; margin-top: 15px"
+                                           type="number" onchange="Check({{ p.pk }}, {{ p.attribute.price|safe }})"
+                                           name="quantity" value="{{ p.amount }}" min="1"
                                            class="tc item-quantity quantity_select"/>
                                 </div>
                             </div>
@@ -107,9 +110,13 @@
                                 <div class="selector-wrapper quantity_holder" style="text-align: left">
                                     <a style="margin-top: 5px;float: left; margin-right: 10px; color: black">Cantidad: </a>
                                     <label for="quantity_{{ p.pk }}_mobile" style="display: none">Cantidad</label>
-                                    <input id="quantity_{{ p.pk }}_mobile" style="width: 41px; height: 17px;" type="number" onchange="CheckMobile({{ p.pk }}, {{ p.attribute.price|safe }})" name="quantity" value="{{ p.amount }}" min="1"
+                                    <input id="quantity_{{ p.pk }}_mobile" style="width: 41px; height: 17px;"
+                                           type="number"
+                                           onchange="CheckMobile({{ p.pk }}, {{ p.attribute.price|safe }})"
+                                           name="quantity" value="{{ p.amount }}" min="1"
                                            class="tc item-quantity quantity_select"/>
-                                    <a class="remove btn-delete" style="cursor: pointer; float: right; margin-top: 4px" onclick="Eliminate({{ p.pk }})">
+                                    <a class="remove btn-delete" style="cursor: pointer; float: right; margin-top: 4px"
+                                       onclick="Eliminate({{ p.pk }})">
                                         <i class=" fa fa-trash-o">
                                         </i>
                                         Eliminar
@@ -120,7 +127,8 @@
                                 <a class="precio_holder">Precio Total: </a>
                                 <a class="precio" id="precio_{{ p.pk }}_mobile">{{ p.price }}</a>
                             </div>
-                            <div class="span2 properties validation" id="my_msg_{{ p.pk }}_mobile" style="margin-top: 7px">
+                            <div class="span2 properties validation" id="my_msg_{{ p.pk }}_mobile"
+                                 style="margin-top: 7px">
                                 {% if p.valid %}
                                     <a class="my_success" id="succes_{{ p.pk }}_mobile">
                                         <i class="fa fa-check"></i>
@@ -144,7 +152,7 @@
                             </div>
                         </div>
                     {% endfor %}
-{#                    <a style="color: #555555; padding-top: 10px; display: inline-block">* Los precios de los productos incluyen IVA</a>#}
+                    {#                    <a style="color: #555555; padding-top: 10px; display: inline-block">* Los precios de los productos incluyen IVA</a>#}
                 </div>
             </div>
         {% endif %}
@@ -157,7 +165,8 @@
                 {% for s in shops %}
                     <div class="header">
                         <h5 style="color: #004024">{{ s.date | date }} ({{ s.total_price }})
-                            <a style="cursor: pointer; font-weight: bold;" data-open="1" id="link_{{ s.pk }}" onclick="Collapse({{ s.pk }})">
+                            <a style="cursor: pointer; font-weight: bold;" data-open="1" id="link_{{ s.pk }}"
+                               onclick="Collapse({{ s.pk }})">
                                 Ver los productos
                             </a>
                         </h5>
@@ -166,7 +175,9 @@
                         <ul>
                             {% for p in s.products.all %}
                                 <li>
-                                    <a style="color: #004024" href="/product/{{ p.product.pk }}/">{{ p.amount }} {{ p.product.name }} - {{ p.to_show_old_cart }}</a>
+                                    <a style="color: #004024"
+                                       href="/product/{{ p.product.pk }}/">{{ p.amount }} {{ p.product.name }}
+                                        - {{ p.to_show_old_cart }}</a>
                                 </li>
                             {% endfor %}
                         </ul>
@@ -178,6 +189,11 @@
         <div class="header">
             <h3 style="color: #004024; margin-bottom: 37px"><strong>No hay ningún carrito para mostrar</strong></h3>
         </div>
+    {% endif %}
+    {% if purchases == 0 %}
+        <script>
+            $("#payment_button").addClass("disabled").css("cursor", "default");
+        </script>
     {% endif %}
 
     <script>
