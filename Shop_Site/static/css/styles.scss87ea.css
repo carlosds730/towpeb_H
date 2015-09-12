@@ -724,7 +724,7 @@ footer {
     clear: none
 }
 
-.span3.adaptive-grid:nth-child(4n+6) {
+.span3.adaptive-grid:nth-child(4n+4) {
     clear: both
 }
 
@@ -777,8 +777,9 @@ ul.expanded > li, ol.expanded > li {
 
 .search_box {
     padding-left: 26px;
+    padding-top: 3px;
     margin-bottom: 2px;
-    height: 24px;
+    height: 17px;
     vertical-align: middle;
     line-height: normal;
     max-height: 55px;
@@ -1328,7 +1329,8 @@ footer .copyright {
 }
 
 .product .circle.sale, #product .circle.sale {
-    background-color: #004024;
+    /*background-color: #004024;*/
+    background-color: #800A1C;
     color: #ffffff !important
 }
 
@@ -3339,8 +3341,8 @@ a:hover .share-count:after {
 }
 
 .price_percent_reduction {
-    background: #004f24;
-    border: 1px solid #004024;
+    background: #EC0B0B;
+    border: 1px solid #800A1C;
     font: 200 21px/24px "Montserrat", sans-serif;
     color: #fff;
     padding: 0 5px 0 3px;
@@ -3633,9 +3635,10 @@ button.close {
     }
 
     .span3.adaptive-grid {
-        width: 18%;
-        margin-right: 1%;
-        margin-left: 1%;
+        width: 23%;
+        margin-right: 5%;
+        margin-left: 5%;
+        text-align: center;
     }
 
     .browse-tags {
@@ -3660,6 +3663,14 @@ button.close {
 
     .fancy_text > a {
         color: #004024;
+    }
+
+    .product .circle, #product .circle {
+        position: absolute;
+        width: 100%;
+        top: 29%;
+        left: 0%;
+        padding: 17px 0px;
     }
 }
 
