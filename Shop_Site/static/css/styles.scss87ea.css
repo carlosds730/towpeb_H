@@ -1362,6 +1362,10 @@ footer .copyright {
     color: #999999
 }
 
+.details{
+    margin-bottom: 10px;
+}
+
 .details .price {
     color: #999999;
     font-size: larger;
