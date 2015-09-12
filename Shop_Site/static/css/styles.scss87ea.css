@@ -1362,7 +1362,7 @@ footer .copyright {
     color: #999999
 }
 
-.details{
+.details {
     margin-bottom: 10px;
 }
 
@@ -3534,6 +3534,45 @@ button.close {
     z-index: 10000;
 }
 
+.notification_zone_big {
+    position: fixed;
+    display: none;
+    width: 100%;
+    height: 100%;
+    z-index: 10000;
+
+}
+
+.signs_to_show {
+    position: relative;
+    top: 43%;
+    width: 200px;
+    z-index: 20000;
+    display: block;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.sign_holder {
+    margin: 7px 0px;
+    border: 1px solid white;
+    padding: 5px;
+}
+
+#keep_buying:hover {
+    cursor: pointer;
+}
+
+.sign_holder > a {
+    color: white;
+}
+
+.signs_to_show:after {
+    content: ' ';
+    clear: both;
+    display: block;
+}
+
 @media only screen and (max-width: 509px) {
     .notification_zone {
         position: fixed;
@@ -3542,6 +3581,10 @@ button.close {
         bottom: 15px;
         left: 5%;
         z-index: 10000;
+    }
+
+    .signs_to_show {
+
     }
 }
 
