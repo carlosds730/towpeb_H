@@ -192,13 +192,17 @@
     {% endif %}
     {% if purchases == 0 %}
         <script>
-            $("#payment_button").addClass("disabled").css("cursor", "default");
+            $("#payment_button").addClass("disabled").css("cursor", "default").click(function () {
+                return false;
+            });
         </script>
     {% endif %}
 
     <script>
         if (document.getElementById("total_price").innerHTML == "Total: 0 €") {
-            $("#payment_button").addClass("disabled").css("cursor", "default");
+            $("#payment_button").addClass("disabled").css("cursor", "default").click(function () {
+                            return false;
+                        });
         }
         function Collapse(id) {
             $("#carrito_" + id).slideToggle();
@@ -224,7 +228,9 @@
                     document.getElementById("total_price").innerHTML = "Total: " + data['total'];
 
                     if (data['cant'] == '0') {
-                        $("#payment_button").addClass("disabled").css("cursor", "default");
+                        $("#payment_button").addClass("disabled").css("cursor", "default").click(function () {
+                            return false;
+                        });
                     }
 
                     function delayedAlert() {
@@ -283,7 +289,9 @@
                     if (data['valid_com'])
                         $("#payment_button").removeClass("disabled").css("cursor", "pointer");
                     else
-                        $("#payment_button").addClass("disabled").css("cursor", "default");
+                        $("#payment_button").addClass("disabled").css("cursor", "default").click(function () {
+                            return false;
+                        });
                 }
                 else {
                     alert("Ha ocurrido un error. Inténtelo más tarde");
