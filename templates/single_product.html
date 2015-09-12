@@ -10,26 +10,26 @@
             <div class="row clearfix">
 
                 <!-- Begin breadcrumb -->
-                <div class="span12">
-                    <div class="breadcrumb clearfix">
-
-                            <span itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="/" title="Vintage"
-                                                                                                itemprop="url"><span
-                                    itemprop="title">Inicio</span></a></span>
-
-                        <span class="arrow-space">&#62;</span>
-                         <span itemscope itemtype="http://data-vocabulary.org/Breadcrumb">
-
-                                 <a href="/categories/{{ product.category.pk }}/" title="All Products"
-                                    itemprop="url">
-                                     <span itemprop="title">{{ product.category.name }}</span>
-                                 </a>
-
-                         </span>
-                        <span class="arrow-space">&#62;</span>
-                        <strong>{{ product.name }}</strong>
-                    </div>
-                </div>
+{#                <div class="span12">#}
+{#                    <div class="breadcrumb clearfix">#}
+{##}
+{#                            <span itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="/" title="Vintage"#}
+{#                                                                                                itemprop="url"><span#}
+{#                                    itemprop="title">Inicio</span></a></span>#}
+{##}
+{#                        <span class="arrow-space">&#62;</span>#}
+{#                         <span itemscope itemtype="http://data-vocabulary.org/Breadcrumb">#}
+{##}
+{#                                 <a href="/categories/{{ product.category.pk }}/" title="All Products"#}
+{#                                    itemprop="url">#}
+{#                                     <span itemprop="title">{{ product.category.name }}</span>#}
+{#                                 </a>#}
+{##}
+{#                         </span>#}
+{#                        <span class="arrow-space">&#62;</span>#}
+{#                        <strong>{{ product.name }}</strong>#}
+{#                    </div>#}
+{#                </div>#}
                 <!-- End breadcrumb -->
                 <div class="spann12 row clearfix">
                     <!-- Begin product photos -->
