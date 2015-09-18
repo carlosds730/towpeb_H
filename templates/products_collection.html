@@ -9,19 +9,19 @@
             <div class="row">
                 <div class="span12">
                     <!-- Begin breadcrumb -->
-{#                    <div class="breadcrumb clearfix">#}
-{##}
-{#                            <span itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="/" title="Hutton"#}
-{#                                                                                                itemprop="url"><span#}
-{#                                    itemprop="title">Inicio</span></a></span>#}
-{##}
-{#                        <span class="arrow-space">&#62;</span>#}
-{#                        <span itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a#}
-{#                                style="cursor: auto"#}
-{#                                title="Productos"#}
-{#                                itemprop="url"></a></span>#}
-{#                        <strong>{{ category.name }}</strong>#}
-{#                    </div>#}
+                    {#                    <div class="breadcrumb clearfix">#}
+                    {##}
+                    {#                            <span itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="/" title="Hutton"#}
+                    {#                                                                                                itemprop="url"><span#}
+                    {#                                    itemprop="title">Inicio</span></a></span>#}
+                    {##}
+                    {#                        <span class="arrow-space">&#62;</span>#}
+                    {#                        <span itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a#}
+                    {#                                style="cursor: auto"#}
+                    {#                                title="Productos"#}
+                    {#                                itemprop="url"></a></span>#}
+                    {#                        <strong>{{ category.name }}</strong>#}
+                    {#                    </div>#}
                     <!-- End breadcrumb -->
 
                     <!-- Begin sort collection -->
@@ -88,20 +88,22 @@
                                           </span>
                                     </a>
                                 {% else %}
-                                    <a href="/product/{{ p.0 }}/" class="clearfix">
-                                        <h4 class="title">{{ p.1 }}</h4>
-                                    </a>
+                                    {#                                    <a href="/product/{{ p.0 }}/" class="clearfix">#}
+                                    <h4 class="title">{{ p.1 }}</h4>
+                                    {#                                    </a>#}
                                     <span class="vendor">{{ p.2 }}</span>
                                     {% if p.8 %}
+                                        <span class="vendor">
                                         <span class="price">
                                             {{ p.7 }} € <del>{{ p.8 }} €</del>
                                         </span>
                                         <span class="price_percent_reduction">-{{ p.10 }}%</span>
+                                        </span>
                                     {% else %}
                                         <span class="price">
                                                 {{ p.7 }} €
                                         </span>
-                                        <span class="price_percent_reduction_blank">&nbsp;</span>
+                                        {#                                        <span class="price_percent_reduction_blank">&nbsp;</span>#}
                                     {% endif %}
                                 {% endif %}
                             </div>

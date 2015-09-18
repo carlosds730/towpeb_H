@@ -40,8 +40,6 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'sorl.thumbnail',
-    'django_common',
-    'django_braintree',
     'Shop_Site'
 )
 

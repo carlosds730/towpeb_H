@@ -78,10 +78,10 @@ class Attribute(models.Model):
     amount = models.IntegerField(verbose_name='Cantidad de existencias', default=0, validators=[validate],
                                  help_text='Cantidad de existencias del producto')
 
-    color = models.CharField(verbose_name='Color', max_length=50, help_text='Color del producto', blank=True, null=True)
+    color = models.CharField(verbose_name='Color', max_length=50, help_text='Color del producto')
 
     size = models.CharField(verbose_name='Talla', choices=sizes, max_length=50, help_text='Talla del producto',
-                            blank=True, null=True)
+                            )
 
     old_price = models.DecimalField(verbose_name='Precio antiguo de oferta', default=None, max_digits=10,
                                     decimal_places=2, null=True, blank=True,

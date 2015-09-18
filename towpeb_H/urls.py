@@ -21,7 +21,6 @@ from Shop_Site import views
 from towpeb_H import settings
 
 urlpatterns = static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + [
-    url(r'^payment/', include('django_braintree.urls')),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^login/?$', views.login, name='login'),
     url(r'^categories/(?P<pk>\d+)/?$', views.categories, name='categories'),
