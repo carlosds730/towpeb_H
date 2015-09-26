@@ -3592,6 +3592,14 @@ button.close {
     display: none;
 }
 
+.crazy_pics_span2 {
+    display: none;
+}
+
+.separator_line {
+    display: none;
+}
+
 @media only screen and (min-width: 996px) {
     .main_menu {
         width: inherit;
@@ -3627,7 +3635,10 @@ button.close {
         margin-right: 30px;
         font-size: 20px;
         color: #004024;
-        font-family: Helvetica, Arial, sans-serif;
+        /*font-family: Helvetica, Arial, sans-serif;*/
+        font-family: 'Brandon Bld'
+        /*font: 20px "Source Sans Pro", Helvetica, sans-serif !important*/
+
     }
 
     #nav > .span12 {
@@ -3668,6 +3679,18 @@ button.close {
         float: right;
     }
 
+    .crazy_pics_span2 {
+        display: block;
+        width: 19%;
+        float: left;
+    }
+
+    .separator_line {
+        display: block;
+        clear: both;
+        margin-bottom: 10px
+    }
+
     .crazy_pics > a:hover {
         opacity: 0.9;
     }
@@ -3699,11 +3722,11 @@ button.close {
     .text_right {
         text-align: right;
         float: right;
-        padding-top: 19px;
+        padding-top: 17px;
     }
 
     .fancy_text {
-        padding-top: 17%;
+        padding-top: 83%;
         text-align: center;
         display: block;
     }
