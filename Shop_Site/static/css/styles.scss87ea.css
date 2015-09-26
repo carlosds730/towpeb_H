@@ -3751,3 +3751,53 @@ button.close {
 .selector-wrapper > a {
     color: black;
 }
+
+.sizes_list {
+    list-style: none;
+    margin-left: 0px;
+}
+
+.sizes_list > li {
+    float: left;
+    width: 30px;
+    text-align: center;
+    border-left: 1px solid #004024;
+    border-bottom: 1px solid #004024;
+    border-top: 1px solid #004024;
+}
+
+.sizes_list > li:last-child {
+    border-right: 1px solid #004024;
+}
+
+.sizes_list > li > label {
+    margin-bottom: 0px;
+    padding: 5px 10px;
+    -webkit-transition: background-color 0.2s ease-in;
+    -moz-transition: background-color 0.2s ease-in;
+    -o-transition: background-color 0.2s ease-in;
+    transition: background-color 0.2s ease-in
+}
+
+.unselected:hover {
+    cursor: pointer;
+    background-color: #004024;
+    color: white;
+}
+
+.selected {
+    background-color: #004024;
+    color: white;
+}
+
+.addSize {
+    display: none;
+}
+
+.sizes_radio {
+    /*display: none;*/
+}
+
+#size_input {
+    display: none;
+}

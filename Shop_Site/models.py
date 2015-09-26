@@ -43,6 +43,19 @@ class Products(models.Model):
     image = ImageField(verbose_name='Imagen Principal', upload_to='Pictures',
                        help_text='Foto del principal producto', null=True, blank=True)
 
+    color = models.CharField(verbose_name='Color', max_length=50, help_text='Color del producto')
+
+    price = models.DecimalField(verbose_name='Precio actual', default=0, max_digits=10, decimal_places=2,
+                                help_text='Precio real del producto', validators=[validate])
+
+    old_price = models.DecimalField(verbose_name='Precio antiguo de oferta', default=None, max_digits=10,
+                                    decimal_places=2, null=True, blank=True,
+                                    help_text='Precio anterior del producto si esta en oferta, sino dejar en blanco',
+                                    validators=[validate])
+
+    percent = models.IntegerField(verbose_name='Porciento', default=None, null=True, blank=True,
+                                  help_text='Porciento de la oferta, sino dejar en blanco')
+
     label = models.CharField(verbose_name='Etiquetas', max_length=200, blank=True, null=True,
                              help_text='Palabras claves que describan al producto que lo ayuden a ser encontrado '
                                        'fácilmente por los buscadores')
@@ -50,18 +63,17 @@ class Products(models.Model):
     is_available = models.BooleanField(verbose_name='Disponible', default=True,
                                        help_text='Define si un producto se puede sacar en la tienda')
 
-    def __repr__(self):
-        return self._type + ':' + str(self.price)
-
     def __str__(self):
         return self.name
 
     def min_price(self):
-        _min = 10000000
+        return self.price
+
+    def sold_out(self):
+        count = 0
         for attr in self.attributes.all():
-            if attr.price < _min:
-                _min = attr.price
-        return _min if _min != 10000000 else 0
+            count += attr.amount
+        return count
 
 
 class Attribute(models.Model):
@@ -72,33 +84,13 @@ class Attribute(models.Model):
     product = models.ForeignKey('Products', related_name='attributes', verbose_name='Producto',
                                 help_text='Producto a la venta')
 
-    price = models.DecimalField(verbose_name='Precio actual', default=0, max_digits=10, decimal_places=2,
-                                help_text='Precio real del producto', validators=[validate])
+    size = models.CharField(verbose_name='Talla', choices=sizes, max_length=50, help_text='Talla del producto')
 
     amount = models.IntegerField(verbose_name='Cantidad de existencias', default=0, validators=[validate],
                                  help_text='Cantidad de existencias del producto')
 
-    color = models.CharField(verbose_name='Color', max_length=50, help_text='Color del producto')
-
-    size = models.CharField(verbose_name='Talla', choices=sizes, max_length=50, help_text='Talla del producto',
-                            )
-
-    old_price = models.DecimalField(verbose_name='Precio antiguo de oferta', default=None, max_digits=10,
-                                    decimal_places=2, null=True, blank=True,
-                                    help_text='Precio anterior del producto si esta en oferta, sino dejar en blanco',
-                                    validators=[validate])
-
-    percent = models.IntegerField(verbose_name='Porciento', default=None, null=True, blank=True,
-                                  help_text='Porciento de la oferta, sino dejar en blanco')
-
     def __str__(self):
-
-        if self.size and self.color and self.price:
-            return 'Talla: ' + str(
-                self.size + ' - ' 'Color: ' + self.color + ' - ' + 'Precio: ' + str(self.price) + '€')
-        # TODO: Fix this, it shouldn't get in here
-        else:
-            return "There is nothing here for you"
+        return self.size
 
 
 class Category(models.Model):
@@ -123,9 +115,8 @@ class Category(models.Model):
     def min_price(self):
         _min = 10000000
         for x in self.products_set.all():
-            for attr in x.attributes.all():
-                if attr.price < _min:
-                    _min = attr.price
+            if x.price < _min:
+                _min = x.price
         return _min if _min != 10000000 else 0
 
     def get_random_product(self):
@@ -193,20 +184,20 @@ class Purchase(models.Model):
     def total_price(self):
         total = 0
         for p in self.products.all():
-            total += p.attribute.price * p.amount
+            total += p.product.price * p.amount
         return str(total) + ' €'
 
     def total_price_two(self):
         total = 0
         for p in self.products.all():
-            total += p.attribute.price * p.amount
+            total += p.product.price * p.amount
         return str(total) + ' €', str(total)
 
     # TODO: Do this (it should return a tuple, the first element should be the price the € sign and the second the price as a number)
     def total_price_with_taxes(self):
         total = 4
         for p in self.products.all():
-            total += p.attribute.price * p.amount
+            total += p.product.price * p.amount
         return str(total) + ' €', str(total)
 
 
@@ -225,15 +216,15 @@ class Sale_Product(models.Model):
         return str(self.product) + ' ' + str(self.attribute)
 
     def price(self):
-        return str(self.attribute.price * self.amount) + ' €'
+        return str(self.product.price * self.amount) + ' €'
 
     def valid(self):
         return self.amount <= self.attribute.amount
 
     def to_show_old_cart(self):
-        total = self.attribute.price * self.amount
+        total = self.product.price * self.amount
         return 'Talla: ' + str(
-            self.attribute.size + ' - ' 'Color: ' + self.attribute.color + ' - ' + 'Precio Total: ' + str(total) + '€')
+            self.attribute.size + ' - ' 'Color: ' + self.product.color + ' - ' + 'Precio Total: ' + str(total) + '€')
 
 
 class Pictures(models.Model):

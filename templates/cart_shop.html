@@ -55,7 +55,7 @@
                             <div class="span2">
                                 <div class="selector-wrapper quantity_holder">
                                     <input id="quantity_{{ p.pk }}" style="width: 41px; height: 17px; margin-top: 15px"
-                                           type="number" onchange="Check({{ p.pk }}, {{ p.attribute.price|safe }})"
+                                           type="number" onchange="Check({{ p.pk }}, {{ p.product.price|safe }})"
                                            name="quantity" value="{{ p.amount }}" min="1"
                                            class="tc item-quantity quantity_select"/>
                                 </div>
@@ -63,7 +63,7 @@
                             <div class="span2 precio_total">
                                 <h5>&nbsp;</h5>
                                 <a class="precio_holder">Precio Total: </a>
-                                <a class="precio" id="precio_{{ p.pk }}">{{ p.price }}</a>
+                                <a class="precio" id="precio_{{ p.pk }}">{{ p.product.price }}</a>
                             </div>
                             <div class="span2 properties validation" id="my_msg_{{ p.pk }}">
                                 <h5>&nbsp;</h5>
@@ -112,7 +112,7 @@
                                     <label for="quantity_{{ p.pk }}_mobile" style="display: none">Cantidad</label>
                                     <input id="quantity_{{ p.pk }}_mobile" style="width: 41px; height: 17px;"
                                            type="number"
-                                           onchange="CheckMobile({{ p.pk }}, {{ p.attribute.price|safe }})"
+                                           onchange="CheckMobile({{ p.pk }}, {{ p.product.price|safe }})"
                                            name="quantity" value="{{ p.amount }}" min="1"
                                            class="tc item-quantity quantity_select"/>
                                     <a class="remove btn-delete" style="cursor: pointer; float: right; margin-top: 4px"
@@ -125,7 +125,7 @@
                             </div>
                             <div class="span2 precio_total" style="margin-top: 7px">
                                 <a class="precio_holder">Precio Total: </a>
-                                <a class="precio" id="precio_{{ p.pk }}_mobile">{{ p.price }}</a>
+                                <a class="precio" id="precio_{{ p.pk }}_mobile">{{ p.product.price }}</a>
                             </div>
                             <div class="span2 properties validation" id="my_msg_{{ p.pk }}_mobile"
                                  style="margin-top: 7px">

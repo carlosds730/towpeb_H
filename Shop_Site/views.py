@@ -164,16 +164,12 @@ def order_by_price(products):
 def get_all_products(products):
     res_prod = []
     for p in products.order_by('-pk'):
-        prices = []
-        for attr in p.attributes.all():
-            if attr.price not in prices:
-                if attr.old_price:
-                    res_prod.append((p.pk, p.name, p.short_description, p.image.url, attr.size, attr.color, attr.amount,
-                                     str(attr.price), str(attr.old_price), attr.pk, attr.percent))
-                else:
-                    res_prod.append((p.pk, p.name, p.short_description, p.image.url, attr.size, attr.color, attr.amount,
-                                     str(attr.price), None, attr.pk, attr.percent))
-                prices.append(attr.price)
+        if p.old_price:
+            res_prod.append((p.pk, p.name, p.short_description, p.image.url, None, p.color, p.sold_out(),
+                             str(p.price), str(p.old_price), None, p.percent))
+        else:
+            res_prod.append((p.pk, p.name, p.short_description, p.image.url, None, p.color, p.sold_out(),
+                             str(p.price), None, None, p.percent))
     return res_prod
 
 
@@ -216,7 +212,6 @@ def categories(request, pk):
             category = None
         except ValueError:
             category = None
-
         if category:
             products = models.Products.objects.filter(category__pk=category.pk, is_available=True)
             return add_info_home(request, {'category': category, 'products': get_all_products(products)},
@@ -420,7 +415,7 @@ def search(request):
                             exist = False
                             for attr in product.attributes.all():
                                 if word in str(
-                                        attr.price).lower() or word in attr.color.lower() or word in attr.size.lower():
+                                        product.price).lower() or word in product.color.lower() or word in attr.size.lower():
                                     exist = True
                                     break
 
