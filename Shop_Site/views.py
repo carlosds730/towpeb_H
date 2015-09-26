@@ -233,7 +233,7 @@ def categories(request, pk):
             purchase = None
         try:
             product_pk = request.POST['product_pk']
-            attr_pk = request.POST['attr_pk']
+            attr_pk = request.POST['size']
             quantity = int(request.POST['quantity'])
         except KeyError:
             raise Http404('Not Found')
@@ -454,7 +454,9 @@ def cart_shop(request):
                     break
 
             if my_car:
-                return HttpResponse(json.dumps({'valid': sale_prod.valid(), 'total': my_car.total_price(), 'valid_com': my_car.is_valid()}), content_type='application/json')
+                return HttpResponse(json.dumps(
+                    {'valid': sale_prod.valid(), 'prod_price': sale_prod.price(), 'total': my_car.total_price(),
+                     'valid_com': my_car.is_valid()}), content_type='application/json')
             else:
                 return HttpResponse(json.dumps({}), content_type='application/json')
 

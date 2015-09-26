@@ -257,6 +257,8 @@
                 {#                alert(ps[i]);#}
                 ps[i].addEventListener('click', SizeElected, false);
             }
+            document.getElementById("size_input").setAttribute("value", document.getElementsByClassName('size_choice')[0].getAttribute("data-size"));
+            document.getElementsByClassName('size_choice')[0].setAttribute("class", "size_choice selected");
         };
 
 
