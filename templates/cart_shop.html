@@ -3,206 +3,211 @@
 {% load staticfiles %}
 {#DONE: It doesn't look good on the phone#}
 {% block content %}
-    {% if on_hold or shops %}
-        {% if on_hold %}
-            <div class="header">
-                <h3 style="color: #004024"><strong>Carrito actual:</strong></h3>
+    <div class="cart_shop_container_pc_only">
+        {% if on_hold or shops %}
+            {% if on_hold %}
+                <div class="header">
+                    <h3 style="color: #004024"><strong>Carrito actual:</strong></h3>
 
-            </div>
-            <div class="container">
-                <div class="container_payments">
-                    <a style="color: #004024"><strong id="total_price">Subtotal: {{ on_hold.total_price }}</strong></a>
-                    <br>
-                    {% if on_hold.is_valid %}
-                        <a href="/info_client/" id="payment_button" class="remove btn-buy">
-                            <i class=" fa fa-shopping-cart">
-                            </i>
-                            Comprar
-                        </a>
-                    {% else %}
-                        <a href="/info_client/" id="payment_button" class="remove btn-buy disabled"
-                           style="cursor: default">
-                            <i class=" fa fa-shopping-cart">
-                            </i>
-                            Comprar
-                        </a>
-                    {% endif %}
                 </div>
-                <div class="carrito row clearfix">
-                    {% for p in on_hold.products.all %}
-                        <div class="row clearfix product_list_pc" id="product_{{ p.pk }}">
-                            <div class="span2" style="text-align: center">
-                                {% thumbnail p.product.image "100x100" as imagen %}
-                                    <a href="/product/{{ p.product.pk }}/">
-                                        <img src="{{ imagen.url }}">
-                                    </a>
-                                {% endthumbnail %}
-                            </div>
-                            <div class="span3 properties">
-                                <h5>
-                                    Producto: <a style="color: #004024" id="dscrptn_{{ p.pk }}"
-                                                 href="/product/{{ p.product.pk }}/">{{ p.product.name }}</a>
-                                </h5>
-                                <h5>
-                                    {{ p.attribute }}
-                                </h5>
-                                <a class="remove btn-delete" style="cursor: pointer" onclick="Eliminate({{ p.pk }})">
-                                    <i class=" fa fa-trash-o">
-                                    </i>
-                                    Eliminar
-                                </a>
-                            </div>
-                            <div class="span2">
-                                <div class="selector-wrapper quantity_holder">
-                                    <input id="quantity_{{ p.pk }}" style="width: 41px; height: 17px; margin-top: 15px"
-                                           type="number" onchange="Check({{ p.pk }}, {{ p.product.price|safe }})"
-                                           name="quantity" value="{{ p.amount }}" min="1"
-                                           class="tc item-quantity quantity_select"/>
+                <div class="container">
+                    <div class="container_payments">
+                        <a style="color: #004024"><strong id="total_price">Subtotal: {{ on_hold.total_price }}</strong></a>
+                        <br>
+                        {% if on_hold.is_valid %}
+                            <a href="/info_client/" id="payment_button" class="remove btn-buy">
+                                <i class=" fa fa-shopping-cart">
+                                </i>
+                                Comprar
+                            </a>
+                        {% else %}
+                            <a href="/info_client/" id="payment_button" class="remove btn-buy disabled"
+                               style="cursor: default">
+                                <i class=" fa fa-shopping-cart">
+                                </i>
+                                Comprar
+                            </a>
+                        {% endif %}
+                    </div>
+                    <div class="carrito row clearfix">
+                        {% for p in on_hold.products.all %}
+                            <div class="row clearfix product_list_pc" id="product_{{ p.pk }}">
+                                <div class="span2" style="text-align: center">
+                                    {% thumbnail p.product.image "100x100" as imagen %}
+                                        <a href="/product/{{ p.product.pk }}/">
+                                            <img src="{{ imagen.url }}">
+                                        </a>
+                                    {% endthumbnail %}
                                 </div>
-                            </div>
-                            <div class="span2 precio_total">
-                                <h5>&nbsp;</h5>
-                                <a class="precio_holder">Precio Total: </a>
-                                <a class="precio" id="precio_{{ p.pk }}">{{ p.price }}</a>
-                            </div>
-                            <div class="span2 properties validation" id="my_msg_{{ p.pk }}">
-                                <h5>&nbsp;</h5>
-                                {% if p.valid %}
-                                    <a class="my_success" id="succes_{{ p.pk }}">
-                                        <i class="fa fa-check"></i>
-                                        Es posible realizar la compra
-                                    </a>
-                                    <a style="display: none" class="my_error" id="error_{{ p.pk }}">
-                                        <i class="fa fa-times"></i>
-                                        No existen tal disponibilidad.
-                                    </a>
-                                {% else %}
-                                    {#TODO: Poner un texto de error que esté bueno#}
-                                    <a style="display: none" class="my_success" id="succes_{{ p.pk }}">
-                                        <i class="fa fa-check"></i>
-                                        Es posible realizar la compra
-                                    </a>
-                                    <a class="my_error" id="error_{{ p.pk }}">
-                                        <i class="fa fa-times"></i>
-                                        No existen tal disponibilidad.
-                                    </a>
-                                {% endif %}
-                            </div>
-                        </div>
-                        <div class="mobile-wrapper mobile_product">
-                            <div class="span2" style="text-align: center">
-                                {% thumbnail p.product.image "100x100" as imagen %}
-                                    <a href="/product/{{ p.product.pk }}/">
-                                        <img src="{{ imagen.url }}">
-                                    </a>
-                                {% endthumbnail %}
-                            </div>
-                            <div class="span3 properties">
-                                <h5>
-                                    Producto: <a style="color: #004024" id="dscrptn_{{ p.pk }}"
-                                                 href="/product/{{ p.product.pk }}/">{{ p.product.name }}</a>
-                                </h5>
-                                <h5>
-                                    {{ p.attribute }}
-                                </h5>
-                            </div>
-                            <div class="span2">
-                                <div class="selector-wrapper quantity_holder" style="text-align: left">
-                                    <a style="margin-top: 5px;float: left; margin-right: 10px; color: black">Cantidad: </a>
-                                    <label for="quantity_{{ p.pk }}_mobile" style="display: none">Cantidad</label>
-                                    <input id="quantity_{{ p.pk }}_mobile" style="width: 41px; height: 17px;"
-                                           type="number"
-                                           onchange="CheckMobile({{ p.pk }}, {{ p.product.price|safe }})"
-                                           name="quantity" value="{{ p.amount }}" min="1"
-                                           class="tc item-quantity quantity_select"/>
-                                    <a class="remove btn-delete" style="cursor: pointer; float: right; margin-top: 4px"
+                                <div class="span3 properties">
+                                    <h5>
+                                        Producto: <a style="color: #004024" id="dscrptn_{{ p.pk }}"
+                                                     href="/product/{{ p.product.pk }}/">{{ p.product.name }}</a>
+                                    </h5>
+                                    <h5>
+                                        {{ p.attribute }}
+                                    </h5>
+                                    <a class="remove btn-delete" style="cursor: pointer"
                                        onclick="Eliminate({{ p.pk }})">
                                         <i class=" fa fa-trash-o">
                                         </i>
                                         Eliminar
                                     </a>
                                 </div>
+                                <div class="span2 quantity_selector">
+                                    <div class="selector-wrapper quantity_holder">
+                                        <input id="quantity_{{ p.pk }}"
+                                               style="width: 41px; height: 17px; margin-top: 15px"
+                                               type="number" onchange="Check({{ p.pk }}, {{ p.product.price|safe }})"
+                                               name="quantity" value="{{ p.amount }}" min="1"
+                                               class="tc item-quantity quantity_select"/>
+                                    </div>
+                                </div>
+                                <div class="span2 precio_total">
+                                    <h5>&nbsp;</h5>
+                                    <a class="precio_holder">Precio Total: </a>
+                                    <a class="precio" id="precio_{{ p.pk }}">{{ p.price }}</a>
+                                </div>
+                                <div class="span2 properties validation" id="my_msg_{{ p.pk }}">
+                                    <h5>&nbsp;</h5>
+                                    {% if p.valid %}
+                                        <a class="my_success" id="succes_{{ p.pk }}">
+                                            <i class="fa fa-check"></i>
+                                            Es posible realizar la compra
+                                        </a>
+                                        <a style="display: none" class="my_error" id="error_{{ p.pk }}">
+                                            <i class="fa fa-times"></i>
+                                            No existen tal disponibilidad.
+                                        </a>
+                                    {% else %}
+                                        {#TODO: Poner un texto de error que esté bueno#}
+                                        <a style="display: none" class="my_success" id="succes_{{ p.pk }}">
+                                            <i class="fa fa-check"></i>
+                                            Es posible realizar la compra
+                                        </a>
+                                        <a class="my_error" id="error_{{ p.pk }}">
+                                            <i class="fa fa-times"></i>
+                                            No existen tal disponibilidad.
+                                        </a>
+                                    {% endif %}
+                                </div>
                             </div>
-                            <div class="span2 precio_total" style="margin-top: 7px">
-                                <a class="precio_holder">Precio Total: </a>
-                                <a class="precio" id="precio_{{ p.pk }}_mobile">{{ p.price }}</a>
+                            <div class="mobile-wrapper mobile_product">
+                                <div class="span2" style="text-align: center">
+                                    {% thumbnail p.product.image "100x100" as imagen %}
+                                        <a href="/product/{{ p.product.pk }}/">
+                                            <img src="{{ imagen.url }}">
+                                        </a>
+                                    {% endthumbnail %}
+                                </div>
+                                <div class="span3 properties">
+                                    <h5>
+                                        Producto: <a style="color: #004024" id="dscrptn_{{ p.pk }}"
+                                                     href="/product/{{ p.product.pk }}/">{{ p.product.name }}</a>
+                                    </h5>
+                                    <h5>
+                                        {{ p.attribute }}
+                                    </h5>
+                                </div>
+                                <div class="span2">
+                                    <div class="selector-wrapper quantity_holder" style="text-align: left">
+                                        <a style="margin-top: 5px;float: left; margin-right: 10px; color: black">Cantidad: </a>
+                                        <label for="quantity_{{ p.pk }}_mobile" style="display: none">Cantidad</label>
+                                        <input id="quantity_{{ p.pk }}_mobile" style="width: 41px; height: 17px;"
+                                               type="number"
+                                               onchange="CheckMobile({{ p.pk }}, {{ p.product.price|safe }})"
+                                               name="quantity" value="{{ p.amount }}" min="1"
+                                               class="tc item-quantity quantity_select"/>
+                                        <a class="remove btn-delete"
+                                           style="cursor: pointer; float: right; margin-top: 4px"
+                                           onclick="Eliminate({{ p.pk }})">
+                                            <i class=" fa fa-trash-o">
+                                            </i>
+                                            Eliminar
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="span2 precio_total" style="margin-top: 7px">
+                                    <a class="precio_holder">Precio Total: </a>
+                                    <a class="precio" id="precio_{{ p.pk }}_mobile">{{ p.price }}</a>
+                                </div>
+                                <div class="span2 properties validation" id="my_msg_{{ p.pk }}_mobile"
+                                     style="margin-top: 7px">
+                                    {% if p.valid %}
+                                        <a class="my_success" id="succes_{{ p.pk }}_mobile">
+                                            <i class="fa fa-check"></i>
+                                            Es posible realizar la compra
+                                        </a>
+                                        <a style="display: none" class="my_error" id="error_{{ p.pk }}_mobile">
+                                            <i class="fa fa-times"></i>
+                                            No existen tal disponibilidad.
+                                        </a>
+                                    {% else %}
+                                        {#TODO: Poner un texto de error que esté bueno#}
+                                        <a style="display: none" class="my_success" id="succes_{{ p.pk }}_mobile">
+                                            <i class="fa fa-check"></i>
+                                            Es posible realizar la compra
+                                        </a>
+                                        <a class="my_error" id="error_{{ p.pk }}_mobile">
+                                            <i class="fa fa-times"></i>
+                                            No existen tal disponibilidad.
+                                        </a>
+                                    {% endif %}
+                                </div>
                             </div>
-                            <div class="span2 properties validation" id="my_msg_{{ p.pk }}_mobile"
-                                 style="margin-top: 7px">
-                                {% if p.valid %}
-                                    <a class="my_success" id="succes_{{ p.pk }}_mobile">
-                                        <i class="fa fa-check"></i>
-                                        Es posible realizar la compra
-                                    </a>
-                                    <a style="display: none" class="my_error" id="error_{{ p.pk }}_mobile">
-                                        <i class="fa fa-times"></i>
-                                        No existen tal disponibilidad.
-                                    </a>
-                                {% else %}
-                                    {#TODO: Poner un texto de error que esté bueno#}
-                                    <a style="display: none" class="my_success" id="succes_{{ p.pk }}_mobile">
-                                        <i class="fa fa-check"></i>
-                                        Es posible realizar la compra
-                                    </a>
-                                    <a class="my_error" id="error_{{ p.pk }}_mobile">
-                                        <i class="fa fa-times"></i>
-                                        No existen tal disponibilidad.
-                                    </a>
-                                {% endif %}
-                            </div>
+                        {% endfor %}
+                        {#                    <a style="color: #555555; padding-top: 10px; display: inline-block">* Los precios de los productos incluyen IVA</a>#}
+                    </div>
+                </div>
+            {% endif %}
+            {#    DONE: Do this#}
+            {% if shops %}
+                <div class="header">
+                    <h3 style="color: #004024"><strong>Carritos anteriores:</strong></h3>
+                </div>
+                <div class="container">
+                    {% for s in shops %}
+                        <div class="header">
+                            <h5 style="color: #004024">{{ s.date | date }} ({{ s.total_price }})
+                                <a style="cursor: pointer; font-weight: bold;" data-open="1" id="link_{{ s.pk }}"
+                                   onclick="Collapse({{ s.pk }})">
+                                    Ver los productos
+                                </a>
+                            </h5>
+                        </div>
+                        <div id="carrito_{{ s.pk }}" class="products_container">
+                            <ul>
+                                {% for p in s.products.all %}
+                                    <li>
+                                        <a style="color: #004024"
+                                           href="/product/{{ p.product.pk }}/">{{ p.amount }} {{ p.product.name }}
+                                            - {{ p.to_show_old_cart }}</a>
+                                    </li>
+                                {% endfor %}
+                            </ul>
                         </div>
                     {% endfor %}
-                    {#                    <a style="color: #555555; padding-top: 10px; display: inline-block">* Los precios de los productos incluyen IVA</a>#}
                 </div>
-            </div>
-        {% endif %}
-        {#    DONE: Do this#}
-        {% if shops %}
+            {% endif %}
+        {% else %}
             <div class="header">
-                <h3 style="color: #004024"><strong>Carritos anteriores:</strong></h3>
-            </div>
-            <div class="container">
-                {% for s in shops %}
-                    <div class="header">
-                        <h5 style="color: #004024">{{ s.date | date }} ({{ s.total_price }})
-                            <a style="cursor: pointer; font-weight: bold;" data-open="1" id="link_{{ s.pk }}"
-                               onclick="Collapse({{ s.pk }})">
-                                Ver los productos
-                            </a>
-                        </h5>
-                    </div>
-                    <div id="carrito_{{ s.pk }}" class="products_container">
-                        <ul>
-                            {% for p in s.products.all %}
-                                <li>
-                                    <a style="color: #004024"
-                                       href="/product/{{ p.product.pk }}/">{{ p.amount }} {{ p.product.name }}
-                                        - {{ p.to_show_old_cart }}</a>
-                                </li>
-                            {% endfor %}
-                        </ul>
-                    </div>
-                {% endfor %}
+                <h3 style="color: #004024; margin-bottom: 37px"><strong>No hay ningún carrito para mostrar</strong></h3>
             </div>
         {% endif %}
-    {% else %}
-        <div class="header">
-            <h3 style="color: #004024; margin-bottom: 37px"><strong>No hay ningún carrito para mostrar</strong></h3>
-        </div>
-    {% endif %}
-    {% if purchases == 0 %}
-        <script>
-            $("#payment_button").addClass("disabled").css("cursor", "default").click(function () {
-                return false;
-            });
-        </script>
-    {% endif %}
+        {% if purchases == 0 %}
+            <script>
+                $("#payment_button").addClass("disabled").css("cursor", "default").click(function () {
+                    return false;
+                });
+            </script>
+        {% endif %}
+    </div>
 
     <script>
         if (document.getElementById("total_price").innerHTML == "Total: 0 €") {
             $("#payment_button").addClass("disabled").css("cursor", "default").click(function () {
-                            return false;
-                        });
+                return false;
+            });
         }
         function Collapse(id) {
             $("#carrito_" + id).slideToggle();

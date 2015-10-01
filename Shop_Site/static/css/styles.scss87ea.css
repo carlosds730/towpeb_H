@@ -3635,8 +3635,8 @@ button.close {
         margin-right: 30px;
         font-size: 20px;
         color: #004024;
-        /*font-family: Helvetica, Arial, sans-serif;*/
-        font-family: 'Brandon Bld'
+        font-family: Helvetica, Arial, sans-serif;
+        /*font-family: 'Brandon Bld'*/
         /*font: 20px "Source Sans Pro", Helvetica, sans-serif !important*/
 
     }
@@ -3741,6 +3741,43 @@ button.close {
         top: 29%;
         left: 0%;
         padding: 17px 0px;
+    }
+
+    .carrito {
+        width: 996px;
+        margin: 0 auto;
+    }
+
+    .properties {
+        width: 17%;
+    }
+
+    .quantity_selector {
+        width: 13%;
+        /*padding-left: 5%;*/
+    }
+
+    .quantity_holder {
+        text-align: center;
+    }
+
+    .precio_total {
+        width: 17%;
+        text-align: center;
+    }
+
+    .validation {
+        width: 25%;
+        text-align: right;
+    }
+
+    .container_payments {
+        /*padding-left: 5%;*/
+    }
+
+    .cart_shop_container_pc_only {
+        width: 996px;
+        margin: 0 auto;
     }
 }
 

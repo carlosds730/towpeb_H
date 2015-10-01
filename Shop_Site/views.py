@@ -10,10 +10,6 @@ from Shop_Site import models
 from Shop_Site import stopwords
 
 
-
-# Create your views here.
-
-
 def get_login(cookies):
     try:
         user = cookies['user']
@@ -43,10 +39,19 @@ def add_info_home(request, data, url='base.html'):
         if log:
             p = models.Purchase.objects.get(client__pk=int(log[0]), on_hold=True)
             cant = p.amount
+        else:
+            _pk = int(request.COOKIES['purchase'])
+            p = models.Purchase.objects.get(pk=_pk)
+            cant = p.amount
     except KeyError:
         cant = 0
     except models.Purchase.DoesNotExist:
         cant = 0
+    try:
+        cant = data['purchase']
+        del data['purchase']
+    except KeyError:
+        pass
     data.update({
         'categories': categories,
         'purchases': cant,
@@ -59,6 +64,19 @@ def set_cookies(_render, client):
     _render.set_cookie('user', str(client.email))
     _render.set_cookie('password', str(client.password))
     return _render
+
+
+def get_purchase(cookies):
+    try:
+        _pk = int(cookies['purchase'])
+        purchase = models.Purchase.objects.get(pk=_pk)
+        return purchase
+    except KeyError:
+        return None
+    except ValueError:
+        return None
+    except models.Purchase.DoesNotExist:
+        return None
 
 
 def login(request):
@@ -75,6 +93,17 @@ def login(request):
                 if password == client.password:
                     value = redirect(request.POST['next'])
                     tmp = set_cookies(value, client)
+                    purchase = get_purchase(request.COOKIES)
+                    if purchase:
+                        try:
+                            old_purchase = models.Purchase.objects.get(client__pk=client.pk, on_hold=True)
+                            old_purchase.client = None
+                            old_purchase.on_hold = False
+                            old_purchase.save()
+                        except models.Purchase.DoesNotExist:
+                            pass
+                        purchase.client = client
+                        purchase.save()
                     return tmp
                 else:
                     return render(request, 'login.html', {
@@ -101,9 +130,10 @@ def login(request):
 
 def shutdown(request):
     if request.method == 'GET':
-        categories = models.Category.objects.all()
+
         value = HttpResponseRedirect('/')
         value.delete_cookie('user')
+        value.delete_cookie('purchase')
         value.delete_cookie('password')
         return value
 
@@ -130,7 +160,12 @@ def register(request):
             except models.Clients.DoesNotExist:
                 client = models.Clients.objects.create(name=request.POST['name'], email=email,
                                                        password=hash(password))
+
                 client.save()
+                purchase = get_purchase(request.COOKIES)
+                if purchase:
+                    purchase.client = client
+                    purchase.save()
                 try:
                     next = request.POST['next']
                     if '/login/' in next:
@@ -226,7 +261,8 @@ def categories(request, pk):
             if log:
                 purchase = models.Purchase.objects.get(client__pk=int(log[0]), on_hold=True)
             else:
-                purchase = None
+                artificial_purchase = int(request.COOKIES['purchase'])
+                purchase = models.Purchase.objects.get(pk=artificial_purchase)
         except KeyError:
             purchase = None
         except models.Purchase.DoesNotExist:
@@ -245,7 +281,6 @@ def categories(request, pk):
             attr = models.Attribute.objects.get(pk=int(attr_pk))
         except models.Attribute.DoesNotExist:
             raise Http404('Not Found')
-
         try:
             category = models.Category.objects.get(pk=int(pk))
         except models.Category.DoesNotExist:
@@ -254,7 +289,7 @@ def categories(request, pk):
         except ValueError:
             category = None
             raise Http404('Not Found')
-
+        mark = None
         if purchase:
             try:
                 sale_product = purchase.products.get(product=product, attribute=attr)
@@ -267,15 +302,15 @@ def categories(request, pk):
                 purchase.products.add(sale_product)
                 purchase.amount += 1
             purchase.save()
-
         else:
             try:
                 if log:
                     client = models.Clients.objects.get(pk=log[0])
                 else:
-                    raise Http404('Client Not Found')
+                    client = None
             except models.Clients.DoesNotExist:
                 raise Http404('Client Not Found')
+
             sale_product = models.Sale_Product.objects.create(product=product, attribute=attr)
             sale_product.amount += quantity
             sale_product.save()
@@ -284,16 +319,32 @@ def categories(request, pk):
             purchase.client = client
             purchase.amount = 1
             purchase.save()
-
+            if not client:
+                mark = purchase.pk
         products = models.Products.objects.filter(category__pk=category.pk, is_available=True)
-
         if quantity == 1:
             to_send = "1 " + product.name + " se ha añadido al carrito"
         else:
             to_send = str(quantity) + " " + product.name + " se han añadido al carrito"
-
+        if mark:
+            ret = add_info_home(request,
+                                {
+                                    'category': category,
+                                    'products': get_all_products(products),
+                                    'notification': product,
+                                    'message': to_send,
+                                    'purchase': 1
+                                },
+                                'products_collection.html')
+            ret.set_cookie('purchase', str(mark))
+            return ret
         return add_info_home(request,
-                             {'category': category, 'products': get_all_products(products), 'notification': product, 'message': to_send},
+                             {
+                                 'category': category,
+                                 'products': get_all_products(products),
+                                 'notification': product,
+                                 'message': to_send
+                             },
                              'products_collection.html')
 
 
@@ -444,10 +495,17 @@ def cart_shop(request):
 
             my_car = None
 
-            cliente, _ = get_login(request.COOKIES)
+            cliente = get_login(request.COOKIES)
+            if cliente:
+                cliente = cliente[0]
 
             for carrito in sale_prod.purchase.all():
-                if carrito.on_hold and cliente == carrito.client.pk:
+                if carrito.on_hold and cliente and cliente == carrito.client.pk:
+                    sale_prod.amount = amonut
+                    sale_prod.save()
+                    my_car = carrito
+                    break
+                else:
                     sale_prod.amount = amonut
                     sale_prod.save()
                     my_car = carrito
@@ -481,7 +539,14 @@ def cart_shop(request):
                     shops.append(purchase)
             return add_info_home(request, {'on_hold': on_hold, 'shops': shops}, 'cart_shop.html')
         else:
-            return HttpResponseRedirect('/login/')
+            try:
+                _pk = int(request.COOKIES['purchase'])
+                purchase = models.Purchase.objects.get(pk=_pk)
+                return add_info_home(request, {'on_hold': purchase, 'shops': []}, 'cart_shop.html')
+            except KeyError:
+                return HttpResponseRedirect('/login/')
+            except models.Purchase.DoesNotExist:
+                return Http404('Purchase not found')
 
 
 def about_us(request):
@@ -519,7 +584,10 @@ def eliminate(request):
         try:
             log = get_login(request.COOKIES)
             pk = request.GET['pk']
-            purchase = models.Purchase.objects.get(client__pk=log[0], on_hold=True)
+            if log:
+                purchase = models.Purchase.objects.get(client__pk=log[0], on_hold=True)
+            else:
+                purchase = models.Purchase.objects.get(pk=int(request.COOKIES['purchase']))
             sale_product = purchase.products.get(pk=int(pk))
             purchase.products.remove(sale_product)
             purchase.amount -= 1
@@ -567,9 +635,14 @@ def info_client(request):
             except models.Clients.DoesNotExist:
                 return HttpResponseRedirect('/login/')
         else:
-            return HttpResponseRedirect('/login/')
-    # TODO: Do this POST method. Right now it goes where it should but it doesn't verify anything
+            purchase = get_purchase(request.COOKIES)
+            if purchase:
+                return add_info_home(request, {'on_hold': purchase, 'shops': []}, 'info_client.html')
+            else:
+                return Http404('Purchase Error')
+
     if request.method == 'POST':
+        # TODO: Do this POST method. Right now it goes where it should but it doesn't verify anything
         log = get_login(request.COOKIES)
         if log:
             on_hold = None
