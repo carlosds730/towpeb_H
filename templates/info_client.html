@@ -459,7 +459,6 @@
             var email_field = document.getElementById("checkout_shipping_address_email").value;
 
             if (!validateEmail(email_field)) {
-                alert("email error");
                 $("#checkout_shipping_address_email").parent().addClass("field--error");
                 count++;
             }
@@ -468,7 +467,6 @@
 
                 if ($(this).get(0).value == "") {
                     count++;
-                    alert($(this).get(0));
                     $(this).parent().addClass("field--error");
                 }
             });
