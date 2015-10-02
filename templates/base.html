@@ -506,8 +506,16 @@
         function Close(num) {
             if (num == 1)
                 $("#product_added").fadeOut();
-            else
-                $("#email_added").fadeOut();
+            else {
+                if (num == 3) {
+                    $(".alert").slideUp();
+{#                    $(".alert").fadeOut();#}
+
+                }
+                else
+                    $("#email_added").fadeOut();
+            }
+
         }
     </script>
 

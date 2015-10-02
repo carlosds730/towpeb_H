@@ -224,8 +224,17 @@
                                         {% if error %}
                                             <div class="alert alert-danger alert-dismissable fade in">
                                                 <button type="button" class="close" data-dismiss="alert"
-                                                        aria-hidden="true" onclick="Close()">&times;</button>
-                                                Faltan campos por llenar.
+                                                        aria-hidden="true" onclick="Close(3)"
+                                                        style="top:-2px">&times;</button>
+                                                Hay errores en los campos
+                                            </div>
+                                        {% else %}
+                                            <div class="alert alert-danger alert-dismissable fade in"
+                                                 style="display: none">
+                                                <button type="button" class="close" data-dismiss="alert"
+                                                        aria-hidden="true" onclick="Close(3)"
+                                                        style="top:-2px">&times;</button>
+                                                Hay errores en los campos
                                             </div>
                                         {% endif %}
 
@@ -258,10 +267,12 @@
                                                 </div>
                                                 <div class="field field--optional">
                                                     <label class="field__label"
-                                                           for="checkout_shipping_address_company">Compañía</label>
+                                                           for="checkout_shipping_address_company">Compañía
+                                                        (opcional)</label>
 
                                                     <div class="field__input-wrapper">
-                                                        <input placeholder="Compañía" required value="{{ company }}"
+                                                        <input placeholder="Compañía (opcional)"
+                                                               value="{{ company }}"
                                                                autocomplete="shipping company"
                                                                data-backup="company" class="field__input" size="30"
                                                                type="text" name="company"
@@ -274,7 +285,7 @@
                                                            for="checkout_shipping_address_province">Región</label>
 
                                                     <div class="field__input-wrapper field__input-wrapper--select">
-                                                        <input placeholder="Región" required data-backup="province"
+                                                        <input placeholder="Región" data-backup="province"
                                                                value="{{ province }}" class="field__input" type="text"
                                                                name="province" id="checkout_shipping_address_province"/>
                                                     </div>
@@ -285,6 +296,7 @@
 
                                                     <div class="field__input-wrapper">
                                                         <input placeholder="Correo electrónico" value="{{ email }}"
+                                                               required
                                                                data-backup="e-mail"
                                                                class="field__input" size="30" type="email" name="email"
                                                                id="checkout_shipping_address_email"/>
@@ -325,13 +337,6 @@
                                                 Información del envío
                                             </h2>
                                         </div>
-                                        {% if error %}
-                                            <div class="alert alert-danger alert-dismissable fade in">
-                                                <button type="button" class="close" data-dismiss="alert"
-                                                        aria-hidden="true" onclick="Close()">&times;</button>
-                                                Faltan campos por llenar.
-                                            </div>
-                                        {% endif %}
 
                                         <div class="section__content">
                                             <div class="fieldset">
@@ -426,8 +431,9 @@
 
                                 </div>
                                 <div class="step__footer">
-                                    <button name="button" type="submit" class="step__footer__continue-btn btn ">
-                                        <span class="btn__content">Continuiar</span>
+                                    <button name="button" type="submit" onclick="Validate"
+                                            class="step__footer__continue-btn btn ">
+                                        <span class="btn__content">Continuar</span>
                                         <i class="btn__spinner icon icon--button-spinner"></i>
                                     </button>
                                 </div>
@@ -439,5 +445,37 @@
             </div>
         </div>
     </div>
+    <script>
+        function validateEmail(email) {
+            var re;
+            re = /(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)])/;
+            return re.test(email);
+        }
 
+        window.onsubmit = Validate;
+
+        function Validate() {
+            var count = 0;
+            var email_field = document.getElementById("checkout_shipping_address_email").value;
+
+            if (!validateEmail(email_field)) {
+                alert("email error");
+                $("#checkout_shipping_address_email").parent().addClass("field--error");
+                count++;
+            }
+
+            $(":required").each(function () {
+
+                if ($(this).get(0).value == "") {
+                    count++;
+                    alert($(this).get(0));
+                    $(this).parent().addClass("field--error");
+                }
+            });
+            if (count != 0) {
+                $(".alert-dismissable").slideDown();
+                return false;
+            }
+        }
+    </script>
 {% endblock %}

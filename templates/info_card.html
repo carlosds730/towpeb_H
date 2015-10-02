@@ -14,6 +14,22 @@
     </div>
 {% endblock %}
 {% block form_content %}
+    <form id="checkout" method="post" action="/payment-methods">
+        <div id="payment-form"></div>
+        <input type="submit" value="Pay $10">
+    </form>
+
+    <script src="https://js.braintreegateway.com/v2/braintree.js"></script>
+
+    <script>
+        braintree.setup(
+                // Replace this with a client token from your server
+                {{ token }},
+                "dropin", {
+                    container: "payment-form"
+                });
+    </script>
+
     <form class="edit_checkout animate-floating-labels" action="/" accept-charset="UTF-8" method="post">
         <div class="section" data-payment-method="">
             <div class="section__header">
@@ -49,7 +65,8 @@
   </span>
 
                                     </div>
-                                    <p class="field__message field__message--error">Por favor, inserte un número de tarje válido.</p></div>
+                                    <p class="field__message field__message--error">Por favor, inserte un número de
+                                        tarjeta válido.</p></div>
 
 
                                 <div class="field--half field field--required field field--show-floating-label">

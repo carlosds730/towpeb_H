@@ -127,3 +127,19 @@ MEDIA_URL = '/media/'
 TEMPLATE_DIRS = (
     os.path.join(BASE_DIR, 'templates'),
 )
+
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
+
+EMAIL_FILE_PATH = os.path.join(BASE_DIR, 'emails')  # change this to a proper location
+
+# EMAIL_HOST =
+
+# EMAIL_HOST_USER =
+
+# EMAIL_PORT = 587
+
+# EMAIL_USE_TLS = True
+
+# EMAIL_HOST_PASSWORD =
