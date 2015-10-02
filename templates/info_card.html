@@ -16,15 +16,13 @@
 {% block form_content %}
     <form id="checkout" method="post" action="/payment-methods">
         <div id="payment-form"></div>
-        <input type="submit" value="Pay $10">
+        <input type="submit" value="Pagar">
     </form>
 
     <script src="https://js.braintreegateway.com/v2/braintree.js"></script>
 
     <script>
-        braintree.setup(
-                // Replace this with a client token from your server
-                {{ token }},
+        braintree.setup({{ token }},
                 "dropin", {
                     container: "payment-form"
                 });

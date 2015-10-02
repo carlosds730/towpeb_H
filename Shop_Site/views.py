@@ -562,7 +562,7 @@ def cart_shop(request):
             except KeyError:
                 return HttpResponseRedirect('/login/')
             except models.Purchase.DoesNotExist:
-                return Http404('Purchase not found')
+                raise Http404('Purchase not found')
 
 
 def about_us(request):
@@ -616,8 +616,8 @@ def eliminate(request):
             raise Http404('')
 
 
-def send_mail():
-    pass
+def send_mail(email, password):
+    print('http://127.0.0.1:8000/change_password/?email=' + email + '&key=' + password)
 
 
 def info_client(request):
@@ -662,7 +662,7 @@ def info_client(request):
             if purchase:
                 return add_info_home(request, {'on_hold': purchase, 'shops': []}, 'info_client.html')
             else:
-                return Http404('Purchase Error')
+                raise Http404('Purchase Error')
     if request.method == 'POST':
         # TODO: Do this POST method. Right now it goes where it should but it doesn't verify anything
         log = get_login(request.COOKIES)
@@ -677,7 +677,7 @@ def info_client(request):
         else:
             on_hold = get_purchase(request.COOKIES)
             if not on_hold:
-                return Http404('Purchase Error')
+                raise Http404('Purchase Error')
         try:
             save = request.POST['checkout']
         except KeyError:
@@ -763,7 +763,7 @@ def info_client(request):
                     add.save()
                     add.client = client
                     add.save()
-                    send_mail()
+                    send_mail(client.email, client.password)
                     if log:
                         return HttpResponseRedirect('/payment/payments-billing/')
                     else:
@@ -865,3 +865,36 @@ def payment_billing(request):
             purchase = get_purchase(request.COOKIES)
             if purchase:
                 return add_info_home(request, {'on_hold': purchase, 'shops': [], 'token': token}, 'info_card.html')
+
+
+def change_password(request):
+    if request.method == 'GET':
+        mail = request.GET['email']
+        password = request.GET['key']
+        try:
+            client = models.Clients.objects.get(email=mail)
+            if client.password == password:
+                return render(request, 'change_password.html', {'email': mail})
+            else:
+                raise Http404('Not Found')
+        except models.Clients.DoesNotExist:
+            raise Http404('Not Found')
+    elif request.method == 'POST':
+        try:
+            new_password = request.POST['password']
+            confirm_password = request.POST['confirm_password']
+            mail = request.POST['email']
+            if new_password != confirm_password:
+                return render(request, 'change_password.html', {'email': mail, 'error': 'Las contraseñas no coinciden'})
+            else:
+                try:
+                    client = models.Clients.objects.get(email=mail)
+                    client.password = hash(new_password)
+                    client.save()
+                    ret = HttpResponseRedirect('/')
+                    set_cookies(ret, client)
+                    return ret
+                except models.Clients.DoesNotExist:
+                    raise Http404('Not Found')
+        except KeyError:
+            raise Http404('Not Found')
