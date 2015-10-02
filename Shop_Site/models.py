@@ -133,7 +133,10 @@ class Clients(models.Model):
         verbose_name = 'Cliente'
         verbose_name_plural = 'Clientes'
 
-    name = models.CharField(verbose_name='Nombre', max_length=200, help_text='Nombre del cliente')
+    name = models.CharField(verbose_name='Nombre', max_length=200, help_text='Nombre del cliente', blank=True)
+
+    last_name = models.CharField(verbose_name='Apellidos', max_length=200, help_text='Apellidos del cliente',
+                                 blank=True)
 
     email = models.EmailField(verbose_name="Email", help_text="Correo del cliente")
 
@@ -248,10 +251,6 @@ class Address(models.Model):
 
     client = models.OneToOneField('Clients', verbose_name='Clientes', related_name='address', blank=True,
                                   null=True)
-
-    first_name = models.CharField(verbose_name='Nombre', blank=True, null=True, max_length=100)
-
-    last_name = models.CharField(verbose_name='Apellidos', blank=True, null=True, max_length=200)
 
     address = models.CharField(verbose_name='Dirección', blank=True, null=True, max_length=400)
 

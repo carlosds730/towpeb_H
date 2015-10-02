@@ -52,7 +52,12 @@ function handleStackInfo(e, t) {
 }
 function normalizeFrame(e) {
     if (e.url) {
-        var t, n = {filename: e.url, lineno: e.line, colno: e.column, "function": e.func || "?"}, r = extractContextFromFrame(e);
+        var t, n = {
+            filename: e.url,
+            lineno: e.line,
+            colno: e.column,
+            "function": e.func || "?"
+        }, r = extractContextFromFrame(e);
         if (r) {
             var o = ["pre_context", "context_line", "post_context"];
             for (t = 3; t--;)n[o[t]] = r[t]
@@ -81,7 +86,12 @@ function processException(e, t, n, r, o, i) {
             lineno: r,
             in_app: !0
         }]
-    }), t = truncate(t, 100), globalOptions.ignoreUrls && globalOptions.ignoreUrls.test(n) || (!globalOptions.whitelistUrls || globalOptions.whitelistUrls.test(n)) && (s = r ? t + " at " + r : t, send(objectMerge({exception: {type: e, value: t}, stacktrace: a, culprit: n, message: s}, i)))))
+    }), t = truncate(t, 100), globalOptions.ignoreUrls && globalOptions.ignoreUrls.test(n) || (!globalOptions.whitelistUrls || globalOptions.whitelistUrls.test(n)) && (s = r ? t + " at " + r : t, send(objectMerge({
+        exception: {
+            type: e,
+            value: t
+        }, stacktrace: a, culprit: n, message: s
+    }, i)))))
 }
 function objectMerge(e, t) {
     return t ? (each(t, function (t, n) {
@@ -129,7 +139,11 @@ function afterLoad() {
     var e = window.RavenConfig;
     e && Raven.config(e.dsn, e.config).install()
 }
-var TraceKit = {remoteFetching: !1, collectWindowErrors: !0, linesOfContext: 7}, _slice = [].slice, UNKNOWN_FUNCTION = "?";
+var TraceKit = {
+    remoteFetching: !1,
+    collectWindowErrors: !0,
+    linesOfContext: 7
+}, _slice = [].slice, UNKNOWN_FUNCTION = "?";
 TraceKit.wrap = function (e) {
     function t() {
         try {
@@ -169,7 +183,11 @@ TraceKit.wrap = function (e) {
         var a = null;
         if (h)TraceKit.computeStackTrace.augmentStackTraceWithInitialElement(h, t, n, e), s(); else if (i)a = TraceKit.computeStackTrace(i), r(a, !0); else {
             var l = {url: t, line: n, column: o};
-            l.func = TraceKit.computeStackTrace.guessFunctionName(l.url, l.line), l.context = TraceKit.computeStackTrace.gatherContext(l.url, l.line), a = {message: e, url: document.location.href, stack: [l]}, r(a, !0)
+            l.func = TraceKit.computeStackTrace.guessFunctionName(l.url, l.line), l.context = TraceKit.computeStackTrace.gatherContext(l.url, l.line), a = {
+                message: e,
+                url: document.location.href,
+                stack: [l]
+            }, r(a, !0)
         }
         return u ? u.apply(this, arguments) : !1
     }
@@ -255,7 +273,11 @@ TraceKit.wrap = function (e) {
     }
 
     function a(e, n) {
-        for (var r, o, i = 0, a = n.length; a > i; ++i)if ((r = t(n[i])).length && (r = r.join("\n"), o = e.exec(r)))return {url: n[i], line: r.substring(0, o.index).split("\n").length, column: o.index - r.lastIndexOf("\n", o.index) - 1};
+        for (var r, o, i = 0, a = n.length; a > i; ++i)if ((r = t(n[i])).length && (r = r.join("\n"), o = e.exec(r)))return {
+            url: n[i],
+            line: r.substring(0, o.index).split("\n").length,
+            column: o.index - r.lastIndexOf("\n", o.index) - 1
+        };
         return null
     }
 
@@ -285,13 +307,24 @@ TraceKit.wrap = function (e) {
     function u(e) {
         if (!e.stack)return null;
         for (var t, o, i = /^\s*at (?:((?:\[object object\])?\S+(?: \[as \S+\])?) )?\(?((?:file|https?):.*?):(\d+)(?::(\d+))?\)?\s*$/i, a = /^\s*(\S*)(?:\((.*?)\))?@((?:file|https?).*?):(\d+)(?::(\d+))?\s*$/i, l = e.stack.split("\n"), u = [], c = /^(.*) is undefined$/.exec(e.message), d = 0, p = l.length; p > d; ++d) {
-            if (t = a.exec(l[d]))o = {url: t[3], func: t[1] || UNKNOWN_FUNCTION, args: t[2] ? t[2].split(",") : "", line: +t[4], column: t[5] ? +t[5] : null}; else {
+            if (t = a.exec(l[d]))o = {
+                url: t[3],
+                func: t[1] || UNKNOWN_FUNCTION,
+                args: t[2] ? t[2].split(",") : "",
+                line: +t[4],
+                column: t[5] ? +t[5] : null
+            }; else {
                 if (!(t = i.exec(l[d])))continue;
                 o = {url: t[2], func: t[1] || UNKNOWN_FUNCTION, line: +t[3], column: t[4] ? +t[4] : null}
             }
             !o.func && o.line && (o.func = n(o.url, o.line)), o.line && (o.context = r(o.url, o.line)), u.push(o)
         }
-        return u.length ? (u[0].line && !u[0].column && c ? u[0].column = s(c[1], u[0].url, u[0].line) : u[0].column || isUndefined(e.columnNumber) || (u[0].column = e.columnNumber + 1), {name: e.name, message: e.message, url: document.location.href, stack: u}) : null
+        return u.length ? (u[0].line && !u[0].column && c ? u[0].column = s(c[1], u[0].url, u[0].line) : u[0].column || isUndefined(e.columnNumber) || (u[0].column = e.columnNumber + 1), {
+            name: e.name,
+            message: e.message,
+            url: document.location.href,
+            stack: u
+        }) : null
     }
 
     function c(e) {
@@ -350,7 +383,12 @@ TraceKit.wrap = function (e) {
 
     function f(e, t) {
         for (var r, o, i, a = /function\s+([_$a-zA-Z\xA0-\uFFFF][_$a-zA-Z0-9\xA0-\uFFFF]*)?\s*\(/i, u = [], c = {}, d = !1, m = f.caller; m && !d; m = m.caller)if (m !== h && m !== TraceKit.report) {
-            if (o = {url: null, func: UNKNOWN_FUNCTION, line: null, column: null}, m.name ? o.func = m.name : (r = a.exec(m.toString())) && (o.func = r[1]), i = l(m)) {
+            if (o = {
+                    url: null,
+                    func: UNKNOWN_FUNCTION,
+                    line: null,
+                    column: null
+                }, m.name ? o.func = m.name : (r = a.exec(m.toString())) && (o.func = r[1]), i = l(m)) {
                 o.url = i.url, o.line = i.line, o.func === UNKNOWN_FUNCTION && (o.func = n(o.url, o.line));
                 var g = / '([^']+)' /.exec(e.message || e.description);
                 g && (o.column = s(g[1], i.url, i.line))
@@ -400,7 +438,16 @@ TraceKit.wrap = function (e) {
     var g = !1, v = {};
     return h.augmentStackTraceWithInitialElement = p, h.guessFunctionName = n, h.gatherContext = r, h.ofCaller = m, h
 }();
-var _Raven = window.Raven, hasJSON = !(!window.JSON || !window.JSON.stringify), lastCapturedException, lastEventId, globalServer, globalUser, globalKey, globalProject, globalOptions = {logger: "javascript", ignoreErrors: [], ignoreUrls: [], whitelistUrls: [], includePaths: [], collectWindowErrors: !0, tags: {}, extra: {}}, authQueryString, Raven = {
+var _Raven = window.Raven, hasJSON = !(!window.JSON || !window.JSON.stringify), lastCapturedException, lastEventId, globalServer, globalUser, globalKey, globalProject, globalOptions = {
+    logger: "javascript",
+    ignoreErrors: [],
+    ignoreUrls: [],
+    whitelistUrls: [],
+    includePaths: [],
+    collectWindowErrors: !0,
+    tags: {},
+    extra: {}
+}, authQueryString, Raven = {
     VERSION: "1.1.15", noConflict: function () {
         return window.Raven = _Raven, Raven
     }, config: function (e, t) {
@@ -736,10 +783,19 @@ RavenConfigError.prototype = new Error, RavenConfigError.prototype.constructor =
                     for (var t = ft || L(), n = Math.max(0, u.startTime + u.duration - t), r = n / u.duration || 0, i = 1 - r, a = 0, l = u.tweens.length; l > a; a++)u.tweens[a].run(i);
                     return s.notifyWith(e, [u, i, n]), 1 > i && l ? n : (s.resolveWith(e, [u]), !1)
                 }, u = s.promise({
-                    elem: e, props: oe.extend({}, t), opts: oe.extend(!0, {specialEasing: {}}, n), originalProperties: t, originalOptions: n, startTime: ft || L(), duration: n.duration, tweens: [], createTween: function (t, n) {
+                    elem: e,
+                    props: oe.extend({}, t),
+                    opts: oe.extend(!0, {specialEasing: {}}, n),
+                    originalProperties: t,
+                    originalOptions: n,
+                    startTime: ft || L(),
+                    duration: n.duration,
+                    tweens: [],
+                    createTween: function (t, n) {
                         var r = oe.Tween(e, u.opts, t, n, u.opts.specialEasing[t] || u.opts.easing);
                         return u.tweens.push(r), r
-                    }, stop: function (t) {
+                    },
+                    stop: function (t) {
                         var n = 0, r = t ? u.tweens.length : 0;
                         if (o)return this;
                         for (o = !0; r > n; n++)u.tweens[n].run(1);
@@ -747,7 +803,11 @@ RavenConfigError.prototype = new Error, RavenConfigError.prototype.constructor =
                     }
                 }), c = u.props;
                 for (M(c, u.opts.specialEasing); a > i; i++)if (r = yt[i].call(u, e, c, u.opts))return r;
-                return oe.map(c, O, u), oe.isFunction(u.opts.start) && u.opts.start.call(e, u), oe.fx.timer(oe.extend(l, {elem: e, anim: u, queue: u.opts.queue})), u.progress(u.opts.progress).done(u.opts.done, u.opts.complete).fail(u.opts.fail).always(u.opts.always)
+                return oe.map(c, O, u), oe.isFunction(u.opts.start) && u.opts.start.call(e, u), oe.fx.timer(oe.extend(l, {
+                    elem: e,
+                    anim: u,
+                    queue: u.opts.queue
+                })), u.progress(u.opts.progress).done(u.opts.done, u.opts.complete).fail(u.opts.fail).always(u.opts.always)
             }
 
             function z(e) {
@@ -1276,7 +1336,18 @@ RavenConfigError.prototype = new Error, RavenConfigError.prototype.constructor =
                     } else for (; t = e[r++];)n += k(t);
                     return n
                 }, C = t.selectors = {
-                    cacheLength: 50, createPseudo: r, match: he, attrHandle: {}, find: {}, relative: {">": {dir: "parentNode", first: !0}, " ": {dir: "parentNode"}, "+": {dir: "previousSibling", first: !0}, "~": {dir: "previousSibling"}}, preFilter: {
+                    cacheLength: 50,
+                    createPseudo: r,
+                    match: he,
+                    attrHandle: {},
+                    find: {},
+                    relative: {
+                        ">": {dir: "parentNode", first: !0},
+                        " ": {dir: "parentNode"},
+                        "+": {dir: "previousSibling", first: !0},
+                        "~": {dir: "previousSibling"}
+                    },
+                    preFilter: {
                         ATTR: function (e) {
                             return e[1] = e[1].replace(we, Ce), e[3] = (e[3] || e[4] || e[5] || "").replace(we, Ce), "~=" === e[2] && (e[3] = " " + e[3] + " "), e.slice(0, 4)
                         }, CHILD: function (e) {
@@ -1285,7 +1356,8 @@ RavenConfigError.prototype = new Error, RavenConfigError.prototype.constructor =
                             var t, n = !e[6] && e[2];
                             return he.CHILD.test(e[0]) ? null : (e[3] ? e[2] = e[4] || e[5] || "" : n && pe.test(n) && (t = _(n, !0)) && (t = n.indexOf(")", n.length - t) - n.length) && (e[0] = e[0].slice(0, t), e[2] = n.slice(0, t)), e.slice(0, 3))
                         }
-                    }, filter: {
+                    },
+                    filter: {
                         TAG: function (e) {
                             var t = e.replace(we, Ce).toLowerCase();
                             return "*" === e ? function () {
@@ -1334,7 +1406,8 @@ RavenConfigError.prototype = new Error, RavenConfigError.prototype.constructor =
                                 return i(e, 0, o)
                             }) : i
                         }
-                    }, pseudos: {
+                    },
+                    pseudos: {
                         not: r(function (e) {
                             var t = [], n = [], o = S(e.replace(le, "$1"));
                             return o[z] ? r(function (e, t, n, r) {
@@ -1414,8 +1487,15 @@ RavenConfigError.prototype = new Error, RavenConfigError.prototype.constructor =
                     var r, o, i, a, s, l, u, c = I[e + " "];
                     if (c)return n ? 0 : c.slice(0);
                     for (s = e, l = [], u = C.preFilter; s;) {
-                        (!r || (o = ue.exec(s))) && (o && (s = s.slice(o[0].length) || s), l.push(i = [])), r = !1, (o = ce.exec(s)) && (r = o.shift(), i.push({value: r, type: o[0].replace(le, " ")}), s = s.slice(r.length));
-                        for (a in C.filter)!(o = he[a].exec(s)) || u[a] && !(o = u[a](o)) || (r = o.shift(), i.push({value: r, type: a, matches: o}), s = s.slice(r.length));
+                        (!r || (o = ue.exec(s))) && (o && (s = s.slice(o[0].length) || s), l.push(i = [])), r = !1, (o = ce.exec(s)) && (r = o.shift(), i.push({
+                            value: r,
+                            type: o[0].replace(le, " ")
+                        }), s = s.slice(r.length));
+                        for (a in C.filter)!(o = he[a].exec(s)) || u[a] && !(o = u[a](o)) || (r = o.shift(), i.push({
+                            value: r,
+                            type: a,
+                            matches: o
+                        }), s = s.slice(r.length));
                         if (!r)break
                     }
                     return n ? s.length : s ? t.error(e) : I(e, l).slice(0)
@@ -1699,15 +1779,21 @@ RavenConfigError.prototype = new Error, RavenConfigError.prototype.constructor =
             };
             var Te = /^(?:\{[\w\W]*\}|\[[\w\W]*\])$/, _e = /([A-Z])/g;
             oe.extend({
-                cache: {}, noData: {"applet ": !0, "embed ": !0, "object ": "clsid:D27CDB6E-AE6D-11cf-96B8-444553540000"}, hasData: function (e) {
+                cache: {},
+                noData: {"applet ": !0, "embed ": !0, "object ": "clsid:D27CDB6E-AE6D-11cf-96B8-444553540000"},
+                hasData: function (e) {
                     return e = e.nodeType ? oe.cache[e[oe.expando]] : e[oe.expando], !!e && !u(e)
-                }, data: function (e, t, n) {
+                },
+                data: function (e, t, n) {
                     return c(e, t, n)
-                }, removeData: function (e, t) {
+                },
+                removeData: function (e, t) {
                     return d(e, t)
-                }, _data: function (e, t, n) {
+                },
+                _data: function (e, t, n) {
                     return c(e, t, n, !0)
-                }, _removeData: function (e, t) {
+                },
+                _removeData: function (e, t) {
                     return d(e, t, !0)
                 }
             }), oe.fn.extend({
@@ -1795,12 +1881,17 @@ RavenConfigError.prototype = new Error, RavenConfigError.prototype.constructor =
                 }
             }(), function () {
                 var t, n, r = he.createElement("div");
-                for (t in{submit: !0, change: !0, focusin: !0})n = "on" + t, (ne[t + "Bubbles"] = n in e) || (r.setAttribute(n, "t"), ne[t + "Bubbles"] = r.attributes[n].expando === !1);
+                for (t in{
+                    submit: !0,
+                    change: !0,
+                    focusin: !0
+                })n = "on" + t, (ne[t + "Bubbles"] = n in e) || (r.setAttribute(n, "t"), ne[t + "Bubbles"] = r.attributes[n].expando === !1);
                 r = null
             }();
             var De = /^(?:input|select|textarea)$/i, je = /^key/, Le = /^(?:mouse|pointer|contextmenu)|click/, Fe = /^(?:focusinfocus|focusoutblur)$/, Oe = /^([^.]*)(?:\.(.+)|)$/;
             oe.event = {
-                global: {}, add: function (e, t, n, r, o) {
+                global: {},
+                add: function (e, t, n, r, o) {
                     var i, a, s, l, u, c, d, p, f, h, m, g = oe._data(e);
                     if (g) {
                         for (n.handler && (l = n, n = l.handler, o = l.selector), n.guid || (n.guid = oe.guid++), (a = g.events) || (a = g.events = {}), (c = g.handle) || (c = g.handle = function (e) {
@@ -1817,7 +1908,8 @@ RavenConfigError.prototype = new Error, RavenConfigError.prototype.constructor =
                         }, l), (p = a[f]) || (p = a[f] = [], p.delegateCount = 0, u.setup && u.setup.call(e, r, h, c) !== !1 || (e.addEventListener ? e.addEventListener(f, c, !1) : e.attachEvent && e.attachEvent("on" + f, c))), u.add && (u.add.call(e, d), d.handler.guid || (d.handler.guid = n.guid)), o ? p.splice(p.delegateCount++, 0, d) : p.push(d), oe.event.global[f] = !0);
                         e = null
                     }
-                }, remove: function (e, t, n, r, o) {
+                },
+                remove: function (e, t, n, r, o) {
                     var i, a, s, l, u, c, d, p, f, h, m, g = oe.hasData(e) && oe._data(e);
                     if (g && (c = g.events)) {
                         for (t = (t || "").match(be) || [""], u = t.length; u--;)if (s = Oe.exec(t[u]) || [], f = m = s[1], h = (s[2] || "").split(".").sort(), f) {
@@ -1826,7 +1918,8 @@ RavenConfigError.prototype = new Error, RavenConfigError.prototype.constructor =
                         } else for (f in c)oe.event.remove(e, f + t[u], n, r, !0);
                         oe.isEmptyObject(c) && (delete g.handle, oe._removeData(e, "events"))
                     }
-                }, trigger: function (t, n, r, o) {
+                },
+                trigger: function (t, n, r, o) {
                     var i, a, s, l, u, c, d, p = [r || he], f = te.call(t, "type") ? t.type : t, h = te.call(t, "namespace") ? t.namespace.split(".") : [];
                     if (s = c = r = r || he, 3 !== r.nodeType && 8 !== r.nodeType && !Fe.test(f + oe.event.triggered) && (f.indexOf(".") >= 0 && (h = f.split("."), f = h.shift(), h.sort()), a = f.indexOf(":") < 0 && "on" + f, t = t[oe.expando] ? t : new oe.Event(f, "object" == typeof t && t), t.isTrigger = o ? 2 : 3, t.namespace = h.join("."), t.namespace_re = t.namespace ? new RegExp("(^|\\.)" + h.join("\\.(?:.*\\.|)") + "(\\.|$)") : null, t.result = void 0, t.target || (t.target = r), n = null == n ? [t] : oe.makeArray(n, [t]), u = oe.event.special[f] || {}, o || !u.trigger || u.trigger.apply(r, n) !== !1)) {
                         if (!o && !u.noBubble && !oe.isWindow(r)) {
@@ -1844,14 +1937,16 @@ RavenConfigError.prototype = new Error, RavenConfigError.prototype.constructor =
                         }
                         return t.result
                     }
-                }, dispatch: function (e) {
+                },
+                dispatch: function (e) {
                     e = oe.event.fix(e);
                     var t, n, r, o, i, a = [], s = V.call(arguments), l = (oe._data(this, "events") || {})[e.type] || [], u = oe.event.special[e.type] || {};
                     if (s[0] = e, e.delegateTarget = this, !u.preDispatch || u.preDispatch.call(this, e) !== !1) {
                         for (a = oe.event.handlers.call(this, e, l), t = 0; (o = a[t++]) && !e.isPropagationStopped();)for (e.currentTarget = o.elem, i = 0; (r = o.handlers[i++]) && !e.isImmediatePropagationStopped();)(!e.namespace_re || e.namespace_re.test(r.namespace)) && (e.handleObj = r, e.data = r.data, n = ((oe.event.special[r.origType] || {}).handle || r.handler).apply(o.elem, s), void 0 !== n && (e.result = n) === !1 && (e.preventDefault(), e.stopPropagation()));
                         return u.postDispatch && u.postDispatch.call(this, e), e.result
                     }
-                }, handlers: function (e, t) {
+                },
+                handlers: function (e, t) {
                     var n, r, o, i, a = [], s = t.delegateCount, l = e.target;
                     if (s && l.nodeType && (!e.button || "click" !== e.type))for (; l != this; l = l.parentNode || this)if (1 === l.nodeType && (l.disabled !== !0 || "click" !== e.type)) {
                         for (o = [], i = 0; s > i; i++)r = t[i], n = r.selector + " ", void 0 === o[n] && (o[n] = r.needsContext ? oe(n, this).index(l) >= 0 : oe.find(n, this, null, [l]).length), o[n] && o.push(r);
@@ -1860,21 +1955,28 @@ RavenConfigError.prototype = new Error, RavenConfigError.prototype.constructor =
                         })
                     }
                     return s < t.length && a.push({elem: this, handlers: t.slice(s)}), a
-                }, fix: function (e) {
+                },
+                fix: function (e) {
                     if (e[oe.expando])return e;
                     var t, n, r, o = e.type, i = e, a = this.fixHooks[o];
                     for (a || (this.fixHooks[o] = a = Le.test(o) ? this.mouseHooks : je.test(o) ? this.keyHooks : {}), r = a.props ? this.props.concat(a.props) : this.props, e = new oe.Event(i), t = r.length; t--;)n = r[t], e[n] = i[n];
                     return e.target || (e.target = i.srcElement || he), 3 === e.target.nodeType && (e.target = e.target.parentNode), e.metaKey = !!e.metaKey, a.filter ? a.filter(e, i) : e
-                }, props: "altKey bubbles cancelable ctrlKey currentTarget eventPhase metaKey relatedTarget shiftKey target timeStamp view which".split(" "), fixHooks: {}, keyHooks: {
+                },
+                props: "altKey bubbles cancelable ctrlKey currentTarget eventPhase metaKey relatedTarget shiftKey target timeStamp view which".split(" "),
+                fixHooks: {},
+                keyHooks: {
                     props: "char charCode key keyCode".split(" "), filter: function (e, t) {
                         return null == e.which && (e.which = null != t.charCode ? t.charCode : t.keyCode), e
                     }
-                }, mouseHooks: {
-                    props: "button buttons clientX clientY fromElement offsetX offsetY pageX pageY screenX screenY toElement".split(" "), filter: function (e, t) {
+                },
+                mouseHooks: {
+                    props: "button buttons clientX clientY fromElement offsetX offsetY pageX pageY screenX screenY toElement".split(" "),
+                    filter: function (e, t) {
                         var n, r, o, i = t.button, a = t.fromElement;
                         return null == e.pageX && null != t.clientX && (r = e.target.ownerDocument || he, o = r.documentElement, n = r.body, e.pageX = t.clientX + (o && o.scrollLeft || n && n.scrollLeft || 0) - (o && o.clientLeft || n && n.clientLeft || 0), e.pageY = t.clientY + (o && o.scrollTop || n && n.scrollTop || 0) - (o && o.clientTop || n && n.clientTop || 0)), !e.relatedTarget && a && (e.relatedTarget = a === e.target ? t.toElement : a), e.which || void 0 === i || (e.which = 1 & i ? 1 : 2 & i ? 3 : 4 & i ? 2 : 0), e
                     }
-                }, special: {
+                },
+                special: {
                     load: {noBubble: !0}, focus: {
                         trigger: function () {
                             if (this !== h() && this.focus)try {
@@ -1897,7 +1999,8 @@ RavenConfigError.prototype = new Error, RavenConfigError.prototype.constructor =
                             void 0 !== e.result && e.originalEvent && (e.originalEvent.returnValue = e.result)
                         }
                     }
-                }, simulate: function (e, t, n, r) {
+                },
+                simulate: function (e, t, n, r) {
                     var o = oe.extend(new oe.Event, n, {type: e, isSimulated: !0, originalEvent: {}});
                     r ? oe.event.trigger(o, null, t) : oe.event.dispatch.call(t, o), o.isDefaultPrevented() && n.preventDefault()
                 }
@@ -1909,17 +2012,27 @@ RavenConfigError.prototype = new Error, RavenConfigError.prototype.constructor =
             }, oe.Event = function (e, t) {
                 return this instanceof oe.Event ? (e && e.type ? (this.originalEvent = e, this.type = e.type, this.isDefaultPrevented = e.defaultPrevented || void 0 === e.defaultPrevented && e.returnValue === !1 ? p : f) : this.type = e, t && oe.extend(this, t), this.timeStamp = e && e.timeStamp || oe.now(), void(this[oe.expando] = !0)) : new oe.Event(e, t)
             }, oe.Event.prototype = {
-                isDefaultPrevented: f, isPropagationStopped: f, isImmediatePropagationStopped: f, preventDefault: function () {
+                isDefaultPrevented: f,
+                isPropagationStopped: f,
+                isImmediatePropagationStopped: f,
+                preventDefault: function () {
                     var e = this.originalEvent;
                     this.isDefaultPrevented = p, e && (e.preventDefault ? e.preventDefault() : e.returnValue = !1)
-                }, stopPropagation: function () {
+                },
+                stopPropagation: function () {
                     var e = this.originalEvent;
                     this.isPropagationStopped = p, e && (e.stopPropagation && e.stopPropagation(), e.cancelBubble = !0)
-                }, stopImmediatePropagation: function () {
+                },
+                stopImmediatePropagation: function () {
                     var e = this.originalEvent;
                     this.isImmediatePropagationStopped = p, e && e.stopImmediatePropagation && e.stopImmediatePropagation(), this.stopPropagation()
                 }
-            }, oe.each({mouseenter: "mouseover", mouseleave: "mouseout", pointerenter: "pointerover", pointerleave: "pointerout"}, function (e, t) {
+            }, oe.each({
+                mouseenter: "mouseover",
+                mouseleave: "mouseout",
+                pointerenter: "pointerover",
+                pointerleave: "pointerout"
+            }, function (e, t) {
                 oe.event.special[e] = {
                     delegateType: t, bindType: t, handle: function (e) {
                         var n, r = this, o = e.relatedTarget, i = e.handleObj;
@@ -2112,7 +2225,13 @@ RavenConfigError.prototype = new Error, RavenConfigError.prototype.constructor =
                     }
                     return this
                 }
-            }), oe.each({appendTo: "append", prependTo: "prepend", insertBefore: "before", insertAfter: "after", replaceAll: "replaceWith"}, function (e, t) {
+            }), oe.each({
+                appendTo: "append",
+                prependTo: "prepend",
+                insertBefore: "before",
+                insertAfter: "after",
+                replaceAll: "replaceWith"
+            }, function (e, t) {
                 oe.fn[e] = function (e) {
                     for (var n, r = 0, o = [], i = oe(e), a = i.length - 1; a >= r; r++)n = r === a ? this : this.clone(!0), oe(i[r])[t](n), Y.apply(o, n.get());
                     return this.pushStack(o)
@@ -2164,7 +2283,11 @@ RavenConfigError.prototype = new Error, RavenConfigError.prototype.constructor =
                 for (i in t)e.style[i] = a[i];
                 return o
             };
-            var it = /alpha\([^)]*\)/i, at = /opacity\s*=\s*([^)]*)/, st = /^(none|table(?!-c[ea]).+)/, lt = new RegExp("^(" + Se + ")(.*)$", "i"), ut = new RegExp("^([+-])=(" + Se + ")", "i"), ct = {position: "absolute", visibility: "hidden", display: "block"}, dt = {letterSpacing: "0", fontWeight: "400"}, pt = ["Webkit", "O", "Moz", "ms"];
+            var it = /alpha\([^)]*\)/i, at = /opacity\s*=\s*([^)]*)/, st = /^(none|table(?!-c[ea]).+)/, lt = new RegExp("^(" + Se + ")(.*)$", "i"), ut = new RegExp("^([+-])=(" + Se + ")", "i"), ct = {
+                position: "absolute",
+                visibility: "hidden",
+                display: "block"
+            }, dt = {letterSpacing: "0", fontWeight: "400"}, pt = ["Webkit", "O", "Moz", "ms"];
             oe.extend({
                 cssHooks: {
                     opacity: {
@@ -2175,7 +2298,23 @@ RavenConfigError.prototype = new Error, RavenConfigError.prototype.constructor =
                             }
                         }
                     }
-                }, cssNumber: {columnCount: !0, fillOpacity: !0, flexGrow: !0, flexShrink: !0, fontWeight: !0, lineHeight: !0, opacity: !0, order: !0, orphans: !0, widows: !0, zIndex: !0, zoom: !0}, cssProps: {"float": ne.cssFloat ? "cssFloat" : "styleFloat"}, style: function (e, t, n, r) {
+                },
+                cssNumber: {
+                    columnCount: !0,
+                    fillOpacity: !0,
+                    flexGrow: !0,
+                    flexShrink: !0,
+                    fontWeight: !0,
+                    lineHeight: !0,
+                    opacity: !0,
+                    order: !0,
+                    orphans: !0,
+                    widows: !0,
+                    zIndex: !0,
+                    zoom: !0
+                },
+                cssProps: {"float": ne.cssFloat ? "cssFloat" : "styleFloat"},
+                style: function (e, t, n, r) {
                     if (e && 3 !== e.nodeType && 8 !== e.nodeType && e.style) {
                         var o, i, a, s = oe.camelCase(t), l = e.style;
                         if (t = oe.cssProps[s] || (oe.cssProps[s] = E(l, s)), a = oe.cssHooks[t] || oe.cssHooks[s], void 0 === n)return a && "get"in a && void 0 !== (o = a.get(e, !1, r)) ? o : l[t];
@@ -2184,7 +2323,8 @@ RavenConfigError.prototype = new Error, RavenConfigError.prototype.constructor =
                         } catch (u) {
                         }
                     }
-                }, css: function (e, t, n, r) {
+                },
+                css: function (e, t, n, r) {
                     var o, i, a, s = oe.camelCase(t);
                     return t = oe.cssProps[s] || (oe.cssProps[s] = E(e.style, s)), a = oe.cssHooks[t] || oe.cssHooks[s], a && "get"in a && (i = a.get(e, !0, n)), void 0 === i && (i = tt(e, t, r)), "normal" === i && t in dt && (i = dt[t]), "" === n || n ? (o = parseFloat(i), n === !0 || oe.isNumeric(o) ? o || 0 : i) : i
                 }
@@ -2282,7 +2422,11 @@ RavenConfigError.prototype = new Error, RavenConfigError.prototype.constructor =
                     t ? yt.unshift(e) : yt.push(e)
                 }
             }), oe.speed = function (e, t, n) {
-                var r = e && "object" == typeof e ? oe.extend({}, e) : {complete: n || !n && t || oe.isFunction(e) && e, duration: e, easing: n && t || t && !oe.isFunction(t) && t};
+                var r = e && "object" == typeof e ? oe.extend({}, e) : {
+                    complete: n || !n && t || oe.isFunction(e) && e,
+                    duration: e,
+                    easing: n && t || t && !oe.isFunction(t) && t
+                };
                 return r.duration = oe.fx.off ? 0 : "number" == typeof r.duration ? r.duration : r.duration in oe.fx.speeds ? oe.fx.speeds[r.duration] : oe.fx.speeds._default, (null == r.queue || r.queue === !0) && (r.queue = "fx"), r.old = r.complete, r.complete = function () {
                     oe.isFunction(r.old) && r.old.call(this), r.queue && oe.dequeue(this, r.queue)
                 }, r
@@ -2319,7 +2463,14 @@ RavenConfigError.prototype = new Error, RavenConfigError.prototype.constructor =
                 oe.fn[t] = function (e, r, o) {
                     return null == e || "boolean" == typeof e ? n.apply(this, arguments) : this.animate(F(t, !0), e, r, o)
                 }
-            }), oe.each({slideDown: F("show"), slideUp: F("hide"), slideToggle: F("toggle"), fadeIn: {opacity: "show"}, fadeOut: {opacity: "hide"}, fadeToggle: {opacity: "toggle"}}, function (e, t) {
+            }), oe.each({
+                slideDown: F("show"),
+                slideUp: F("hide"),
+                slideToggle: F("toggle"),
+                fadeIn: {opacity: "show"},
+                fadeOut: {opacity: "hide"},
+                fadeToggle: {opacity: "toggle"}
+            }, function (e, t) {
                 oe.fn[e] = function (e, n, r) {
                     return this.animate(t, e, n, r)
                 }
@@ -2587,7 +2738,13 @@ RavenConfigError.prototype = new Error, RavenConfigError.prototype.constructor =
                     processData: !0,
                     async: !0,
                     contentType: "application/x-www-form-urlencoded; charset=UTF-8",
-                    accepts: {"*": It, text: "text/plain", html: "text/html", xml: "application/xml, text/xml", json: "application/json, text/javascript"},
+                    accepts: {
+                        "*": It,
+                        text: "text/plain",
+                        html: "text/html",
+                        xml: "application/xml, text/xml",
+                        json: "application/json, text/javascript"
+                    },
                     contents: {xml: /xml/, html: /html/, json: /json/},
                     responseFields: {xml: "responseXML", text: "responseText", json: "responseJSON"},
                     converters: {"* text": String, "text html": !0, "text json": oe.parseJSON, "text xml": oe.parseXML},
@@ -2656,7 +2813,13 @@ RavenConfigError.prototype = new Error, RavenConfigError.prototype.constructor =
                 }
             }), oe.each(["get", "post"], function (e, t) {
                 oe[t] = function (e, n, r, o) {
-                    return oe.isFunction(n) && (o = o || r, r = n, n = void 0), oe.ajax({url: e, type: t, dataType: o, data: n, success: r})
+                    return oe.isFunction(n) && (o = o || r, r = n, n = void 0), oe.ajax({
+                        url: e,
+                        type: t,
+                        dataType: o,
+                        data: n,
+                        success: r
+                    })
                 }
             }), oe.each(["ajaxStart", "ajaxStop", "ajaxComplete", "ajaxError", "ajaxSuccess", "ajaxSend"], function (e, t) {
                 oe.fn[t] = function (e) {
@@ -2736,30 +2899,16 @@ RavenConfigError.prototype = new Error, RavenConfigError.prototype.constructor =
                     var t;
                     return {
                         send: function (n, r) {
-                            var o, i = e.xhr(), a = ++Yt;
-                            if (i.open(e.type, e.url, e.async, e.username, e.password), e.xhrFields)for (o in e.xhrFields)i[o] = e.xhrFields[o];
-                            e.mimeType && i.overrideMimeType && i.overrideMimeType(e.mimeType), e.crossDomain || n["X-Requested-With"] || (n["X-Requested-With"] = "XMLHttpRequest");
-                            for (o in n)void 0 !== n[o] && i.setRequestHeader(o, n[o] + "");
-                            i.send(e.hasContent && e.data || null), t = function (n, o) {
-                                var s, l, u;
-                                if (t && (o || 4 === i.readyState))if (delete Qt[a], t = void 0, i.onreadystatechange = oe.noop, o)4 !== i.readyState && i.abort(); else {
-                                    u = {}, s = i.status, "string" == typeof i.responseText && (u.text = i.responseText);
-                                    try {
-                                        l = i.statusText
-                                    } catch (c) {
-                                        l = ""
-                                    }
-                                    s || !e.isLocal || e.crossDomain ? 1223 === s && (s = 204) : s = u.text ? 200 : 404
-                                }
-                                u && r(s, l, u, i.getAllResponseHeaders())
-                            }, e.async ? 4 === i.readyState ? setTimeout(t) : i.onreadystatechange = Qt[a] = t : t()
+
                         }, abort: function () {
                             t && t(void 0, !0)
                         }
                     }
                 }
             }), oe.ajaxSetup({
-                accepts: {script: "text/javascript, application/javascript, application/ecmascript, application/x-ecmascript"}, contents: {script: /(?:java|ecma)script/}, converters: {
+                accepts: {script: "text/javascript, application/javascript, application/ecmascript, application/x-ecmascript"},
+                contents: {script: /(?:java|ecma)script/},
+                converters: {
                     "text script": function (e) {
                         return oe.globalEval(e), e
                     }
@@ -2805,7 +2954,12 @@ RavenConfigError.prototype = new Error, RavenConfigError.prototype.constructor =
             oe.fn.load = function (e, t, n) {
                 if ("string" != typeof e && nn)return nn.apply(this, arguments);
                 var r, o, i, a = this, s = e.indexOf(" ");
-                return s >= 0 && (r = oe.trim(e.slice(s, e.length)), e = e.slice(0, s)), oe.isFunction(t) ? (n = t, t = void 0) : t && "object" == typeof t && (i = "POST"), a.length > 0 && oe.ajax({url: e, type: i, dataType: "html", data: t}).done(function (e) {
+                return s >= 0 && (r = oe.trim(e.slice(s, e.length)), e = e.slice(0, s)), oe.isFunction(t) ? (n = t, t = void 0) : t && "object" == typeof t && (i = "POST"), a.length > 0 && oe.ajax({
+                    url: e,
+                    type: i,
+                    dataType: "html",
+                    data: t
+                }).done(function (e) {
                     o = arguments, a.html(r ? oe("<div>").append(oe.parseHTML(e)).find(r) : e)
                 }).complete(n && function (e, t) {
                         a.each(n, o || [e.responseText, t, e])
@@ -2827,11 +2981,17 @@ RavenConfigError.prototype = new Error, RavenConfigError.prototype.constructor =
                         oe.offset.setOffset(this, e, t)
                     });
                     var t, n, r = {top: 0, left: 0}, o = this[0], i = o && o.ownerDocument;
-                    if (i)return t = i.documentElement, oe.contains(t, o) ? (typeof o.getBoundingClientRect !== ke && (r = o.getBoundingClientRect()), n = G(i), {top: r.top + (n.pageYOffset || t.scrollTop) - (t.clientTop || 0), left: r.left + (n.pageXOffset || t.scrollLeft) - (t.clientLeft || 0)}) : r
+                    if (i)return t = i.documentElement, oe.contains(t, o) ? (typeof o.getBoundingClientRect !== ke && (r = o.getBoundingClientRect()), n = G(i), {
+                        top: r.top + (n.pageYOffset || t.scrollTop) - (t.clientTop || 0),
+                        left: r.left + (n.pageXOffset || t.scrollLeft) - (t.clientLeft || 0)
+                    }) : r
                 }, position: function () {
                     if (this[0]) {
                         var e, t, n = {top: 0, left: 0}, r = this[0];
-                        return "fixed" === oe.css(r, "position") ? t = r.getBoundingClientRect() : (e = this.offsetParent(), t = this.offset(), oe.nodeName(e[0], "html") || (n = e.offset()), n.top += oe.css(e[0], "borderTopWidth", !0), n.left += oe.css(e[0], "borderLeftWidth", !0)), {top: t.top - n.top - oe.css(r, "marginTop", !0), left: t.left - n.left - oe.css(r, "marginLeft", !0)}
+                        return "fixed" === oe.css(r, "position") ? t = r.getBoundingClientRect() : (e = this.offsetParent(), t = this.offset(), oe.nodeName(e[0], "html") || (n = e.offset()), n.top += oe.css(e[0], "borderTopWidth", !0), n.left += oe.css(e[0], "borderLeftWidth", !0)), {
+                            top: t.top - n.top - oe.css(r, "marginTop", !0),
+                            left: t.left - n.left - oe.css(r, "marginLeft", !0)
+                        }
                     }
                 }, offsetParent: function () {
                     return this.map(function () {
@@ -2924,7 +3084,11 @@ RavenConfigError.prototype = new Error, RavenConfigError.prototype.constructor =
                 var s = this.findClosestDomain(i.secondLevelDomain, n, o, this.secondLevelThreshold), l = this.findClosestDomain(i.topLevelDomain, r, o, this.topLevelThreshold);
                 if (i.domain) {
                     var a = i.domain, u = !1;
-                    if (s && s != i.secondLevelDomain && (a = a.replace(i.secondLevelDomain, s), u = !0), l && l != i.topLevelDomain && (a = a.replace(i.topLevelDomain, l), u = !0), 1 == u)return {address: i.address, domain: a, full: i.address + "@" + a}
+                    if (s && s != i.secondLevelDomain && (a = a.replace(i.secondLevelDomain, s), u = !0), l && l != i.topLevelDomain && (a = a.replace(i.topLevelDomain, l), u = !0), 1 == u)return {
+                        address: i.address,
+                        domain: a,
+                        full: i.address + "@" + a
+                    }
                 }
                 return !1
             },
@@ -3005,21 +3169,56 @@ RavenConfigError.prototype = new Error, RavenConfigError.prototype.constructor =
             e = t, e.payment = {}, e.payment.fn = {}, e.fn.payment = function () {
                 var t, n;
                 return n = arguments[0], t = 2 <= arguments.length ? x.call(arguments, 1) : [], e.payment.fn[n].apply(this, t)
-            }, i = /(\d{1,4})/g, o = [{type: "maestro", pattern: /^(5018|5020|5038|6304|6759|676[1-3])/, format: i, length: [12, 13, 14, 15, 16, 17, 18, 19], cvcLength: [3], luhn: !0}, {type: "dinersclub", pattern: /^(36|38|30[0-5])/, format: i, length: [14], cvcLength: [3], luhn: !0}, {
+            }, i = /(\d{1,4})/g, o = [{
+                type: "maestro",
+                pattern: /^(5018|5020|5038|6304|6759|676[1-3])/,
+                format: i,
+                length: [12, 13, 14, 15, 16, 17, 18, 19],
+                cvcLength: [3],
+                luhn: !0
+            }, {type: "dinersclub", pattern: /^(36|38|30[0-5])/, format: i, length: [14], cvcLength: [3], luhn: !0}, {
                 type: "laser",
                 pattern: /^(6706|6771|6709)/,
                 format: i,
                 length: [16, 17, 18, 19],
                 cvcLength: [3],
                 luhn: !0
-            }, {type: "jcb", pattern: /^35/, format: i, length: [16], cvcLength: [3], luhn: !0}, {type: "unionpay", pattern: /^62/, format: i, length: [16, 17, 18, 19], cvcLength: [3], luhn: !1}, {type: "discover", pattern: /^(6011|65|64[4-9]|622)/, format: i, length: [16], cvcLength: [3], luhn: !0}, {
+            }, {type: "jcb", pattern: /^35/, format: i, length: [16], cvcLength: [3], luhn: !0}, {
+                type: "unionpay",
+                pattern: /^62/,
+                format: i,
+                length: [16, 17, 18, 19],
+                cvcLength: [3],
+                luhn: !1
+            }, {
+                type: "discover",
+                pattern: /^(6011|65|64[4-9]|622)/,
+                format: i,
+                length: [16],
+                cvcLength: [3],
+                luhn: !0
+            }, {
                 type: "mastercard",
                 pattern: /^5[1-5]/,
                 format: i,
                 length: [16],
                 cvcLength: [3],
                 luhn: !0
-            }, {type: "amex", pattern: /^3[47]/, format: /(\d{1,4})(\d{1,6})?(\d{1,5})?/, length: [15], cvcLength: [3, 4], luhn: !0}, {type: "visa", pattern: /^4/, format: i, length: [13, 16], cvcLength: [3], luhn: !0}], f = "keypress", "oninput"in document.createElement("input") && (f = "input"), n = function (e) {
+            }, {
+                type: "amex",
+                pattern: /^3[47]/,
+                format: /(\d{1,4})(\d{1,6})?(\d{1,5})?/,
+                length: [15],
+                cvcLength: [3, 4],
+                luhn: !0
+            }, {
+                type: "visa",
+                pattern: /^4/,
+                format: i,
+                length: [13, 16],
+                cvcLength: [3],
+                luhn: !0
+            }], f = "keypress", "oninput"in document.createElement("input") && (f = "input"), n = function (e) {
                 var t, n, r;
                 for (e = (e + "").replace(/\D/g, ""), n = 0, r = o.length; r > n; n++)if (t = o[n], t.pattern.test(e))return t
             }, r = function (e) {
@@ -3087,7 +3286,10 @@ RavenConfigError.prototype = new Error, RavenConfigError.prototype.constructor =
                 return e.payment.cardExpiryVal(e(this).val())
             }, e.payment.cardExpiryVal = function (e) {
                 var t, n, r, o;
-                return e = e.replace(/\s/g, ""), o = e.split("/", 2), t = o[0], r = o[1], 2 === (null != r ? r.length : void 0) && /^\d+$/.test(r) && (n = (new Date).getFullYear(), n = n.toString().slice(0, 2), r = n + r), t = parseInt(t, 10), r = parseInt(r, 10), {month: t, year: r}
+                return e = e.replace(/\s/g, ""), o = e.split("/", 2), t = o[0], r = o[1], 2 === (null != r ? r.length : void 0) && /^\d+$/.test(r) && (n = (new Date).getFullYear(), n = n.toString().slice(0, 2), r = n + r), t = parseInt(t, 10), r = parseInt(r, 10), {
+                    month: t,
+                    year: r
+                }
             }, e.payment.validateCardNumber = function (e) {
                 var t, r;
                 return e = (e + "").replace(/\s+|-/g, ""), /^\d+$/.test(e) ? (t = n(e), t ? (r = e.length, w.call(t.length, r) >= 0 && (t.luhn === !1 || p(e))) : !1) : !1
@@ -3423,7 +3625,11 @@ RavenConfigError.prototype = new Error, RavenConfigError.prototype.constructor =
             return !!("placeholder"in(Modernizr.input || document.createElement("input")) && "placeholder"in(Modernizr.textarea || document.createElement("textarea")))
         }), Modernizr.addTest("mediaqueries", Modernizr.mq("only all")), function () {
             var t, n, r;
-            t = e("meta[data-browser]"), n = t.data("browser"), r = t.data("browserMajor"), this.Browser = {safari6: "safari" !== n || r >= 6, ie: "ie" === n, ie11: "ie" !== n || r >= 11}
+            t = e("meta[data-browser]"), n = t.data("browser"), r = t.data("browserMajor"), this.Browser = {
+                safari6: "safari" !== n || r >= 6,
+                ie: "ie" === n,
+                ie11: "ie" !== n || r >= 11
+            }
         }.call(this), function () {
             var t = [].slice;
             this.DeferredRequest = function () {
@@ -3535,7 +3741,10 @@ RavenConfigError.prototype = new Error, RavenConfigError.prototype.constructor =
                     var r, o, i, a, s;
                     if (null == n && (n = document), this.dependenciesMet()) {
                         for (r = e(n), s = this.prototype.listeners(), i = 0, a = s.length; a > i; i++)o = s[i], r.on(o.event, t, this.delegator(t, o));
-                        return this.OBSERVERS.push({selector: t, behaviour: this}), this.prototype.onScroll ? this.ON_SCROLL.push({selector: t, behaviour: this}) : void 0
+                        return this.OBSERVERS.push({
+                            selector: t,
+                            behaviour: this
+                        }), this.prototype.onScroll ? this.ON_SCROLL.push({selector: t, behaviour: this}) : void 0
                     }
                 }, i = 0, r.dataKey = function () {
                     return this._dataKey || (this._dataKey = "behaviour-" + i++)
@@ -3649,7 +3858,10 @@ RavenConfigError.prototype = new Error, RavenConfigError.prototype.constructor =
                     this.onClickSuggestion = e(this.onClickSuggestion, this), n.__super__.constructor.apply(this, arguments), this.$input = this.$("input[type=email]"), this.$container = this.$(this.$element.data("email-check")), this.$suggestionLink = this.$container.find("a").attr("data-email-suggestion", "")
                 }
 
-                return r(n, t), n.name = "EmailCheck", n.prototype.events = {"blur input[type=email]": "onBlur", "click a[data-email-suggestion]": "onClickSuggestion"}, n.prototype.onBlur = function () {
+                return r(n, t), n.name = "EmailCheck", n.prototype.events = {
+                    "blur input[type=email]": "onBlur",
+                    "click a[data-email-suggestion]": "onClickSuggestion"
+                }, n.prototype.onBlur = function () {
                     var e = this;
                     return this.$container.removeClass("hidden"), this.$input.mailcheck({
                         suggested: function (t, n) {
@@ -3677,7 +3889,10 @@ RavenConfigError.prototype = new Error, RavenConfigError.prototype.constructor =
                     r.__super__.constructor.apply(this, arguments), e = this.$('[name="checkout[payment_gateway]"]:checked'), 0 === e.length && (e = this.$('[name="checkout[payment_gateway]"]')), this.selectGateway(e)
                 }
 
-                return n(r, t), r.name = "GatewaySelector", r.prototype.events = {"change [data-select-gateway]": "updateSelectedGateway", "change [data-toggle]": "onDataToggleChange"}, r.prototype.updateSelectedGateway = function (e) {
+                return n(r, t), r.name = "GatewaySelector", r.prototype.events = {
+                    "change [data-select-gateway]": "updateSelectedGateway",
+                    "change [data-toggle]": "onDataToggleChange"
+                }, r.prototype.updateSelectedGateway = function (e) {
                     return this.selectGateway(this.$(e.target))
                 }, r.prototype.selectGateway = function (e) {
                     var t, n, r, o, i, a, s;
@@ -3718,7 +3933,10 @@ RavenConfigError.prototype = new Error, RavenConfigError.prototype.constructor =
 
                 return n(r, t), r.name = "PollingRefresh", r.prototype.polling = function () {
                     var e = this;
-                    return this.ajax({url: this.$element.attr("data-poll-target"), method: "GET"}).always(function (t, n, r) {
+                    return this.ajax({
+                        url: this.$element.attr("data-poll-target"),
+                        method: "GET"
+                    }).always(function (t, n, r) {
                         return void 0 === r.status ? e.schedule(e.polling, 5e3) : 202 === r.status || r.status >= 400 ? e.schedule(e.polling) : e.updatePage(t, e.$element.attr("data-poll-refresh"))
                     })
                 }, r.prototype.schedule = function (e, t) {
@@ -3783,7 +4001,10 @@ RavenConfigError.prototype = new Error, RavenConfigError.prototype.constructor =
                     return r.__super__.constructor.apply(this, arguments)
                 }
 
-                return n(r, t), r.name = "CountryProvinceSelector", r.prototype.events = e.extend({'blur input[data-autocomplete-field="province"]': "autoCompleteProvince", 'input input[data-autocomplete-field="province"]': "autoCompleteProvince"}, r.__super__.events), r.prototype.coerceToSelect = function () {
+                return n(r, t), r.name = "CountryProvinceSelector", r.prototype.events = e.extend({
+                    'blur input[data-autocomplete-field="province"]': "autoCompleteProvince",
+                    'input input[data-autocomplete-field="province"]': "autoCompleteProvince"
+                }, r.__super__.events), r.prototype.coerceToSelect = function () {
                     return r.__super__.coerceToSelect.apply(this, arguments), this.$provinceSection.find(".field__input-wrapper").addClass("field__input-wrapper--select"), this.$provinces.addClass("field__input--select")
                 }, r.prototype.updateFieldClasses = function (e) {
                     return this.$countrySection.removeClass("field--half field--three-eights"), this.$provinceSection.removeClass("field--half field--three-eights"), this.$zipSection.removeClass("field--half field--quarter"), e.provinces && e.zip_required ? (this.$countrySection.addClass("field--three-eights"), this.$provinceSection.addClass("field--three-eights"), this.$zipSection.addClass("field--quarter")) : e.provinces ? (this.$countrySection.addClass("field--half"), this.$provinceSection.addClass("field--half")) : e.zip_required ? (this.$countrySection.addClass("field--half"), this.$zipSection.addClass("field--half")) : void 0
@@ -3809,7 +4030,10 @@ RavenConfigError.prototype = new Error, RavenConfigError.prototype.constructor =
                     return r.__super__.constructor.apply(this, arguments)
                 }
 
-                return n(r, t), r.name = "AddressSelector", r.prototype.events = {"change [data-address-selector]": "changeAddressFields", "change :not([data-address-selector])": "resetAddressSelector"}, r.prototype.init = function () {
+                return n(r, t), r.name = "AddressSelector", r.prototype.events = {
+                    "change [data-address-selector]": "changeAddressFields",
+                    "change :not([data-address-selector])": "resetAddressSelector"
+                }, r.prototype.init = function () {
                     return this.$selector = this.$("[data-address-selector]"), this.$selector.length ? (this.format = this.$selector.attr("data-field-name-format"), this.namePattern = this.regexpForFormat(this.format), this.fillAddressFields()) : void 0
                 }, r.prototype.changeAddressFields = function (e) {
                     return e.restoredFromBackup ? void 0 : this.selectedAddress() ? this.fillAddressFields() : this.clearAddressFields()
@@ -3908,7 +4132,11 @@ RavenConfigError.prototype = new Error, RavenConfigError.prototype.constructor =
                     return r.__super__.constructor.apply(this, arguments)
                 }
 
-                return n(r, t), r.name = "CreditCard", r.prototype.events = {"focus [data-credit-card]": "initializePayments", 'payment.cardType [data-credit-card="number"]': "toggleCardType", 'change [data-credit-card="number"]': "onChange"}, r.prototype.initializePayments = function () {
+                return n(r, t), r.name = "CreditCard", r.prototype.events = {
+                    "focus [data-credit-card]": "initializePayments",
+                    'payment.cardType [data-credit-card="number"]': "toggleCardType",
+                    'change [data-credit-card="number"]': "onChange"
+                }, r.prototype.initializePayments = function () {
                     return this.paymentsInitialized ? void 0 : (this.$('[data-credit-card="cvv"]').payment("formatCardCVC"), this.$('[data-credit-card="number"]').payment("formatCardNumber"), this.paymentsInitialized = !0)
                 }, r.prototype.toggleCardTypeIcon = function (t, n) {
                     var r, o, i, a, s, l;
@@ -3949,7 +4177,10 @@ RavenConfigError.prototype = new Error, RavenConfigError.prototype.constructor =
                     return t = this.$("[data-debit-card-field]"), 0 !== t.length ? this.isDebitCard(e) ? this.showDebitCardFields(t) : this.hideDebitCardFields(t) : void 0
                 }, r.prototype.showDebitCardFields = function (t) {
                     var n = this;
-                    return t.removeClass("hidden hidden-if-js"), this.changeClass("[name='checkout[credit_card][name]']", {from: "field--half"}), this.changeClass("[data-credit-card-start]", {from: "field--quarter", to: "field--three-eights"}), this.changeClass("[data-credit-card-expiry]", {
+                    return t.removeClass("hidden hidden-if-js"), this.changeClass("[name='checkout[credit_card][name]']", {from: "field--half"}), this.changeClass("[data-credit-card-start]", {
+                        from: "field--quarter",
+                        to: "field--three-eights"
+                    }), this.changeClass("[data-credit-card-expiry]", {
                         from: "field--quarter",
                         to: "field--three-eights"
                     }), this.$("[data-debit-card-alternative-text]").each(function (t, r) {
@@ -3958,7 +4189,13 @@ RavenConfigError.prototype = new Error, RavenConfigError.prototype.constructor =
                     })
                 }, r.prototype.hideDebitCardFields = function (t) {
                     var n = this;
-                    return t.addClass("hidden"), this.changeClass("[name='checkout[credit_card][name]']", {to: "field--half"}), this.changeClass("[data-credit-card-start]", {from: "field--three-eights", to: "field--quarter"}), this.changeClass("[data-credit-card-expiry]", {from: "field--three-eights", to: "field--quarter"}), this.$("[data-debit-card-alternative-text]").each(function (t, r) {
+                    return t.addClass("hidden"), this.changeClass("[name='checkout[credit_card][name]']", {to: "field--half"}), this.changeClass("[data-credit-card-start]", {
+                        from: "field--three-eights",
+                        to: "field--quarter"
+                    }), this.changeClass("[data-credit-card-expiry]", {
+                        from: "field--three-eights",
+                        to: "field--quarter"
+                    }), this.$("[data-debit-card-alternative-text]").each(function (t, r) {
                         return n.changeText(e(r), "debitCardDefaultText")
                     })
                 }, r.prototype.changeClass = function (t, n) {
@@ -3987,7 +4224,10 @@ RavenConfigError.prototype = new Error, RavenConfigError.prototype.constructor =
                     r.__super__.constructor.apply(this, arguments), t = e("meta[data-google-wallet]"), this.jwt = t.attr("data-google-wallet-jwt"), this.url = t.attr("data-google-wallet-url"), this.fn = t.attr("data-google-wallet"), this.handleUsingGoogleWallet(), this.notifyTransactionStatus()
                 }
 
-                return n(r, t), r.name = "GoogleWallet", r.prototype.events = {"change [data-select-gateway]": "handleUsingGoogleWallet", 'click [data-google-wallet="true"]': "onClick"}, r.prototype.handleUsingGoogleWallet = function () {
+                return n(r, t), r.name = "GoogleWallet", r.prototype.events = {
+                    "change [data-select-gateway]": "handleUsingGoogleWallet",
+                    'click [data-google-wallet="true"]': "onClick"
+                }, r.prototype.handleUsingGoogleWallet = function () {
                     return this.$("[data-select-gateway]").length ? (this.$("[data-billing-address]").toggle(!this.usingGoogleWallet()), this.$('[data-google-wallet="false"], [data-google-wallet="true"]').attr("data-google-wallet", this.usingGoogleWallet())) : void 0
                 }, r.prototype.usingGoogleWallet = function () {
                     return e('[name="checkout[google_wallet]"]').is(":enabled")
@@ -4048,14 +4288,22 @@ RavenConfigError.prototype = new Error, RavenConfigError.prototype.constructor =
                     })
                 }
 
-                return n(r, t), r.name = "OrderSummaryUpdater", r.prototype.events = {"change [data-country-section]": "onChange", "change [data-province-section]": "onChange", "change [data-zip-section]": "onChange"}, r.prototype.onChange = function (e) {
+                return n(r, t), r.name = "OrderSummaryUpdater", r.prototype.events = {
+                    "change [data-country-section]": "onChange",
+                    "change [data-province-section]": "onChange",
+                    "change [data-zip-section]": "onChange"
+                }, r.prototype.onChange = function (e) {
                     var t = this;
                     return this.debounce(function () {
                         return t.refresh(e.target)
                     }, 100)
                 }, r.prototype.refresh = function (t) {
                     var n, r = this;
-                    return n = e(t).closest("form"), this.ajax({url: n.attr("action"), method: "GET", data: this.serialized(n)}).done(function (t) {
+                    return n = e(t).closest("form"), this.ajax({
+                        url: n.attr("action"),
+                        method: "GET",
+                        data: this.serialized(n)
+                    }).done(function (t) {
                         var n;
                         return n = e("[data-order-summary-section]").map(function (t, n) {
                             return "[data-order-summary-section=" + e(n).attr("data-order-summary-section") + "]"
@@ -4063,7 +4311,10 @@ RavenConfigError.prototype = new Error, RavenConfigError.prototype.constructor =
                     }), !1
                 }, r.prototype.serialized = function (t) {
                     var n, r;
-                    return r = e("[data-step]").data("step"), n = t.find(":input").not("[name='step']").serializeArray(), null != r && n.push({name: "step", value: r}), e.param(n)
+                    return r = e("[data-step]").data("step"), n = t.find(":input").not("[name='step']").serializeArray(), null != r && n.push({
+                        name: "step",
+                        value: r
+                    }), e.param(n)
                 }, r
             }(Behaviour)
         }.call(this), function () {
@@ -4097,7 +4348,13 @@ RavenConfigError.prototype = new Error, RavenConfigError.prototype.constructor =
                     return r.__super__.constructor.apply(this, arguments)
                 }
 
-                return n(r, t), r.name = "ErrorRemover", r.prototype.KEY_CODES = {TAB: 9}, r.prototype.events = {"keyup .field--error input": "removeError", "keyup .field--error textarea": "removeError", "change .field--error input": "removeError", "change .field--error textarea": "removeError", "change .field--error select": "removeError"}, r.prototype.removeError = function (t) {
+                return n(r, t), r.name = "ErrorRemover", r.prototype.KEY_CODES = {TAB: 9}, r.prototype.events = {
+                    "keyup .field--error input": "removeError",
+                    "keyup .field--error textarea": "removeError",
+                    "change .field--error input": "removeError",
+                    "change .field--error textarea": "removeError",
+                    "change .field--error select": "removeError"
+                }, r.prototype.removeError = function (t) {
                     var n;
                     if (t.keyCode !== this.KEY_CODES.TAB && !t.restoredFromBackup)return n = e(t.target).closest(".field--error"), n.removeClass("field--error")
                 }, r
@@ -4212,7 +4469,12 @@ RavenConfigError.prototype = new Error, RavenConfigError.prototype.constructor =
                     return r.__super__.constructor.apply(this, arguments)
                 }
 
-                return n(r, t), r.name = "Modal", r.prototype.events = {"click [data-modal-backdrop]": "clickToClose", "keydown body": "handleKeys", "click [data-modal]": "showModal", "click [data-modal-close]": "hideModal"}, r.prototype.clickToClose = function (t) {
+                return n(r, t), r.name = "Modal", r.prototype.events = {
+                    "click [data-modal-backdrop]": "clickToClose",
+                    "keydown body": "handleKeys",
+                    "click [data-modal]": "showModal",
+                    "click [data-modal-close]": "hideModal"
+                }, r.prototype.clickToClose = function (t) {
                     return e(t.target).is("[data-modal-backdrop]") ? this.hideModal() : void 0
                 }, r.prototype.handleKeys = function (e) {
                     return this.isModalOpen() ? 27 === e.keyCode ? (this.hideModal(), !1) : 9 === e.keyCode ? (this.$modal.find("[data-modal-close]").focus(), !1) : void 0 : void 0
@@ -4243,9 +4505,16 @@ RavenConfigError.prototype = new Error, RavenConfigError.prototype.constructor =
                 }
 
                 var o;
-                return n(r, t), r.name = "ReductionForm", o = "btn--disabled", r.prototype.events = {"submit [data-reduction-form]": "onReductionFormSubmit", "keyup [data-discount-field]": "onKeyUp"}, r.prototype.onReductionFormSubmit = function (e) {
+                return n(r, t), r.name = "ReductionForm", o = "btn--disabled", r.prototype.events = {
+                    "submit [data-reduction-form]": "onReductionFormSubmit",
+                    "keyup [data-discount-field]": "onKeyUp"
+                }, r.prototype.onReductionFormSubmit = function (e) {
                     var t, n = this;
-                    return e.preventDefault(), t = this.$(e.target), t.find(".btn[type=submit]").addClass("btn--loading").attr("disabled", !0), this.ajax({url: t.attr("action"), method: t.attr("method"), data: t.serialize()}).done(function (e) {
+                    return e.preventDefault(), t = this.$(e.target), t.find(".btn[type=submit]").addClass("btn--loading").attr("disabled", !0), this.ajax({
+                        url: t.attr("action"),
+                        method: t.attr("method"),
+                        data: t.serialize()
+                    }).done(function (e) {
                         var t;
                         return t = n.updateSubmitBtnState(e), n.updatePage(t, n.selectorsToUpdate())
                     })
@@ -4301,7 +4570,10 @@ RavenConfigError.prototype = new Error, RavenConfigError.prototype.constructor =
                     return r.__super__.constructor.apply(this, arguments)
                 }
 
-                return n(r, t), r.name = "SectionToggle", r.prototype.events = {"click [data-hide-on-click]": "hideTargetedSections", "click [data-enable-on-click]": "enableTargetedSections"}, r.prototype.init = function () {
+                return n(r, t), r.name = "SectionToggle", r.prototype.events = {
+                    "click [data-hide-on-click]": "hideTargetedSections",
+                    "click [data-enable-on-click]": "enableTargetedSections"
+                }, r.prototype.init = function () {
                     var e;
                     return e = this.$(this.$("[data-enable-on-click]").attr("data-enable-on-click")), e.find(":input").prop("disabled", !0)
                 }, r.prototype.hideTargetedSections = function (t) {
@@ -4333,7 +4605,12 @@ RavenConfigError.prototype = new Error, RavenConfigError.prototype.constructor =
                     return n = e(t.target).find('[name="checkout[credit_card][name]"]'), e.payment.validateCardNumber(n.val()) ? n.val("") : void 0
                 }, r.prototype.retrieveToken = function (e) {
                     var t, n = this;
-                    if (!this.skip(e))return e.preventDefault(), t = this.$(e.target), t.find(".btn.step__footer__continue-btn").prop("disabled", !0).addClass("btn--loading"), this.ajax({url: t.attr("action"), method: t.attr("method"), data: t.serializeArray(), dataType: "json"}).fail(function () {
+                    if (!this.skip(e))return e.preventDefault(), t = this.$(e.target), t.find(".btn.step__footer__continue-btn").prop("disabled", !0).addClass("btn--loading"), this.ajax({
+                        url: t.attr("action"),
+                        method: t.attr("method"),
+                        data: t.serializeArray(),
+                        dataType: "json"
+                    }).fail(function () {
                         return n.submitPlainForm(t)
                     }).done(function (e) {
                         return n.submitAjaxForm(t, e.id)
@@ -4426,10 +4703,14 @@ RavenConfigError.prototype = new Error, RavenConfigError.prototype.constructor =
                 return n(t, e), t.name = "AddressBook", t.prototype.init = function () {
                     var e, t, n = this;
                     if (this.withinFlow())return e = this.$element.closest("form"), t = e.find("[name=amazon_payments_order_reference_id]"), new OffAmazonPayments.Widgets.AddressBook({
-                        sellerId: this.sellerId(), design: {designMode: "responsive"}, onOrderReferenceCreate: function (e) {
+                        sellerId: this.sellerId(),
+                        design: {designMode: "responsive"},
+                        onOrderReferenceCreate: function (e) {
                             return t.val(e.getAmazonOrderReferenceId()), n.enableSubmit()
-                        }, onAddressSelect: function (e) {
-                        }, onError: function (e) {
+                        },
+                        onAddressSelect: function (e) {
+                        },
+                        onError: function (e) {
                             return console.error("" + e.getErrorCode() + ": " + e.getErrorMessage())
                         }
                     }).bind(this.$element.attr("id"))
@@ -4442,9 +4723,13 @@ RavenConfigError.prototype = new Error, RavenConfigError.prototype.constructor =
                 return n(t, e), t.name = "Wallet", t.prototype.init = function () {
                     var e = this;
                     if (this.withinFlow())return new OffAmazonPayments.Widgets.Wallet({
-                        sellerId: this.sellerId(), amazonOrderReferenceId: this.orderReferenceId(), design: {designMode: "responsive"}, onPaymentSelect: function (t) {
+                        sellerId: this.sellerId(),
+                        amazonOrderReferenceId: this.orderReferenceId(),
+                        design: {designMode: "responsive"},
+                        onPaymentSelect: function (t) {
                             return e.enableSubmit()
-                        }, onError: function (e) {
+                        },
+                        onError: function (e) {
                             return console.error("" + e.getErrorCode() + ": " + e.getErrorMessage())
                         }
                     }).bind(this.$element.attr("id"))
@@ -4487,7 +4772,12 @@ RavenConfigError.prototype = new Error, RavenConfigError.prototype.constructor =
                 }, e.prototype.buttonReady = function (e) {
                     return "SUCCESS" === e.status ? this.buttonHolder.appendChild(e.walletButtonElement) : void 0
                 }, e.prototype.createWalletButton = function () {
-                    return google.wallet.online.createWalletButton({jwt: this.requestMaskedWalletJwt, success: this.requestMaskedWalletSuccessCallback, failure: this.failureCallback, ready: this.buttonReady})
+                    return google.wallet.online.createWalletButton({
+                        jwt: this.requestMaskedWalletJwt,
+                        success: this.requestMaskedWalletSuccessCallback,
+                        failure: this.failureCallback,
+                        ready: this.buttonReady
+                    })
                 }, e.prototype.failureCallback = function (e) {
                     return "BUYER_CANCELLED" !== (null != e ? e.error : void 0) ? this.removeButton() : void 0
                 }, e

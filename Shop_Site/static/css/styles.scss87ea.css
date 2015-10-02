@@ -3779,6 +3779,10 @@ button.close {
         width: 996px;
         margin: 0 auto;
     }
+
+    #your_info {
+        padding-bottom: 1em;
+    }
 }
 
 .selector-wrapper {

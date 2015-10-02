@@ -1,14 +1,21 @@
 # -*- coding:utf8 -*-
 import json
+import random
+import string
 
 from django.http import HttpResponseRedirect, Http404, HttpResponse
+
 from django.shortcuts import render, redirect
+
 from django.core.validators import validate_email
 
 from Shop_Site.extra_functions import hash
 from Shop_Site import models
 from Shop_Site import stopwords
 
+
+def random_string(length=16):
+    return ''.join([random.choice(string.ascii_letters + string.digits) for _ in range(length)])
 
 def get_login(cookies):
     try:
@@ -134,6 +141,7 @@ def shutdown(request):
         value = HttpResponseRedirect('/')
         value.delete_cookie('user')
         value.delete_cookie('purchase')
+        value.delete_cookie('address')
         value.delete_cookie('password')
         return value
 
@@ -153,14 +161,18 @@ def register(request):
                 return render(request, 'register.html', {
                     'error': 'Ya existe un usuario registrado con ese correo',
                     'name': request.POST['name'],
+                    'last_name': request.POST['last_name'],
                     'email': request.POST['email'],
                     'password': request.POST['password'],
                     'next': request.POST['next']
                 })
             except models.Clients.DoesNotExist:
-                client = models.Clients.objects.create(name=request.POST['name'], email=email,
-                                                       password=hash(password))
-
+                try:
+                    client = models.Clients.objects.create(name=request.POST['name'],
+                                                           last_name=request.POST['last_name'],
+                                                           email=email, password=hash(password))
+                except KeyError:
+                    client = models.Clients.objects.create(email=email, password=hash(password))
                 client.save()
                 purchase = get_purchase(request.COOKIES)
                 if purchase:
@@ -186,6 +198,7 @@ def register(request):
             return render(request, 'register.html', {
                 'error': 'Error en el envio',
                 'name': name,
+                'last_name': request.POST['last_name'],
                 'email': request.POST['email'],
                 'password': request.POST['password'],
                 'next': request.POST['next']
@@ -600,6 +613,10 @@ def eliminate(request):
             raise Http404('')
 
 
+def send_mail():
+    pass
+
+
 def info_client(request):
     if request.method == 'GET':
         log = get_login(request.COOKIES)
@@ -619,8 +636,8 @@ def info_client(request):
                                          {
                                              'on_hold': on_hold,
                                              'shops': shops,
-                                             'name': client.address.first_name,
-                                             'last_name': client.address.last_name,
+                                             'name': client.name,
+                                             'last_name': client.last_name,
                                              'company': client.address.company,
                                              'address': client.address.address,
                                              'country': client.address.country,
@@ -640,20 +657,21 @@ def info_client(request):
                 return add_info_home(request, {'on_hold': purchase, 'shops': []}, 'info_client.html')
             else:
                 return Http404('Purchase Error')
-
     if request.method == 'POST':
         # TODO: Do this POST method. Right now it goes where it should but it doesn't verify anything
         log = get_login(request.COOKIES)
+        on_hold = None
+        shops = []
         if log:
-            on_hold = None
-            shops = []
             for purchase in models.Purchase.objects.filter(client__pk=log[0]):
                 if purchase.on_hold:
                     on_hold = purchase
                 else:
                     shops.append(purchase)
         else:
-            return HttpResponseRedirect('/login/')
+            on_hold = get_purchase(request.COOKIES)
+            if not on_hold:
+                return Http404('Purchase Error')
         try:
             save = request.POST['checkout']
         except KeyError:
@@ -675,10 +693,8 @@ def info_client(request):
             phone = request.POST['phone']
             if save:
                 try:
-                    client = models.Clients.objects.get(pk=log[0])
+                    client = models.Clients.objects.get(email=request.POST['email'])
                     try:
-                        client.address.first_name = name
-                        client.address.last_name = last_name
                         client.address.company = company
                         client.address.address = address
                         client.address.country = country
@@ -689,8 +705,7 @@ def info_client(request):
                         client.address.phone = phone
                         client.address.save()
                     except Exception:
-                        add = models.Address.objects.create(first_name=name, last_name=last_name,
-                                                            company=company,
+                        add = models.Address.objects.create(company=company,
                                                             address=address, country=country, city=city,
                                                             province=province,
                                                             postal_code=zip_code, apt_suite=apto, phone=phone)
@@ -698,11 +713,59 @@ def info_client(request):
                         add.client = client
                         add.save()
                     client.save()
-                    return HttpResponseRedirect('/payment/payments-billing/')
+                    if log:
+                        return HttpResponseRedirect('/payment/payments-billing/')
+                    else:
+                        ret = HttpResponseRedirect('/payment/payments-billing/')
+                        ret.set_cookie('address', str(client.address.pk))
+                        ret.set_cookie('name_shipment', str(name))
+                        ret.set_cookie('last_name_shipment', str(last_name))
+                        ret.set_cookie('company_shipment', str(client.address.company))
+                        ret.set_cookie('mail_shipment', str(client.email))
+                        return ret
                 except models.Clients.DoesNotExist:
-                    return HttpResponseRedirect('/login/')
+                    email = request.POST['email']
+                    password = random_string()
+                    client = models.Clients.objects.create(email=email, name=name, last_name=last_name,
+                                                           password=hash(password))
+                    client.save()
+                    add = models.Address.objects.create(company=company,
+                                                        address=address, country=country, city=city,
+                                                        province=province,
+                                                        postal_code=zip_code, apt_suite=apto, phone=phone)
+                    add.save()
+                    add.client = client
+                    add.save()
+                    send_mail()
+                    if log:
+                        return HttpResponseRedirect('/payment/payments-billing/')
+                    else:
+                        ret = HttpResponseRedirect('/payment/payments-billing/')
+                        ret.set_cookie('address', str(client.address.pk))
+                        ret.set_cookie('name_shipment', str(name))
+                        ret.set_cookie('last_name_shipment', str(last_name))
+                        ret.set_cookie('company_shipment', str(client.address.company))
+                        ret.set_cookie('mail_shipment', str(client.email))
+                        return ret
             else:
-                return HttpResponseRedirect('/payment/payments-billing/')
+                add = models.Address.objects.create(company=company,
+                                                    address=address, country=country, city=city,
+                                                    province=province,
+                                                    postal_code=zip_code, apt_suite=apto, phone=phone)
+                add.save()
+                if log:
+                    client = models.Clients.objects.get(pk=int(log[0]))
+                    client.address = add
+                    client.save()
+                    return HttpResponseRedirect('/payment/payments-billing/')
+                else:
+                    ret = HttpResponseRedirect('/payment/payments-billing/')
+                    ret.set_cookie('address', str(add.pk))
+                    ret.set_cookie('name_shipment', str(name))
+                    ret.set_cookie('last_name_shipment', str(last_name))
+                    ret.set_cookie('company_shipment', str(company))
+                    ret.set_cookie('mail_shipment', str(request.POST['email']))
+                    return ret
         except KeyError:
             return add_info_home(request,
                                  {
@@ -719,7 +782,8 @@ def info_client(request):
                                      'zip_code': request.POST['zip_code'],
                                      'apto': request.POST['apartment'],
                                      'phone': request.POST['phone'],
-                                 }, 'info_client.html')
+                                 }
+                                 , 'info_client.html')
 
 
 def info_card(request):
