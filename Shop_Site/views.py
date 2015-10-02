@@ -637,6 +637,7 @@ def info_client(request):
                                              'on_hold': on_hold,
                                              'shops': shops,
                                              'name': client.name,
+                                             'email': client.email,
                                              'last_name': client.last_name,
                                              'company': client.address.company,
                                              'address': client.address.address,
@@ -648,7 +649,9 @@ def info_client(request):
                                              'phone': client.address.phone,
                                          }, 'info_client.html')
                 except Exception:
-                    return add_info_home(request, {'on_hold': on_hold, 'shops': shops}, 'info_client.html')
+                    return add_info_home(request, {'on_hold': on_hold, 'shops': shops, 'name': client.name,
+                                                   'email': client.email,
+                                                   'last_name': client.last_name, }, 'info_client.html')
             except models.Clients.DoesNotExist:
                 return HttpResponseRedirect('/login/')
         else:
@@ -691,6 +694,24 @@ def info_client(request):
             zip_code = request.POST['zip_code']
             apto = request.POST['apartment']
             phone = request.POST['phone']
+            if not name or not last_name or not company or not address or not country or not city or not province or not zip_code or not apto or not phone:
+                return add_info_home(request,
+                                     {
+                                         'error': True,
+                                         'on_hold': on_hold,
+                                         'shops': shops,
+                                         'name': request.POST['name'],
+                                         'last_name': request.POST['last_name'],
+                                         'company': request.POST['company'],
+                                         'address': request.POST['address'],
+                                         'country': request.POST['country'],
+                                         'city': request.POST['city'],
+                                         'province': request.POST['province'],
+                                         'zip_code': request.POST['zip_code'],
+                                         'apto': request.POST['apartment'],
+                                         'phone': request.POST['phone'],
+                                     }
+                                     , 'info_client.html')
             if save:
                 try:
                     client = models.Clients.objects.get(email=request.POST['email'])
@@ -728,7 +749,10 @@ def info_client(request):
                     password = random_string()
                     client = models.Clients.objects.create(email=email, name=name, last_name=last_name,
                                                            password=hash(password))
+                    purchase = get_purchase(request.COOKIES)
                     client.save()
+                    purchase.client = client
+                    purchase.save()
                     add = models.Address.objects.create(company=company,
                                                         address=address, country=country, city=city,
                                                         province=province,
