@@ -64,29 +64,16 @@
                     <form class="search" action="/search/" method="post">{% csrf_token %}
                         <button type="submit" alt="Go" class="go"><i class="fa fa-search"></i></button>
                         <input type="text" name="query" class="search_box" placeholder="Buscar" value=""/>
-                        {% if login %}
-                            <input type="hidden" name="login" class="search_box" placeholder="Buscar"
-                                   value="{{ login.0 }}"/>
-                        {% else %}
-                            <input type="hidden" name="login" class="search_box" placeholder="Buscar"
-                                   value="{{ login.0 }}"/>
-                        {% endif %}
                     </form>
                 </li>
-                {% if login %}
-                    <li class="fr"><a href="/cart_shop/?pk_l={{ login.0 }}" class="cart" title="Cart"><i
-                            class="fa fa-shopping-cart"></i>Carrito: {{ purchases }} Items
-                    </a></li>
-                {% else %}
-                    <li class="fr"><a class="cart" title="Cart"><i
-                            class="fa fa-shopping-cart"></i>Carrito: {{ purchases }} Items
-                    </a></li>
-                {% endif %}
+                <li class="fr"><a class="cart" title="Cart"><i
+                        class="fa fa-shopping-cart"></i>Carrito: {{ purchases }} Items
+                </a></li>
                 <li class="customer-links">
                     {% if login %}
                         <a id="customer_login_link">{{ login.1 }}</a>
                         <span class="or">&nbsp;|&nbsp;</span>
-                        <a href="/" id="customer_register_link">Cerrar sesión</a>
+                        <a href="/shutdown/" id="customer_register_link">Cerrar sesión</a>
                     {% else %}
                         <a href="/login/" id="customer_login_link">Iniciar sesión</a>
 
@@ -108,46 +95,24 @@
             <div class="flyout">
                 <ul class="clearfix">
                     <li>
-                        {% if login %}
-                            <a href="/?pk_l={{ login.0 }}" class=" current navlink"><span>Inicio</span></a>
-                        {% else %}
-                            <a href="/" class=" current navlink"><span>Inicio</span></a>
-                        {% endif %}
+                        <a href="/" class=" current navlink"><span>Inicio</span></a>
                     </li>
                     <li>
                         {# TODO: Que se supone q vaya aqui INFO q me tienes q mandar#}
-                        {% if login %}
-                            <a href="/about_us/?pk_l={{ login.0 }}" class="current navlink"><span>Sobre nostros</span></a>
-                        {% else %}
-                            <a href="/about_us/" class="current navlink"><span>Sobre nostros</span></a>
-                        {% endif %}
+                        <a href="/about_us/#home" class="current navlink"><span>Sobre nostros</span></a>
                     </li>
                     <li>
-
                         <a style="cursor: pointer" class="navlink"><span>Productos</span></a>
                         <span class="more"><i class="fa fa-plus"></i></span>
                         <ul class="sub-menu">
-
                             {% for c in categories %}
-                                {% if login %}
-                                    <li><a href="/categories/{{ c.pk }}/?pk_l={{ login.0 }}"
-                                           class=" navlink">{{ c.name }}</a></li>
-                                {% else %}
-                                    <li><a href="/categories/{{ c.pk }}/" class=" navlink">{{ c.name }}</a></li>
-                                {% endif %}
+                                <li><a href="/categories/{{ c.pk }}/" class=" navlink">{{ c.name }}</a></li>
                             {% endfor %}
-                            {#                            <li><a href="#" class=" navlink">Polos</a></li>#}
-                            {##}
-                            {#                            <li><a href="#" class=" last  navlink">Corbatas</a></li>#}
                         </ul>
                     </li>
                     <li>
                         {# TODO: Explicame aqui igual q es esto y mandame lo que quieres q vaya ahi #}
-                        {% if login %}
-                            <a href="/sizes/?pk_l={{ login.0 }}" class=" current navlink"><span>Guía de tallas</span></a>
-                        {% else %}
-                            <a href="/sizes/" class=" current navlink"><span>Guía de tallas</span></a>
-                        {% endif %}
+                        <a href="/sizes/" class=" current navlink"><span>Guía de tallas</span></a>
                     </li>
                     <li><span class="account-links">Usuarios</span>
                         <span class="more"><i class="fa fa-user"></i></span>
@@ -156,7 +121,8 @@
                                 <li class="customer-links"><a id="customer_login_link">{{ login.1 }}</a>
                                 </li>
                                 <span class="or">&nbsp;|&nbsp;</span>
-                                <li class="customer-links"><a href="/" id="customer_register_link">Cerrar sesión</a>
+                                <li class="customer-links"><a href="/shutdown/" id="customer_register_link">Cerrar
+                                    sesión</a>
                                 </li>
                             </ul>
                         {% else %}
@@ -174,13 +140,6 @@
                         <form class="search" action="/search/" method="post">{% csrf_token %}
                             <button type="submit" alt="Go" class="go"><i class="fa fa-search"></i></button>
                             <input type="text" name="query" class="search_box" placeholder="Buscar" value=""/>
-                            {% if login %}
-                                <input type="hidden" name="login" class="search_box" placeholder="Buscar"
-                                       value="{{ login.0 }}"/>
-                            {% else %}
-                                <input type="hidden" name="login" class="search_box" placeholder="Buscar"
-                                       value="{{ login.0 }}"/>
-                            {% endif %}
                         </form>
                     </li>
                 </ul>
@@ -207,52 +166,27 @@
                         <nav class="main">
                             <ul class="horizontal unstyled clearfix fr">
                                 <li class="">
-                                    {% if login %}
-                                        <a href="/?pk_l={{ login.0 }}" class="current">
-                                            Inicio
-                                        </a>
-                                    {% else %}
-                                        <a href="/" class="current">
-                                            Inicio
-                                        </a>
-                                    {% endif %}
+                                    <a href="/" class="current">
+                                        Inicio
+                                    </a>
                                 </li>
                                 <li class="">
-                                    {% if login %}
-                                        <a href="/about_us/?pk_l={{ login.0 }}">Sobre nostros</a>
-                                    {% else %}
-                                        <a href="/about_us/">Sobre nostros</a>
-                                    {% endif %}
+                                    <a href="/about_us/#home">Sobre nostros</a>
                                 </li>
                                 <li class=" dropdown">
                                     <a style="cursor: pointer">
                                         Productos
-
                                     </a>
                                     <ul class="dropdown">
                                         {% for c in categories %}
                                             <li>
-                                                {% if login %}
-                                                    <a href="/categories/{{ c.pk }}/?pk_l={{ login.0 }}">{{ c.name }}</a>
-                                                {% else %}
-                                                    <a href="/categories/{{ c.pk }}/">{{ c.name }}</a>
-                                                {% endif %}
+                                                <a href="/categories/{{ c.pk }}/">{{ c.name }}</a>
                                             </li>
                                         {% endfor %}
-                                        {#                                        <li>#}
-                                        {#                                            <a href="#">Polos</a>#}
-                                        {#                                        </li>#}
-                                        {#                                        <li>#}
-                                        {#                                            <a href="#">Corbatas</a>#}
-                                        {#                                        </li>#}
                                     </ul>
                                 </li>
                                 <li class="">
-                                    {% if login %}
-                                        <a href="/sizes/?pk_l={{ login.0 }}">Guía de tallas</a>
-                                    {% else %}
-                                        <a href="/sizes/">Guía de tallas</a>
-                                    {% endif %}
+                                    <a href="/sizes/">Guía de tallas</a>
                                 </li>
                             </ul>
 
@@ -278,8 +212,6 @@
                         <div class="flexslider-container">
                             <div class="flexslider">
                                 <ul class="slides">
-
-
                                     <li>
                                         <a href="#">
                                             <img src="{% static 'img/slideshow/timthumb16da.jpg' %}" alt=""/>
@@ -337,76 +269,22 @@
                                 {#                    <span class="circle sold-out">Sold out</span>#}
 
                                 <div class="image">
-                                    {% if login %}
-                                        <a href="/categories/{{ c.pk }}/?pk_l={{ login.0 }}">
-                                            <img src="{{ c.image.url }}" alt="Eye exam"/>
-                                        </a>
-                                    {% else %}
-                                        <a href="/categories/{{ c.pk }}">
-                                            <img src="{{ c.image.url }}" alt="Eye exam"/>
-                                        </a>
-                                    {% endif %}
+
+                                    <a href="/categories/{{ c.pk }}">
+                                        <img src="{{ c.image.url }}" alt="Eye exam"/>
+                                    </a>
                                 </div>
                                 <div class="details">
-                                    {% if login %}
-                                        <a href="/categories/{{ c.pk }}/?pk_l={{ login.0 }}" class="clearfix">
-                                    {% else %}
-                                        <a href="/categories/{{ c.pk }}" class="clearfix">
-                                    {% endif %}
-
-                                    <h4 class="title">{{ c.name }}</h4>
-
-                                    {#                            <span class="vendor">Sideshow Sign Co</span>#}
-                            <span class="price">
-                                <em>Desde</em> 20.00€
-                            </span>
+                                    <a href="/categories/{{ c.pk }}" class="clearfix">
+                                        <h4 class="title">{{ c.name }}</h4>
+                                        <span class="price">
+                                            <em>Desde</em> 20.00€
+                                        </span>
                                     </a>
                                 </div>
                             </div>
 
                         {% endfor %}
-                        {#                        <div class="product span4 ">#}
-                        {#                            <div class="image">#}
-                        {#                                <a href="#">#}
-                        {#                                    <img src="{% static 'img/productos/calibrado_20150525_hutton_020-373x195.jpg' %}"#}
-                        {#                                         alt="Eye exam"/>#}
-                        {#                                </a>#}
-                        {#                            </div>#}
-                        {##}
-                        {#                            <div class="details">#}
-                        {#                                <a href="#" class="clearfix">#}
-                        {#                                    <h4 class="title">Polos</h4>#}
-                        {#                            <span class="vendor">Sideshow Sign Co</span>#}
-                        {#                            <span class="price">#}
-                        {#                                <em>Desde</em> 20.00€#}
-                        {#                            </span>#}
-                        {#                                </a>#}
-                        {#                            </div>#}
-                        {#                        </div>#}
-                        {##}
-                        {#                        <div class="product span4 ">#}
-                        {#                    <span class="circle sale">Sale</span>#}
-                        {##}
-                        {#                            <div class="image">#}
-                        {#                                <a href="#">#}
-                        {#                                    <img src="{% static 'img/productos/fcalderon_corbatas0051-373x195.jpg' %}"#}
-                        {#                                         alt="Eye exam"/>#}
-                        {#                                </a>#}
-                        {#                            </div>#}
-                        {#                            <div class="details">#}
-                        {#                                <a href="#" class="clearfix">#}
-                        {#                                    <h4 class="title">Corbatas</h4>#}
-                        {#                            <span class="vendor">Sideshow Sign Co</span>#}
-                        {#                    <span class="price">#}
-                        {#                      <del>$115.00</del>#}
-                        {#                        $85.00#}
-                        {#                    </span>#}
-                        {#                            <span class="price">#}
-                        {#                                <em>Desde</em> 20.00€#}
-                        {#                            </span>#}
-                        {#                                </a>#}
-                        {#                            </div>#}
-                        {#                        </div>#}
                         <div style="clear:both;"></div>
                     </div>
                 {% endblock %}
@@ -447,21 +325,9 @@
                     <h4>Avisos legales</h4>
                     <ul class="unstyled">
                         {# TODO: Que se supone q vaya en todos estos enlaces, me imagino q sea textos, mandamelos#}
-                        {% if login %}
-                            <li><a href="/privacy/#home?pk_l={{ login.0 }}" title="Política de privacidad">Política de privacidad</a></li>
-                        {% else %}
-                            <li><a href="/privacy/#home" title="Política de privacidad">Política de privacidad</a></li>
-                        {% endif %}
-                        {% if login %}
-                            <li><a href="/conditions/#home?pk_l={{ login.0 }}" title="Términos y Condiciones">Términos y Condiciones</a></li>
-                        {% else %}
-                            <li><a href="/conditions/#home" title="Términos y Condiciones">Términos y Condiciones</a></li>
-                        {% endif %}
-                        {% if login %}
-                            <li><a href="/cookies/#home?pk_l={{ login.0 }}" title="Política de Cookies">Política de Cookies</a></li>
-                        {% else %}
-                            <li><a href="/cookies/#home" title="Política de Cookies">Política de Cookies</a></li>
-                        {% endif %}
+                        <li><a href="/privacy/#home" title="Política de privacidad">Política de privacidad</a></li>
+                        <li><a href="/conditions/#home" title="Términos y Condiciones">Términos y Condiciones</a></li>
+                        <li><a href="/cookies/#home" title="Política de Cookies">Política de Cookies</a></li>
                     </ul>
                 </div>
                 <!-- End footer navigation -->

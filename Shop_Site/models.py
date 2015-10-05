@@ -16,6 +16,12 @@ from Shop_Site.extra_functions import hash
 
 
 
+
+
+
+
+
+
 # TODO: Terminar de poner la tallas q faltan, estas fueron la unicas que se me ocurrieron
 sizes = [('S', 'S'), ('M', 'M'), ('L', 'L'), ('XL', 'XL')]
 
@@ -131,9 +137,10 @@ class Clients(models.Model):
         return str(self.name)
 
     def save(self, *args, **kwargs):
-        super(Clients, self).save(*args, **kwargs)
         if self.password:
             self.password = hash(self.password)
+        super(Clients, self).save(*args, **kwargs)
+
 
 
 class Purchase(models.Model):

@@ -8,3 +8,4 @@ def hash(text):
         return hashlib.sha256(text).hexdigest()
     except TypeError:
         return hashlib.sha256(text.encode()).hexdigest()
+

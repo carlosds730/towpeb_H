@@ -2,110 +2,153 @@
 import json
 
 from django.http import HttpResponseRedirect, Http404, HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
 from Shop_Site.extra_functions import hash
 from Shop_Site import models
-from Shop_Site import forms
 from Shop_Site import stopwords
 
 
 # Create your views here.
 
 
+def get_login(cookies):
+    try:
+        user = cookies['user']
+        password = cookies['password']
+        client = models.Clients.objects.get(email=user)
+        if password == client.password:
+            if client.name:
+                return client.pk, client.name
+            else:
+                return client.pk, client.email
+        return None
+    except KeyError:
+        return None
+
 def home(request):
     if request.method == 'GET':
-        try:
-            log = request.GET['pk_l']
-            try:
-                client = models.Clients.objects.get(pk=int(log))
-                if client.name:
-                    return add_info_home(request, {'login': (client.pk, client.name)})
-                else:
-                    return add_info_home(request, {'login': (client.pk, client.email)})
-            except models.Clients.DoesNotExist:
-                return add_info_home(request, {})
-            except ValueError:
-                return add_info_home(request, {})
-        except KeyError:
-            return add_info_home(request, {})
+        return add_info_home(request, {})
 
 
 def add_info_home(request, data, url='base.html'):
     categories = models.Category.objects.all()
+    log = None
     try:
-        log = request.GET['pk_l']
+        log = get_login(request.COOKIES)
         cant = 0
-        p = models.Purchase.objects.get(client__pk=int(log), on_hold=True)
-        cant = p.amount
+        if log:
+            p = models.Purchase.objects.get(client__pk=int(log[0]), on_hold=True)
+            cant = p.amount
     except KeyError:
         cant = 0
     except models.Purchase.DoesNotExist:
         cant = 0
     data.update({
         'categories': categories,
-        'purchases': cant
+        'purchases': cant,
+        'login': log
     })
     return render(request, url, data)
 
 
+def set_cookies(_render, client):
+    _render.set_cookie('user', str(client.email))
+    _render.set_cookie('password', str(client.password))
+    return _render
+
+
 def login(request):
     if request.method == 'GET':
-        return render(request, 'login.html', {'next': request.environ['HTTP_REFERER'].split('?')[0]})
+        try:
+            return render(request, 'login.html', {'next': request.environ['HTTP_REFERER'].split('?')[0]})
+        except KeyError:
+            return render(request, 'login.html', {'next': '/'})
     elif request.method == 'POST':
         if request.POST['email'] and request.POST['password']:
             try:
                 client = models.Clients.objects.get(email=request.POST['email'])
                 password = hash(request.POST['password'])
                 if password == client.password:
-                    return HttpResponseRedirect(request.POST['next'] + '?pk_l=' + str(client.pk))
+                    value = redirect(request.POST['next'])
+                    tmp = set_cookies(value, client)
+                    return tmp
                 else:
                     return render(request, 'login.html', {
                         'error': 'Error en la contraseña',
                         'email': request.POST['email'],
-                        'password': request.POST['password']
+                        'password': request.POST['password'],
+                        'next': request.POST['next']
                     })
             except models.Clients.DoesNotExist:
                 return render(request, 'login.html', {
                     'error': 'No existe ningún cliente con ese correo',
                     'email': request.POST['email'],
-                    'password': request.POST['password']
+                    'password': request.POST['password'],
+                    'next': request.POST['next']
                 })
         else:
             return render(request, 'login.html', {
                 'error': 'Falta el usuario o la contraseña',
                 'email': request.POST['email'],
-                'password': request.POST['password']
+                'password': request.POST['password'],
+                'next': request.POST['next']
             })
+
+
+def shutdown(request):
+    if request.method == 'GET':
+        categories = models.Category.objects.all()
+        value = HttpResponseRedirect('/')
+        value.delete_cookie('user')
+        value.delete_cookie('password')
+        return value
 
 
 def register(request):
     if request.method == 'GET':
-        return render(request, 'register.html', {'next': request.environ['HTTP_REFERER'].split('?')[0]})
+        try:
+            return render(request, 'register.html', {'next': request.environ['HTTP_REFERER'].split('?')[0]})
+        except KeyError:
+            return render(request, 'register.html', {'next': '/'})
     elif request.method == 'POST':
-        form = forms.RegisterForm(request.POST)
-        if form.is_valid():
-
-            client = models.Clients.objects.create(name=form.cleaned_data['name'], email=form.cleaned_data['email'],
-                                                   password=form.cleaned_data['password'],
-                                                   address=form.cleaned_data['address'])
-            client.save()
-            return HttpResponseRedirect(request.POST['next'] + '?pk_l=' + str(client.pk))
-        else:
+        try:
+            email = request.POST['email']
+            password = request.POST['password']
             try:
-                name = form.cleaned_data['name']
+                models.Clients.objects.get(email=email)
+                return render(request, 'register.html', {
+                    'error': 'Ya existe esa direccion de correo',
+                    'name': request.POST['name'],
+                    'email': request.POST['email'],
+                    'password': request.POST['password'],
+                    'address': request.POST['address'],
+                    'next': request.POST['next']
+                })
+            except models.Clients.DoesNotExist:
+                client = models.Clients.objects.create(name=request.POST['name'], email=email,
+                                                       password=password,
+                                                       address=request.POST['address'])
+                client.save()
+                value = redirect(request.POST['next'])
+                tmp = set_cookies(value, client)
+                return tmp
+        except KeyError:
+            try:
+                name = request.POST['name']
             except KeyError:
                 name = ''
             try:
-                address = form.cleaned_data['address']
+                address = request.POST['address']
             except KeyError:
                 address = ''
             return render(request, 'register.html', {
-                'error': 'Correo inválido',
+                'error': 'Error en el envio',
                 'name': name,
-                'email': form.cleaned_data['email'],
-                'password': form.cleaned_data['password'],
-                'address': address
+                'email': request.POST['email'],
+                'password': request.POST['password'],
+                'address': address,
+                'next': request.POST['next']
             })
 
 
@@ -127,19 +170,7 @@ def get_all_products(products):
 
 def categories(request, pk):
     if request.is_ajax():
-        try:
-            log = request.GET['pk_l']
-            log = models.Clients.objects.get(pk=int(log))
-            if log.name:
-                log = (log.pk, log.name)
-            else:
-                log = (log.pk, log.email)
-        except KeyError:
-            log = None
-        except models.Clients.DoesNotExist:
-            log = None
-        except ValueError:
-            log = None
+        log = get_login(request.COOKIES)
         try:
             order = request.GET['order']
         except KeyError:
@@ -171,19 +202,6 @@ def categories(request, pk):
         return HttpResponse(json.dumps(response_data), content_type='application/json')
     elif request.method == 'GET':
         try:
-            log = request.GET['pk_l']
-            log = models.Clients.objects.get(pk=int(log))
-            if log.name:
-                log = (log.pk, log.name)
-            else:
-                log = (log.pk, log.email)
-        except KeyError:
-            log = None
-        except models.Clients.DoesNotExist:
-            log = None
-        except ValueError:
-            log = None
-        try:
             category = models.Category.objects.get(pk=int(pk))
         except models.Category.DoesNotExist:
             category = None
@@ -192,7 +210,7 @@ def categories(request, pk):
         if category:
             products = models.Products.objects.filter(category__pk=category.pk, is_available=True)
             return add_info_home(request,
-                                 {'category': category, 'products': get_all_products(products), 'login': log},
+                                 {'category': category, 'products': get_all_products(products)},
                                  'products_collection.html')
         else:
             raise Http404('Esa categoría no existe')
@@ -200,27 +218,13 @@ def categories(request, pk):
 
 def products(request, pk):
     try:
-        log = request.GET['pk_l']
-        log = models.Clients.objects.get(pk=int(log))
-        if log.name:
-            log = (log.pk, log.name)
-        else:
-            log = (log.pk, log.email)
-    except KeyError:
-        log = None
-    except models.Clients.DoesNotExist:
-        log = None
-    except ValueError:
-        log = None
-    try:
         product = models.Products.objects.get(pk=int(pk), is_available=True)
     except models.Products.DoesNotExist:
         product = None
     except ValueError:
         product = None
     if product:
-
-        return add_info_home(request, {'product': product, 'login': log},
+        return add_info_home(request, {'product': product},
                              'single_product.html')
     else:
         raise Http404('Ese producto no existe')
@@ -239,9 +243,9 @@ def add_items_no_repeated(collection, _property='size'):
 def add_to_cart(request):
     if request.method == 'POST':
         try:
-            log = request.POST['login']
+            log = get_login(request.COOKIES)
             if log:
-                purchase = models.Purchase.objects.get(client__pk=int(log), on_hold=True)
+                purchase = models.Purchase.objects.get(client__pk=int(log[0]), on_hold=True)
             else:
                 purchase = None
         except KeyError:
@@ -269,7 +273,7 @@ def add_to_cart(request):
             purchase.amount += 1
             purchase.save()
             return HttpResponseRedirect(
-                '/categories/' + request.POST['category_pk'] + '/?pk_l=' + request.POST['login'])
+                '/categories/' + request.POST['category_pk'] + '/')
         else:
             try:
                 client = models.Clients.objects.get(pk=int(request.POST['login']))
@@ -282,7 +286,7 @@ def add_to_cart(request):
             purchase.amount = 1
             purchase.save()
         return HttpResponseRedirect(
-            '/categories/' + request.POST['category_pk'] + '/?pk_l=' + request.POST['login'])
+            '/categories/' + request.POST['category_pk'] + '/')
     else:
         raise Http404('Este url no tiene página')
 
@@ -338,85 +342,33 @@ def search(request):
         except KeyError:
             raise Http404('Wrong request!!!!!!!')
     if request.method == 'GET':
-        try:
-            log = request.GET['pk_l']
-            log = models.Clients.objects.get(pk=int(log))
-            if log.name:
-                log = (log.pk, log.name)
-            else:
-                log = (log.pk, log.email)
-        except KeyError:
-            log = None
-        except models.Clients.DoesNotExist:
-            log = None
-        except models.Purchase.DoesNotExist:
-            log = None
-        except ValueError:
-            log = None
-        return add_info_home(request, {'no_data': True, 'login': log}, 'search.html')
+        return add_info_home(request, {'no_data': True}, 'search.html')
 
 
 def cart_shop(request):
     if request.method == 'GET':
-        try:
-            log = request.GET['pk_l']
-            client = models.Clients.objects.get(pk=int(log))
-            if client.name:
-                log = (client.pk, client.name)
-            else:
-                log = (client.pk, client.email)
-        except KeyError:
-            raise Http404('Wrong client!!!!!')
-        except ValueError:
-            raise Http404('Wrong client!!!!!')
-        except models.Clients.DoesNotExist:
-            raise Http404('Wrong client!!!!!')
-        on_hold = None
-        shops = []
-        for purchase in models.Purchase.objects.filter(client__pk=client.pk):
-            if purchase.on_hold:
-                on_hold = purchase
-            else:
-                shops.append(purchase)
-        return add_info_home(request, {'login': log, 'on_hold': on_hold, 'shops': shops}, 'cart_shop.html')
+        log = get_login(request.COOKIES)
+        if log:
+            on_hold = None
+            shops = []
+            for purchase in models.Purchase.objects.filter(client__pk=log[0]):
+                if purchase.on_hold:
+                    on_hold = purchase
+                else:
+                    shops.append(purchase)
+            return add_info_home(request, {'on_hold': on_hold, 'shops': shops}, 'cart_shop.html')
+        else:
+            return HttpResponseRedirect('/login/')
 
 
 def about_us(request):
     if request.method == 'GET':
-        try:
-            log = request.GET['pk_l']
-            client = models.Clients.objects.get(pk=int(log))
-            if client.name:
-                log = (client.pk, client.name)
-            else:
-                log = (client.pk, client.email)
-        except KeyError:
-            log = None
-        except ValueError:
-            log = None
-        except models.Clients.DoesNotExist:
-            log = None
-
-        return add_info_home(request, {'login': log}, url='about_us.html')
+        return add_info_home(request, {}, url='about_us.html')
 
 
 def finish_views(request, html):
     if request.method == 'GET':
-        try:
-            log = request.GET['pk_l']
-            client = models.Clients.objects.get(pk=int(log))
-            if client.name:
-                log = (client.pk, client.name)
-            else:
-                log = (client.pk, client.email)
-        except KeyError:
-            log = None
-        except ValueError:
-            log = None
-        except models.Clients.DoesNotExist:
-            log = None
-
-        return add_info_home(request, {'login': log}, url=html)
+        return add_info_home(request, {}, url=html)
 
 
 def sizes(request):
@@ -426,8 +378,10 @@ def sizes(request):
 def privacy(request):
     return finish_views(request, 'privacy.html')
 
+
 def conditions(request):
     return finish_views(request, 'conditions.html')
+
 
 def cookies(request):
     return finish_views(request, 'cookies.html')

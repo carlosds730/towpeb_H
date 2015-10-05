@@ -45,6 +45,8 @@ INSTALLED_APPS = (
     'Shop_Site'
 )
 
+SESSION_COOKIE_DOMAIN = None
+
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',

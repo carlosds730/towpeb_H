@@ -34,6 +34,7 @@ urlpatterns = static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + [
     url(r'^privacy/?$', views.privacy, name='privacy'),
     url(r'^conditions/?$', views.conditions, name='conditions'),
     url(r'^cookies/?$', views.cookies, name='cookies'),
+    url(r'^shutdown/?$', views.shutdown, name='shutdown'),
     url(r'^$', views.home)
     #url(r'', include('django_braintree.urls'))
 ]

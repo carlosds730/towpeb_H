@@ -11,14 +11,8 @@
             <h5 style="color: #004024"><strong>Total: {{ on_hold.total_price }}</strong></h5>
             <ul>
                 {% for p in on_hold.products.all %}
-                    {% if login %}
-                        <li><a style="color: #004024"
-                               href="/product/{{ p.product.pk }}/?pk_l={{ login.0 }}">{{ p.product.name }}</a>: {{ p.attribute }}
-                        </li>
-                    {% else %}
-                        <li><a style="color: #004024"
-                               href="/product/{{ p.product.pk }}/">{{ p.product.name }}</a>: {{ p.attribute }}</li>
-                    {% endif %}
+                    <li><a style="color: #004024"
+                           href="/product/{{ p.product.pk }}/">{{ p.product.name }}</a>: {{ p.attribute }}</li>
                 {% endfor %}
             </ul>
         </div>
@@ -29,23 +23,17 @@
         </div>
         <div class="container">
             {% for s in shops %}
-                    <div class="header">
-                        <h5 style="color: #004024"><strong>Compra del d&iacutea {{ s.date | date }}</strong></h5>
-                        <h5 style="color: #004024"><strong>Total gastado: {{ s.total_price }} </strong></h5>
-                    </div>
+                <div class="header">
+                    <h5 style="color: #004024"><strong>Compra del d&iacutea {{ s.date | date }}</strong></h5>
+                    <h5 style="color: #004024"><strong>Total gastado: {{ s.total_price }} </strong></h5>
+                </div>
                 <div class="container">
                 <ul>
-                    {% for p in s.products.all %}
-                        {% if login %}
-                            <li><a style="color: #004024"
-                                   href="/product/{{ p.product.pk }}/?pk_l={{ login.0 }}">{{ p.product.name }}</a>
-                                : {{ p.attribute }}</li>
-                        {% else %}
-                            <li><a style="color: #004024"
-                                   href="/product/{{ p.product.pk }}/">{{ p.product.name }}</a>: {{ p.attribute }}</li>
-                        {% endif %}
-                    {% endfor %}
+                {% for p in s.products.all %}
+                    <li><a style="color: #004024"
+                           href="/product/{{ p.product.pk }}/">{{ p.product.name }}</a>: {{ p.attribute }}</li>
                 {% endfor %}
+            {% endfor %}
             </ul>
             </div>
 
