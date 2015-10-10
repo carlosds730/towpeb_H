@@ -11,28 +11,33 @@
                          </span>
         <span class="arrow-space">&#62;</span>
         <strong itemprop="title">Método de pago</strong>
+
     </div>
 {% endblock %}
 {% block form_content %}
-    <form id="checkout" method="post" action="/payment-methods">
-        <div id="payment-form"></div>
-        <input type="submit" value="Pagar">
-    </form>
 
-    {#    <script src="https://js.braintreegateway.com/v2/braintree.js"></script>#}
-    <script src="{% static 'js/compra/braintree.js' %}"></script>
-
-    <script>
-        braintree.setup("{{ token }}",
-                "dropin", {
-                    container: "payment-form"
-                });
-    </script>
-
-    <form class="edit_checkout animate-floating-labels" action="/" accept-charset="UTF-8" method="post">
+    {#TODO: First show something to select if you want to pay with PayPal or via CreditCard, depending on that show paypal-container or section__content#}
+    <form class="edit_checkout animate-floating-labels" action="/payment-methods" accept-charset="UTF-8"
+          id="payment_form" method="post">{% csrf_token %}
         <div class="section" data-payment-method="">
             <div class="section__header">
                 <h2 class="section__title">Método de pago</h2>
+                {% if error %}
+                    <div class="alert alert-danger alert-dismissable fade in">
+                        <button type="button" class="close" data-dismiss="alert"
+                                aria-hidden="true" onclick="Close(3)"
+                                style="top:-2px">&times;</button>
+                        Hay errores en los campos
+                    </div>
+                {% else %}
+                    <div class="alert alert-danger alert-dismissable fade in"
+                         style="display: none">
+                        <button type="button" class="close" data-dismiss="alert"
+                                aria-hidden="true" onclick="Close(3)"
+                                style="top:-2px">&times;</button>
+                        Hay errores en los campos
+                    </div>
+                {% endif %}
                 {#TODO: Find an page in spanish and see how they say this#}
                 <p class="section__text">
                     Todas las transacciones son seguras y encriptadas. La información de la tarjeta de crédito nunca se
@@ -40,12 +45,16 @@
                     {#                    All transactions are secure and encrypted. Credit card information is never stored.#}
                 </p>
             </div>
+            <div class="section__content">
+                <div id="paypal-container"></div>
+            </div>
 
             <div class="section__content">
 
                 <div data-payment-subform="required">
                     <div class="content-box">
-                        <div class="radio-wrapper content-box__row " data-select-gateway="5735017">
+                        <div class="radio-wrapper content-box__row " onclick="ShowThing();"
+                             data-select-gateway="5735017">
                             <input value="5735017" size="30" type="hidden" name="checkout[payment_gateway]">
 
                             <label class="radio__label content-box__emphasis" for="checkout_payment_gateway_5735017">
@@ -54,40 +63,39 @@
                         </div>
 
                         <div class="radio-wrapper content-box__row content-box__row--secondary"
-                             data-subfields-for-gateway="5735017">
+                             data-subfields-for-gateway="5735017" id="credit_card_info">
                             <div class="fieldset " dir="ltr">
 
                                 <div class="field field--required field">
 
                                     <div class="field__input-wrapper"><label class="field__label"
-                                                                             for="checkout_credit_card_number">Card
-                                        number</label>
-                                        <input type="tel" placeholder="Número de tarjeta" autocomplete="cc-number"
-                                               value="" data-backup="credit_card_number" data-credit-card="number"
-                                               data-autofocus="true" data-session-storage="false" class="field__input"
-                                               size="30" name="checkout[credit_card][number]"
+                                                                             for="checkout_credit_card_number">Número de
+                                        tarjeta</label>
+                                        <input type="tel" placeholder="Número de tarjeta" autocomplete="off"
+                                               value="" data-session-storage="false" class="field__input"
+                                               size="30" data-braintree-name="number"
                                                id="checkout_credit_card_number">
-              <span id="credit_card_number_tooltip" class="field__icon icon icon--lock">
-    <span class="visually-hidden">Secure field</span>
-  </span>
-
+                                          <span id="credit_card_number_tooltip" class="field__icon icon icon--lock">
+                                            <span class="visually-hidden">Secure field</span>
+                                         </span>
                                     </div>
                                     <p class="field__message field__message--error">Por favor, inserte un número de
-                                        tarjeta válido.</p></div>
+                                        tarjeta válido.</p>
+                                </div>
 
-
-                                <div class="field--half field field--required field field--show-floating-label">
+                                <div class="field field--required field">
 
                                     <div class="field__input-wrapper"><label class="field__label"
                                                                              for="checkout_credit_card_name">Nombre en
                                         la tarjeta</label>
-                                        <input placeholder="Nombre en la tarjeta" data-backup="credit_card_name"
-                                               autocomplete="cc-name" class="field__input" size="30" type="text"
-                                               value=" " name="checkout[credit_card][name]"
+                                        <input type="text" placeholder="Nombre en la tarjeta"
+                                               autocomplete="off" class="field__input" size="30"
+                                               data-braintree-name="cardholder_name"
                                                id="checkout_credit_card_name">
                                     </div>
                                     <p class="field__message field__message--error">Por favor, inserte su nombre tal
-                                        como sale en la tarjeta de crédito.</p></div>
+                                        como sale en la tarjeta de crédito.</p>
+                                </div>
 
 
                                 <div class="field field--required field visually-hidden">
@@ -141,55 +149,71 @@
                                             <option value="2025">2025</option>
                                         </select>
                                     </div>
-                                    <p class="field__message field__message--error">Por favor, inserte un año válid</p>
+                                    <p class="field__message field__message--error">Por favor, inserte un año válido</p>
                                 </div>
 
-
-                                <div class="field--quarter field field--required field"
+                                <div class="field--third field field--required field"
                                      data-debit-card-alternative-text="Expiry (MM / YY)">
 
                                     <div class="field__input-wrapper"><label class="field__label"
                                                                              for="checkout_credit_card_expiry">MM /
                                         YY</label>
-                                        <input placeholder="MM / YY" class="field__input" autocomplete="cc-exp"
-                                               data-backup="credit_card_expiry"
+                                        <input placeholder="MM/YY" class="field__input" autocomplete="off"
+                                               data-braintree-name="expiration_date"
                                                data-payment-month="[name=&#39;checkout[credit_card][month]&#39;]"
                                                data-payment-year="[name=&#39;checkout[credit_card][year]&#39;]"
                                                data-credit-card-expiry="true" size="30" type="tel"
-                                               id="checkout_credit_card_expiry">
+                                               id="checkout_credit_card_expiry" onchange="RemoveWhite();">
                                     </div>
                                     <p class="field__message field__message--error">Por favor, inserte una fecha de
-                                        expiración válida.</p></div>
+                                        expiración válida.</p>
+                                </div>
 
-
-                                <div class="field--quarter field field--required field">
+                                <div class="field--third field field--required field">
 
                                     <div class="field__input-wrapper"><label class="field__label"
                                                                              for="checkout_credit_card_verification_value">CVV</label>
                                         <input type="tel" placeholder="CVV" autocomplete="off" maxlength="4"
-                                               data-backup="credit_card_cvv" data-credit-card="cvv"
+                                               data-credit-card="cvv"
                                                data-session-storage="false"
                                                aria-describedby="credit_card_verification_value_tooltip"
                                                class="field__input" size="30"
-                                               name="checkout[credit_card][verification_value]"
+                                               data-braintree-name="cvv"
                                                id="checkout_credit_card_verification_value">
-            <span id="credit_card_verification_value_tooltip" tabindex="0"
-                  class="field__icon icon icon--question has-tooltip" role="tooltip">
-              <span class="tooltip">
-                <span data-cvv-tooltip="unknown">
-                    Código de seguridad de 3 dígitos, usualmente se encuentra en el reverso de la tarjeta. Las tarjetas de American Express tienen un código de 4 dígitos ubicado en el frente.
-                </span>
-                <span data-cvv-tooltip="amex" class="hidden">
-                    Código de 4 dígitos en el frente de su tarjeta.
-                </span>
-                <span data-cvv-tooltip="other" class="hidden">
-                    Código de 3 dígitos en el reverso de su tarjeta
-                </span>
-              </span>
-            </span>
+                                                <span id="credit_card_verification_value_tooltip" tabindex="0"
+                                                      class="field__icon icon icon--question has-tooltip"
+                                                      role="tooltip">
+                                                  <span class="tooltip">
+                                                    <span data-cvv-tooltip="unknown">
+                                                        Código de seguridad de 3 dígitos, usualmente se encuentra en el reverso de la tarjeta. Las tarjetas de American Express tienen un código de 4 dígitos ubicado en el frente.
+                                                    </span>
+                                                    <span data-cvv-tooltip="amex" class="hidden">
+                                                        Código de 4 dígitos en el frente de su tarjeta.
+                                                    </span>
+                                                    <span data-cvv-tooltip="other" class="hidden">
+                                                        Código de 3 dígitos en el reverso de su tarjeta
+                                                    </span>
+                                                  </span>
+                                                </span>
                                     </div>
-                                    <p class="field__message field__message--error">Por favor, inserte el CVV</p></div>
+                                    <p class="field__message field__message--error">Por favor, inserte el CVV</p>
+                                </div>
 
+
+                                <div class="field--third field field--required field">
+
+                                    <div class="field__input-wrapper"><label class="field__label"
+                                                                             for="checkout_credit_card_zip_code">Código
+                                        Postal</label>
+                                        <input type="tel" placeholder="Código Postal" autocomplete="off"
+                                               data-session-storage="false"
+                                               class="field__input" size="30"
+                                               data-braintree-name="postal_code"
+                                               id="checkout_credit_card_zip_code">
+                                    </div>
+                                    <p class="field__message field__message--error">Por favor, inserte el Código
+                                        Postal</p>
+                                </div>
                             </div>
                         </div>
 
@@ -199,9 +223,10 @@
             </div>
         </div>
 
-        <div class="section" data-billing-address="">
+        <div class="section" data-billing-address="" id="billing_addres_info" style="display: none">
             <div class="section__header">
                 <h2 class="section__title">Dirección de facturación</h2>
+                <h5 class="specification">(Solo para pagos con tarjeta de crédito)</h5>
             </div>
 
             <div class="section__content">
@@ -231,76 +256,45 @@
                     <div class="radio-group__row content-box__row content-box__row--secondary hidden"
                          data-billing-address-fields="">
                         <div class="fieldset">
+                            <div class="field--two-thirds field field--required">
+                                <label class="field__label"
+                                       for="checkout_shipping_address_address1">Dirección</label>
 
-
-                            <div class="field--half field field--optional field--show-floating-label">
-
-                                <div class="field__input-wrapper"><label class="field__label"
-                                                                         for="checkout_billing_address_first_name">Nombre</label>
-                                    <input placeholder="Nombre" autocomplete="billing given-name"
-                                           data-backup="first_name" class="field__input" size="30" type="text"
-                                           value="Carlos" name="checkout[billing_address][first_name]"
-                                           id="checkout_billing_address_first_name" disabled="">
-                                </div>
-                            </div>
-                            <div class="field--half field field--required field--show-floating-label">
-
-                                <div class="field__input-wrapper"><label class="field__label"
-                                                                         for="checkout_billing_address_last_name">Apellidos</label>
-                                    <input placeholder="Apellidos" autocomplete="billing family-name"
-                                           data-backup="last_name" class="field__input" size="30" type="text"
-                                           value="Fernández" name="checkout[billing_address][last_name]"
-                                           id="checkout_billing_address_last_name" disabled="">
-                                </div>
-                            </div>
-                            <div class="field field--optional">
-
-                                <div class="field__input-wrapper"><label class="field__label"
-                                                                         for="checkout_billing_address_company">Compañía
-                                    (opcional)</label>
-                                    <input placeholder="Compañía (opcional)" autocomplete="billing organization"
-                                           data-backup="company" class="field__input" size="30" type="text" value=""
-                                           name="checkout[billing_address][company]"
-                                           id="checkout_billing_address_company" disabled="">
-                                </div>
-                            </div>
-                            <div class="field--two-thirds field field--required field--show-floating-label">
-
-                                <div class="field__input-wrapper"><label class="field__label"
-                                                                         for="checkout_billing_address_address1">Dirección</label>
-                                    <input placeholder="Dirección" autocomplete="billing address-line1"
-                                           data-backup="address1" class="field__input" size="30" type="text"
-                                           value="30 street #3111, Playa" name="checkout[billing_address][address1]"
-                                           id="checkout_billing_address_address1" disabled="">
+                                <div class="field__input-wrapper">
+                                    <input placeholder="Dirección" required value="{{ address }}"
+                                           autocomplete="shipping address-line1"
+                                           data-backup="address1" class="field__input" size="30"
+                                           type="text" name="address"
+                                           id="checkout_shipping_address_address1"/>
                                 </div>
                             </div>
                             <div class="field--third field field--optional">
+                                <label class="field__label"
+                                       for="checkout_shipping_address_address2">Apartamento
+                                    (opcional)</label>
 
-                                <div class="field__input-wrapper"><label class="field__label"
-                                                                         for="checkout_billing_address_address2">Apt,
-                                    suite, etc. (opcional)</label>
-                                    <input placeholder="Apt, suite, etc. (opcional)"
-                                           autocomplete="billing address-line2" data-backup="address2"
-                                           class="field__input" size="30" type="text" value=""
-                                           name="checkout[billing_address][address2]"
-                                           id="checkout_billing_address_address2" disabled="">
+                                <div class="field__input-wrapper">
+                                    <input placeholder="Apartamento (opcional)" value="{{ apto }}"
+                                           autocomplete="shipping address-line2"
+                                           data-backup="address2" class="field__input" size="30"
+                                           type="text" name="apartment"
+                                           id="checkout_shipping_address_address2"/>
                                 </div>
                             </div>
-                            <div class="field field--required field--show-floating-label">
+                            <div class="field field--required">
+                                <label class="field__label" for="checkout_shipping_address_city">Ciudad</label>
 
-                                <div class="field__input-wrapper"><label class="field__label"
-                                                                         for="checkout_billing_address_city">Ciudad</label>
-                                    <input placeholder="Ciudad" autocomplete="billing address-level2" data-backup="city"
-                                           class="field__input" size="30" type="text" value="Havana City"
-                                           name="checkout[billing_address][city]" id="checkout_billing_address_city"
-                                           disabled="">
+                                <div class="field__input-wrapper">
+                                    <input placeholder="Ciudad" required value="{{ city }}"
+                                           autocomplete="shipping address-level2" data-backup="city"
+                                           class="field__input" size="30" type="text" name="city"
+                                           id="checkout_shipping_address_city"/>
                                 </div>
                             </div>
-                            <div data-country-section="1"
-                                 class="field field--required field--half field--show-floating-label">
+                            <div data-country-section="1" class="field--half field field--required">
+                                <label class="field__label" for="checkout_shipping_address_country">País</label>
 
-                                <div class="field__input-wrapper field__input-wrapper--select"><label
-                                        class="field__label" for="checkout_billing_address_country">País</label>
+                                <div class="field__input-wrapper field__input-wrapper--select">
                                     <select size="1" autocomplete="billing country" data-backup="country"
                                             class="field__input field__input--select"
                                             name="checkout[billing_address][country]"
@@ -364,7 +358,7 @@
                                         <option value="Cook Islands">Cook Islands</option>
                                         <option value="Costa Rica">Costa Rica</option>
                                         <option value="Croatia">Croatia</option>
-                                        <option selected="selected" value="Cuba">Cuba</option>
+                                        <option value="Cuba">Cuba</option>
                                         <option value="Curaçao">Curaçao</option>
                                         <option value="Cyprus">Cyprus</option>
                                         <option value="Czech Republic">Czech Republic</option>
@@ -376,7 +370,7 @@
                                         <option value="Ecuador">Ecuador</option>
                                         <option value="Egypt">Egypt</option>
                                         <option value="El Salvador">El Salvador</option>
-                                        <option value="España">España</option>
+                                        <option selected="selected" value="España">España</option>
                                         <option value="Equatorial Guinea">Equatorial Guinea</option>
                                         <option value="Eritrea">Eritrea</option>
                                         <option value="Estonia">Estonia</option>
@@ -558,61 +552,129 @@
                                     </select>
                                 </div>
                             </div>
-                            <input class="visually-hidden" autocomplete="billing address-level1" tabindex="-1"
-                                   data-autocomplete-field="province" size="30" type="text"
-                                   name="checkout[billing_address][province]" disabled="">
+                            <div data-province-section="1"
+                                 class="field--half field field--required">
+                                <label class="field__label"
+                                       for="checkout_shipping_address_province">Región</label>
 
-                            <div data-province-section="1" class="field field--required field--show-floating-label"
-                                 style="display: none;">
-
-                                <div class="field__input-wrapper field__input-wrapper--select"><label
-                                        class="field__label" for="checkout_billing_address_province">Región</label>
-                                    <input type="hidden" name="checkout[billing_address][province]" disabled=""><select
-                                            placeholder="Región" data-backup="province"
-                                            class="field__input field__input--select"
-                                            name="checkout[billing_address][province]"
-                                            id="checkout_billing_address_province" disabled=""></select>
+                                <div class="field__input-wrapper field__input-wrapper--select">
+                                    <input placeholder="Región" required data-backup="province"
+                                           value="{{ province }}" class="field__input" type="text"
+                                           name="province" id="checkout_shipping_address_province"/>
                                 </div>
                             </div>
-                            <div data-zip-section="1"
-                                 class="field field--required field--half field--show-floating-label">
-
-                                <div class="field__input-wrapper"><label class="field__label"
-                                                                         for="checkout_billing_address_zip">Código
+                            <div data-zip-section="1" class="field--half field field--required">
+                                <label class="field__label" for="checkout_shipping_address_zip">Código
                                     postal</label>
-                                    <input placeholder="Código postal" autocomplete="billing postal-code"
-                                           data-backup="zip" class="field__input" size="30" type="text" value="11400"
-                                           name="checkout[billing_address][zip]" id="checkout_billing_address_zip"
-                                           disabled="">
+
+                                <div class="field__input-wrapper">
+                                    <input placeholder="Código postal" required
+                                           value="{{ zip_code }}"
+                                           autocomplete="shipping postal-code" data-backup="zip"
+                                           class="field__input" size="30" type="text"
+                                           name="zip_code" id="checkout_shipping_address_zip"/>
                                 </div>
                             </div>
-                            <div class="field field--optional field--show-floating-label">
-
-                                <div class="field__input-wrapper"><label class="field__label"
-                                                                         for="checkout_billing_address_phone">Teléfono
+                            <div class="field field--optional">
+                                <label class="field__label" for="checkout_shipping_address_phone">Teléfono
                                     (opcional)</label>
-                                    <input placeholder="Teléfono (opcional)" autocomplete="billing tel"
-                                           data-backup="phone" class="field__input" size="30" type="tel"
-                                           value="+5353308829" name="checkout[billing_address][phone]"
-                                           id="checkout_billing_address_phone" disabled="">
+
+                                <div class="field__input-wrapper">
+                                    <input placeholder="Teléfono (opcional)" value="{{ phone }}"
+                                           autocomplete="shipping tel" data-backup="phone"
+                                           class="field__input" size="30" type="tel" name="phone"
+                                           id="checkout_shipping_address_phone"/>
                                 </div>
                             </div>
                         </div>
-
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div class="step__footer">
-            <input type="hidden" name="complete" value="1">
-            <button name="button" type="submit" class="step__footer__continue-btn btn ">
-                <span class="btn__content">Completar orden</span>
-                <i class="btn__spinner icon icon--button-spinner"></i>
-            </button>
-        </div>
+            <div class="step__footer">
+                <input type="hidden" name="complete" value="1">
+                <button name="button" type="submit" id="submit" class="step__footer__continue-btn btn ">
+                    <span class="btn__content">Completar orden</span>
+                    <i class="btn__spinner icon icon--button-spinner"></i>
+                </button>
+            </div>
 
-        <input type="hidden" name="checkout[client_details][browser_width]" value="1349"><input type="hidden"
-                                                                                                name="checkout[client_details][browser_height]"
-                                                                                                value="667"></form>
+            <input type="hidden" name="checkout[client_details][browser_width]" value="1349"><input type="hidden"
+                                                                                                    name="checkout[client_details][browser_height]"
+                                                                                                    value="667">
+        </div>
+    </form>
+
+    {#        <script src="https://js.braintreegateway.com/v2/braintree.js"></script>#}
+    <script>
+        function RemoveWhite() {
+            var a = document.getElementById("checkout_credit_card_expiry");
+            a.value = a.value.replace(" ", "").replace(" ", "");
+        }
+    </script>
+    <script>
+        function ShowThing() {
+            $("#credit_card_info").slideToggle();
+            $("#billing_addres_info").slideToggle();
+        }
+    </script>
+    {#    <script src="{% static 'js/compra/braintree.js' %}"></script>#}
+    <script src="https://js.braintreegateway.com/js/beta/braintree-hosted-fields-beta.18.min.js"></script>
+
+
+    {##}
+    {#    <script>#}
+    {#        braintree.setup("{{ token }}",#}
+    {#                "dropin", {#}
+    {#                    container: "payment-form"#}
+    {#                });#}
+    {#    </script>#}
+    <script>
+        braintree.setup("{{ token }}", "custom", {id: "payment_form"});
+    </script>
+    <script type="text/javascript">
+        braintree.setup("{{ token }}", "paypal", {
+            container: "paypal-container",
+            singleUse: true,
+            amount: {{ on_hold.total_price_two.1 }},
+            currency: 'EUR',
+            enableShippingAddress: 'true',
+            shippingAddressOverride: {
+                recipientName: '{{ on_hold.client.full_name }}',
+                type: 'Personal',
+                streetAddress: '{{ on_hold.client.address.address }}',
+                {% if on_hold.client.address.apt_suite %}
+                    extendedAddress: '{{ on_hold.client.address.apt_suite }}',
+                {% else %}
+                    extendedAddress: '',
+                {% endif %}
+                locality: '{{ on_hold.client.address.city }}',
+                countryCodeAlpha2: 'ES',
+                postalCode: '{{ on_hold.client.address.postal_code }}',
+                {#            TODO: Find out the alphacode of Spanish provinces#}
+                region: '{{ on_hold.client.address.province }}',
+                {% if on_hold.client.address.phone %}
+                    phone: '{{ on_hold.client.address.phone }}',
+                {% else %}
+                    phone: '',
+                {% endif %}
+                editable: false
+            },
+            onPaymentMethodReceived: function (obj) {
+                //Send this to the server.
+                doSomethingWithTheNonce(obj.nonce);
+            },
+            onUnsupported: function () {
+
+            },
+            onCancelled: function () {
+
+            }
+        });
+    </script>
+    <script>
+        window.onload = function () {
+            document.getElementById("billing_addres_info").setAttribute("style", "display:none");
+        }
+    </script>
 {% endblock %}

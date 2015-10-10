@@ -127,7 +127,7 @@ class Category(models.Model):
         else:
             return None
 
-
+# TODO: name, last_name, email and password must be
 class Clients(models.Model):
     class Meta:
         verbose_name = 'Cliente'
@@ -150,6 +150,9 @@ class Clients(models.Model):
         # if self.password:
         # self.password = hash(self.password)
         # super(Clients, self).save(*args, **kwargs)
+
+    def full_name(self):
+        return str(self.name + " " + self.last_name)
 
 
 class Purchase(models.Model):
@@ -268,8 +271,8 @@ class Address(models.Model):
 
     phone = models.CharField(verbose_name='Télefono', blank=True, null=True, max_length=50)
 
-    def __str__(self):
-        return self.last_name + ', ' + self.first_name + ' ' + self.province + ', ' + self.country
+    # def __str__(self):
+    #     return self.last_name + ', ' + self.first_name + ' ' + self.province + ', ' + self.country
 
 
 class Newsletter_Clients(models.Model):

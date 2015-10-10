@@ -23,7 +23,7 @@ window.Countries = {
             "Yukon": "Yukon"
         }
     },
-    "United Estados": {
+    "United States": {
         "label": "Estado",
         "zip_label": "Zip code",
         "zip_placeholder": "Zip code",

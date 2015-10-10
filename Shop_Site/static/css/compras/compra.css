@@ -1008,7 +1008,7 @@ th {
 
 @media (min-width: 750px) {
     .step__footer {
-        margin-top: -1.5em
+        margin-top: 0.5em
     }
 }
 
@@ -1103,7 +1103,8 @@ th {
 }
 
 .section__title {
-    color: #333333
+    color: #333333;
+    margin-bottom: 5px;
 }
 
 .section__text {
@@ -3172,3 +3173,8 @@ button.close {
     border: 0;
     -webkit-appearance: none;
 }
+
+#credit_card_info, #billing_addres_info {
+    display: none;
+}
+

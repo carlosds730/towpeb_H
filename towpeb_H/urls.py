@@ -26,6 +26,7 @@ urlpatterns = static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + [
     url(r'^change_password/?$', views.change_password, name='change_password'),
     url(r'^categories/(?P<pk>\d+)/?$', views.categories, name='categories'),
     url(r'^payment/payments-billing/?$', views.payment_billing, name='payment'),
+    url(r'^payment-methods/?$', views.payment_methods, name='payment_method'),
     url(r'^product/(?P<pk>\d+)/?$', views.products, name='product'),
     url(r'^register/?$', views.register, name='register'),
     url(r'^search/?$', views.search, name='search'),
