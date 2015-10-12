@@ -27,7 +27,7 @@
                         <button type="button" class="close" data-dismiss="alert"
                                 aria-hidden="true" onclick="Close(3)"
                                 style="top:-2px">&times;</button>
-                        Hay errores en los campos
+                        {{ error }}
                     </div>
                 {% else %}
                     <div class="alert alert-danger alert-dismissable fade in"
@@ -618,8 +618,8 @@
             $("#billing_addres_info").slideToggle();
         }
     </script>
-    {#    <script src="{% static 'js/compra/braintree.js' %}"></script>#}
-    <script src="https://js.braintreegateway.com/js/beta/braintree-hosted-fields-beta.18.min.js"></script>
+        <script src="{% static 'js/compra/braintree.js' %}"></script>
+{#    <script src="https://js.braintreegateway.com/js/beta/braintree-hosted-fields-beta.18.min.js"></script>#}
 
 
     {##}
@@ -651,7 +651,7 @@
                 locality: '{{ on_hold.client.address.city }}',
                 countryCodeAlpha2: 'ES',
                 postalCode: '{{ on_hold.client.address.postal_code }}',
-                {#            TODO: Find out the alphacode of Spanish provinces#}
+{#                TODO: Find out the alphacode of Spanish provinces#}
                 region: '{{ on_hold.client.address.province }}',
                 {% if on_hold.client.address.phone %}
                     phone: '{{ on_hold.client.address.phone }}',
@@ -661,8 +661,7 @@
                 editable: false
             },
             onPaymentMethodReceived: function (obj) {
-                //Send this to the server.
-                doSomethingWithTheNonce(obj.nonce);
+
             },
             onUnsupported: function () {
 

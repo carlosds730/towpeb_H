@@ -84,6 +84,17 @@
         </div>
     </div>
 {% endif %}
+{% if successful_purchase %}
+    <div class="notification_zone_big" id="product_added" style="display:block">
+        <div style="position: absolute; width: 100%;height: 100%;background-color: #004024;opacity: 0.85;filter: alpha(opacity=85);">
+        </div>
+        <div class="signs_to_show">
+            <div class="row sign_holder">
+                <a id="keep_buying" onclick="CloseButton();">Compra realizada con éxito</a>
+            </div>
+        </div>
+    </div>
+{% endif %}
 <div class="notification_zone" id="email_added">
     <div id="email_added_holder"
          style="position: absolute; width: 100%;height: 100%;background-color: #004024;opacity: 0.85;filter: alpha(opacity=85); border-radius: 31px">
@@ -381,7 +392,7 @@
 {% endblock %}
 
 {% block other_js %}
-    {% if notification %}
+    {% if notification or successful_purchase %}
         <script>
             $("#product_added").fadeIn();
 
@@ -509,7 +520,7 @@
             else {
                 if (num == 3) {
                     $(".alert").slideUp();
-{#                    $(".alert").fadeOut();#}
+                    {#                    $(".alert").fadeOut();#}
 
                 }
                 else
