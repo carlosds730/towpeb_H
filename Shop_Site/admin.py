@@ -5,8 +5,6 @@ from django.contrib.admin.models import LogEntry
 from Shop_Site import models
 
 
-
-
 # Register your models here.
 
 
@@ -59,6 +57,7 @@ class PurchaseAdmin(admin.ModelAdmin):
     search_fields = ['delivery_address']
     list_filter = ['delivery_address']
     filter_horizontal = ['products']
+    readonly_fields = ['transaction_id']
 
 
 class NewsletterClientsAdmin(admin.ModelAdmin):

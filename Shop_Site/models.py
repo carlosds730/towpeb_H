@@ -127,16 +127,15 @@ class Category(models.Model):
         else:
             return None
 
-# TODO: name, last_name, email and password must be
+
 class Clients(models.Model):
     class Meta:
         verbose_name = 'Cliente'
         verbose_name_plural = 'Clientes'
 
-    name = models.CharField(verbose_name='Nombre', max_length=200, help_text='Nombre del cliente', blank=True)
+    name = models.CharField(verbose_name='Nombre', max_length=200, help_text='Nombre del cliente')
 
-    last_name = models.CharField(verbose_name='Apellidos', max_length=200, help_text='Apellidos del cliente',
-                                 blank=True)
+    last_name = models.CharField(verbose_name='Apellidos', max_length=200, help_text='Apellidos del cliente')
 
     email = models.EmailField(verbose_name="Email", help_text="Correo del cliente")
 
@@ -178,6 +177,9 @@ class Purchase(models.Model):
     amount = models.IntegerField(verbose_name='Cantidad', default=1,
                                  help_text='Cantidad de productos que se quieren comprar')
 
+    transaction_id = models.CharField(verbose_name='Id de la Transacción', default='', max_length=700,
+                                      help_text='Numero de la transacción')
+
     def __str__(self):
         return str(self.pk)
 
@@ -199,12 +201,23 @@ class Purchase(models.Model):
             total += p.product.price * p.amount
         return str(total) + ' €', str(total)
 
-    # TODO: Do this (it should return a tuple, the first element should be the price the € sign and the second the price as a number)
     def total_price_with_taxes(self):
         total = 4
         for p in self.products.all():
             total += p.product.price * p.amount
         return str(total) + ' €', str(total)
+
+    def discount(self):
+        if self.on_hold:
+            self.on_hold = False
+            for sale_product in self.products.all():
+                if sale_product.valid():
+                    sale_product.attribute.amount -= sale_product.amount
+                else:
+                    raise Exception()
+            for sale_product in self.products.all():
+                sale_product.attribute.save()
+                sale_product.save()
 
 
 class Sale_Product(models.Model):
