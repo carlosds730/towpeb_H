@@ -1031,12 +1031,12 @@ def completed_payment(request):
     if request.method == 'POST':
         try:
             amount = request.POST['Ds_Amount']
-            moneda = request.POST['Ds_Currency']
+            currency = request.POST['Ds_Currency']
             transaction_id = request.POST['Ds_Order']
             merchant_code = request.POST['Ds_MerchantCode']
             response = request.POST['Ds_Response']
             signature = request.POST['Ds_Signature']
-            my_signature = create_sha_2(amount, transaction_id, merchant_code, moneda, response)
+            my_signature = create_sha_2(amount, transaction_id, merchant_code, currency, response)
             if signature == my_signature:
                 try:
                     value = int(response[len(response) - 2:])
