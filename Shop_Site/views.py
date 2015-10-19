@@ -4,13 +4,14 @@ import random
 import string
 
 import braintree
+
 from django.http import HttpResponseRedirect, Http404, HttpResponse
 
 from django.shortcuts import render, redirect
 
 from django.core.validators import validate_email
 
-from Shop_Site.extra_functions import hash
+from Shop_Site.extra_functions import hash, create_unique_id, create_sha, create_sha_2
 from Shop_Site import models
 from Shop_Site import stopwords
 
@@ -858,11 +859,11 @@ def add_mail(request):
 
 def payment_billing(request):
     if request.method == 'GET':
-        try:
-            token = braintree.ClientToken.generate()
-            print(token)
-        except Exception:
-            token = 'eyJ2ZXJzaW9uIjoyLCJhdXRob3JpemF0aW9uRmluZ2VycHJpbnQiOiJmMDU0MTRmZTc1MGNiYmIwOGQ0YTM1MGIwZmYyYmMxMWE5ZDc0ZWMzNmMxM2QwYjkzNjExYWNiMTUyYTRmNjhhfGNyZWF0ZWRfYXQ9MjAxNS0wOS0wNFQyMDo0NTozMS4zMjE0ODU4MzErMDAwMFx1MDAyNm1lcmNoYW50X2lkPTM0OHBrOWNnZjNiZ3l3MmJcdTAwMjZwdWJsaWNfa2V5PTJuMjQ3ZHY4OWJxOXZtcHIiLCJjb25maWdVcmwiOiJodHRwczovL2FwaS5zYW5kYm94LmJyYWludHJlZWdhdGV3YXkuY29tOjQ0My9tZXJjaGFudHMvMzQ4cGs5Y2dmM2JneXcyYi9jbGllbnRfYXBpL3YxL2NvbmZpZ3VyYXRpb24iLCJjaGFsbGVuZ2VzIjpbXSwiZW52aXJvbm1lbnQiOiJzYW5kYm94IiwiY2xpZW50QXBpVXJsIjoiaHR0cHM6Ly9hcGkuc2FuZGJveC5icmFpbnRyZWVnYXRld2F5LmNvbTo0NDMvbWVyY2hhbnRzLzM0OHBrOWNnZjNiZ3l3MmIvY2xpZW50X2FwaSIsImFzc2V0c1VybCI6Imh0dHBzOi8vYXNzZXRzLmJyYWludHJlZWdhdGV3YXkuY29tIiwiYXV0aFVybCI6Imh0dHBzOi8vYXV0aC52ZW5tby5zYW5kYm94LmJyYWludHJlZWdhdGV3YXkuY29tIiwiYW5hbHl0aWNzIjp7InVybCI6Imh0dHBzOi8vY2xpZW50LWFuYWx5dGljcy5zYW5kYm94LmJyYWludHJlZWdhdGV3YXkuY29tIn0sInRocmVlRFNlY3VyZUVuYWJsZWQiOnRydWUsInRocmVlRFNlY3VyZSI6eyJsb29rdXBVcmwiOiJodHRwczovL2FwaS5zYW5kYm94LmJyYWludHJlZWdhdGV3YXkuY29tOjQ0My9tZXJjaGFudHMvMzQ4cGs5Y2dmM2JneXcyYi90aHJlZV9kX3NlY3VyZS9sb29rdXAifSwicGF5cGFsRW5hYmxlZCI6dHJ1ZSwicGF5cGFsIjp7ImRpc3BsYXlOYW1lIjoiQWNtZSBXaWRnZXRzLCBMdGQuIChTYW5kYm94KSIsImNsaWVudElkIjpudWxsLCJwcml2YWN5VXJsIjoiaHR0cDovL2V4YW1wbGUuY29tL3BwIiwidXNlckFncmVlbWVudFVybCI6Imh0dHA6Ly9leGFtcGxlLmNvbS90b3MiLCJiYXNlVXJsIjoiaHR0cHM6Ly9hc3NldHMuYnJhaW50cmVlZ2F0ZXdheS5jb20iLCJhc3NldHNVcmwiOiJodHRwczovL2NoZWNrb3V0LnBheXBhbC5jb20iLCJkaXJlY3RCYXNlVXJsIjpudWxsLCJhbGxvd0h0dHAiOnRydWUsImVudmlyb25tZW50Tm9OZXR3b3JrIjp0cnVlLCJlbnZpcm9ubWVudCI6Im9mZmxpbmUiLCJ1bnZldHRlZE1lcmNoYW50IjpmYWxzZSwiYnJhaW50cmVlQ2xpZW50SWQiOiJtYXN0ZXJjbGllbnQzIiwiYmlsbGluZ0FncmVlbWVudHNFbmFibGVkIjpmYWxzZSwibWVyY2hhbnRBY2NvdW50SWQiOiJhY21ld2lkZ2V0c2x0ZHNhbmRib3giLCJjdXJyZW5jeUlzb0NvZGUiOiJVU0QifSwiY29pbmJhc2VFbmFibGVkIjpmYWxzZSwibWVyY2hhbnRJZCI6IjM0OHBrOWNnZjNiZ3l3MmIiLCJ2ZW5tbyI6Im9mZiJ9'
+        # try:
+        #     token = braintree.ClientToken.generate()
+        #     print(token)
+        # except Exception:
+        #     token = 'eyJ2ZXJzaW9uIjoyLCJhdXRob3JpemF0aW9uRmluZ2VycHJpbnQiOiJmMDU0MTRmZTc1MGNiYmIwOGQ0YTM1MGIwZmYyYmMxMWE5ZDc0ZWMzNmMxM2QwYjkzNjExYWNiMTUyYTRmNjhhfGNyZWF0ZWRfYXQ9MjAxNS0wOS0wNFQyMDo0NTozMS4zMjE0ODU4MzErMDAwMFx1MDAyNm1lcmNoYW50X2lkPTM0OHBrOWNnZjNiZ3l3MmJcdTAwMjZwdWJsaWNfa2V5PTJuMjQ3ZHY4OWJxOXZtcHIiLCJjb25maWdVcmwiOiJodHRwczovL2FwaS5zYW5kYm94LmJyYWludHJlZWdhdGV3YXkuY29tOjQ0My9tZXJjaGFudHMvMzQ4cGs5Y2dmM2JneXcyYi9jbGllbnRfYXBpL3YxL2NvbmZpZ3VyYXRpb24iLCJjaGFsbGVuZ2VzIjpbXSwiZW52aXJvbm1lbnQiOiJzYW5kYm94IiwiY2xpZW50QXBpVXJsIjoiaHR0cHM6Ly9hcGkuc2FuZGJveC5icmFpbnRyZWVnYXRld2F5LmNvbTo0NDMvbWVyY2hhbnRzLzM0OHBrOWNnZjNiZ3l3MmIvY2xpZW50X2FwaSIsImFzc2V0c1VybCI6Imh0dHBzOi8vYXNzZXRzLmJyYWludHJlZWdhdGV3YXkuY29tIiwiYXV0aFVybCI6Imh0dHBzOi8vYXV0aC52ZW5tby5zYW5kYm94LmJyYWludHJlZWdhdGV3YXkuY29tIiwiYW5hbHl0aWNzIjp7InVybCI6Imh0dHBzOi8vY2xpZW50LWFuYWx5dGljcy5zYW5kYm94LmJyYWludHJlZWdhdGV3YXkuY29tIn0sInRocmVlRFNlY3VyZUVuYWJsZWQiOnRydWUsInRocmVlRFNlY3VyZSI6eyJsb29rdXBVcmwiOiJodHRwczovL2FwaS5zYW5kYm94LmJyYWludHJlZWdhdGV3YXkuY29tOjQ0My9tZXJjaGFudHMvMzQ4cGs5Y2dmM2JneXcyYi90aHJlZV9kX3NlY3VyZS9sb29rdXAifSwicGF5cGFsRW5hYmxlZCI6dHJ1ZSwicGF5cGFsIjp7ImRpc3BsYXlOYW1lIjoiQWNtZSBXaWRnZXRzLCBMdGQuIChTYW5kYm94KSIsImNsaWVudElkIjpudWxsLCJwcml2YWN5VXJsIjoiaHR0cDovL2V4YW1wbGUuY29tL3BwIiwidXNlckFncmVlbWVudFVybCI6Imh0dHA6Ly9leGFtcGxlLmNvbS90b3MiLCJiYXNlVXJsIjoiaHR0cHM6Ly9hc3NldHMuYnJhaW50cmVlZ2F0ZXdheS5jb20iLCJhc3NldHNVcmwiOiJodHRwczovL2NoZWNrb3V0LnBheXBhbC5jb20iLCJkaXJlY3RCYXNlVXJsIjpudWxsLCJhbGxvd0h0dHAiOnRydWUsImVudmlyb25tZW50Tm9OZXR3b3JrIjp0cnVlLCJlbnZpcm9ubWVudCI6Im9mZmxpbmUiLCJ1bnZldHRlZE1lcmNoYW50IjpmYWxzZSwiYnJhaW50cmVlQ2xpZW50SWQiOiJtYXN0ZXJjbGllbnQzIiwiYmlsbGluZ0FncmVlbWVudHNFbmFibGVkIjpmYWxzZSwibWVyY2hhbnRBY2NvdW50SWQiOiJhY21ld2lkZ2V0c2x0ZHNhbmRib3giLCJjdXJyZW5jeUlzb0NvZGUiOiJVU0QifSwiY29pbmJhc2VFbmFibGVkIjpmYWxzZSwibWVyY2hhbnRJZCI6IjM0OHBrOWNnZjNiZ3l3MmIiLCJ2ZW5tbyI6Im9mZiJ9'
         log = get_login(request.COOKIES)
         if log:
             on_hold = None
@@ -872,11 +873,34 @@ def payment_billing(request):
                     on_hold = purchase
                 else:
                     shops.append(purchase)
-            return add_info_home(request, {'on_hold': on_hold, 'shops': [], 'token': token}, 'info_card.html')
+            if on_hold:
+                on_hold.transaction_id = create_unique_id(on_hold.pk)
+                on_hold.save()
+                price = on_hold.total_price_with_taxes()[2]
+                signature = create_sha(price, on_hold.transaction_id, '092508472', 978, 0,
+                                       'https://www.hutton.es/completed_payment/', 'qwertyasdf0123456789')
+                return add_info_home(request,
+                                     {
+                                         'on_hold': on_hold, 'shops': [], 'token': None,
+                                         'price_form': price,
+                                         'signature': signature
+                                     }
+                                     , 'info_card.html')
         else:
             purchase = get_purchase(request.COOKIES)
+
             if purchase:
-                return add_info_home(request, {'on_hold': purchase, 'shops': [], 'token': token}, 'info_card.html')
+                purchase.transaction_id = create_unique_id(purchase.pk)
+                purchase.save()
+                price = purchase.total_price_with_taxes()[2]
+                signature = create_sha(price, purchase.transaction_id, '092508472', 978, 0,
+                                       'https://www.hutton.es/completed_payment/', 'qwertyasdf0123456789')
+                return add_info_home(request, {
+                    'on_hold': purchase, 'shops': [], 'token': None,
+                    'price_form': price,
+                    'signature': signature
+                },
+                                     'info_card.html')
 
 
 def change_password(request):
@@ -1001,3 +1025,75 @@ def payment_methods(request):
     else:
         raise Http404('Wrong Access')
         # DONE: If result.is_success this should go somewhere. Is not result.is_success then when should go back and say
+
+
+def completed_payment(request):
+    if request.method == 'POST':
+        try:
+            amount = request.POST['Ds_Amount']
+            moneda = request.POST['Ds_Currency']
+            transaction_id = request.POST['Ds_Order']
+            merchant_code = request.POST['Ds_MerchantCode']
+            response = request.POST['Ds_Response']
+            signature = request.POST['Ds_Signature']
+            my_signature = create_sha_2(amount, transaction_id, merchant_code, moneda, response)
+            if signature == my_signature:
+                try:
+                    value = int(response[len(response) - 2:])
+                except ValueError:
+                    value = -1
+                if response.startswith('00') and 0 <= value <= 99 and len(response) == 4:
+                    try:
+                        purchase = models.Purchase.objects.get(transaction_id=transaction_id)
+                        purchase.discount()
+                        purchase.save()
+                    except models.Purchase.DoesNotExist:
+                        print('Error in transaction!!!!! ' + str(transaction_id) + ' does not exist!!!')
+
+            else:
+                raise Http404('Get out of my site!!!!!')
+        except KeyError:
+            raise Http404('Error in POST method')
+    else:
+        raise Http404('Not GET method founded')
+
+
+def completed_payment_fail(request):
+    if request.method == 'GET':
+        codes = {
+            '101': 'Tarjeta caducada',
+            '102': 'Tarjeta en excepción transitoria o bajo sospecha de fraude',
+            '104': 'Operación no permitida para esa tarjeta o terminal',
+            '9104': 'Operación no permitida para esa tarjeta o terminal',
+            '116': 'Disponible insuficiente',
+            '118': 'Tarjeta no registrada',
+            '129': 'Código de seguridad (CVV2/CVC2) incorrecto',
+            '180': 'Tarjeta ajena al servicio',
+            '184': 'Error en la autenticación del titular',
+            '190': 'Denegación sin especificar Motivo',
+            '191': 'Fecha de caducidad errónea',
+            '202': 'Tarjeta en excepción transitoria o bajo sospecha de fraude con retirada de tarjeta',
+            '912': 'Emisor no disponible',
+            '913': 'Pedido repetido',
+            '9912': 'Emisor no disponible'
+        }
+        try:
+            response = request.GET['Ds_Response']
+            try:
+                error = codes[response]
+            except KeyError:
+                error = 'Transacción denegada'
+            return add_info_home(request, {'error': error}, 'fail.html')
+        except KeyError:
+            raise Http404('Wrong request')
+    else:
+        raise Http404('Not method founded')
+
+
+def completed_payment_ok(request):
+    if request.method == 'GET':
+        ret = HttpResponseRedirect('/')
+        ret.set_cookie('successful_shop', True)
+        return ret
+    else:
+        raise Http404('Not method founded')

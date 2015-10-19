@@ -19,7 +19,7 @@
           id="payment_form" method="post">{% csrf_token %}
         <div class="section" data-payment-method="">
             <div class="section__header">
-                <h2 class="section__title">Seleccione método de pago</h2>
+                <h2 class="section__title">Método de pago</h2>
                 {% if error %}
                     <div class="alert alert-danger alert-dismissable fade in">
                         <button type="button" class="close" data-dismiss="alert"
@@ -53,6 +53,20 @@
                     </div>
                 </div>
             </div>
+
+            <input type="hidden" name="Ds_Merchant_Amount" value="{{ price_form }}">
+            <input type="hidden" name="Ds_Merchant_Currency" value="978">
+            <input type="hidden" name="Ds_Merchant_Order" value="{{ on_hold.transaction_id }}">
+            <input type="hidden" name="Ds_Merchant_Titular" value="{{ on_hold.client.full_name }}">
+            <input type="hidden" name="Ds_Merchant_MerchantCode" value="092508472">
+            <input type="hidden" name="Ds_Merchant_MerchantURL" value="https://www.hutton.es/completed_payment/">
+            <input type="hidden" name="Ds_Merchant_UrlOK" value="https://www.hutton.es/completed_payment_ok/">
+            <input type="hidden" name="Ds_Merchant_UrlKO" value="https://www.hutton.es/completed_payment_fail/">
+            <input type="hidden" name="Ds_Merchant_MerchantName" value="GRUPO TEXTIL HUTTON S.L">
+            <input type="hidden" name="Ds_Merchant_ConsumerLanguage" value="001">
+            <input type="hidden" name="Ds_Merchant_MerchantSignature" value="{{ signature }}">
+            <input type="hidden" name="Ds_Merchant_Terminal" value="001">
+            <input type="hidden" name="Ds_Merchant_TransactionType" value="0">
         </div>
     </form>
 {% endblock %}
