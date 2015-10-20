@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{#TODO: Arreglar los nombres una vez que tengamos los que son#}
+{% block content %}
+    <div style="text-align: center">
+        <h3>Su transacción no ha podido ser completada con éxito</h3>
+
+        <h3><a style="color: red">Error:</a> {{ error }}</h3>
+    </div>
+{% endblock %}
