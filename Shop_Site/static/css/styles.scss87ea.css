@@ -135,6 +135,11 @@ input[type=submit] {
     color: #666666 !important
 }
 
+@font-face {
+    font-family: "ThirstyScriptExtraBoldDemo";
+    src: url("ThirstyScriptExtraBoldDemo.otf");
+}
+
 /*select {*/
 /*font-size: 13px;*/
 /*display: inline-block;*/
@@ -3635,7 +3640,7 @@ button.close {
         margin-right: 30px;
         font-size: 20px;
         color: #004024;
-        font-family: Helvetica, Arial, sans-serif;
+        font-family: ThirstyScriptExtraBoldDemo, sans-serif;
         /*font-family: 'Brandon Bld'*/
         /*font: 20px "Source Sans Pro", Helvetica, sans-serif !important*/
 
@@ -3646,7 +3651,7 @@ button.close {
     }
 
     .inner_text_menu {
-        display: inline;
+        display: block;
         margin-left: -29px;
     }
 
@@ -3840,5 +3845,40 @@ button.close {
 }
 
 #size_input {
+    display: none;
+}
+
+.menu_big, .sub_menu_big {
+    display: block;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    line-height: normal;
+    direction: ltr;
+}
+
+.menu_big > li {
+    position: relative;
+    float: left;
+    width: 18%;
+    font-size: 24px;
+    color: #004024;
+    font-family: ThirstyScriptExtraBoldDemo, sans-serif;
+
+}
+
+.menu_big > li > a {
+    color: #004024;
+}
+
+.menu_big li:first-child {
+    width: 23%;
+}
+
+.menu_big li:last-child {
+    width: 23%;
+}
+
+.sub_menu_big {
     display: none;
 }

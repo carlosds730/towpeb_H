@@ -226,10 +226,23 @@
                     <div class="span12">
                         <nav class="main">
                             <div class="inner_text_menu">
-                                <a href="#">Hutton111</a>
-                                {% for c in categories %}
-                                    <a href="/categories/{{ c.pk }}/">{{ c.name }}</a>
-                                {% endfor %}
+                                <ul class="menu_big">
+                                    <li></li>
+                                    <li><a href="#">Lookbook</a></li>
+                                    <li>
+                                        Productos
+                                        <ul class="sub_menu_big">
+                                            {% for c in categories %}
+                                                <li><a href="/categories/{{ c.pk }}/">{{ c.name }}</a></li>
+                                            {% endfor %}
+                                        </ul>
+                                    </li>
+                                    <li><a href="/shop/#home" title="Tienda">Tienda</a></li>
+                                    <li></li>
+                                </ul>
+                                {#                                {% for c in categories %}#}
+                                {#                                    <a href="/categories/{{ c.pk }}/">{{ c.name }}</a>#}
+                                {#                                {% endfor %}#}
                             </div>
                         </nav>
                     </div>
@@ -316,6 +329,8 @@
 
                         <p class="p10"><strong><a href="mailto:info@hutton.es">info@hutton.es</a></strong></p>
 
+                        <p class="p10"><strong>Flagshipstore</strong> Calle Padilla 4 ...</p>
+
                         <p>Teléfono: +123-456-789</p>
 
                     </div>
@@ -329,7 +344,7 @@
                     <ul class="unstyled">
                         {# DONE: Que se supone q vaya en todos estos enlaces, me imagino q sea textos, mandamelos#}
                         <li><a href="/about_us/#home" title="Conócenos">Conócenos</a></li>
-                        <li><a href="/shop/#home" title="TIENDA">TIENDA</a></li>
+                        {#                        <li><a href="/shop/#home" title="TIENDA">TIENDA</a></li>#}
                     </ul>
                 </div>
 
@@ -365,8 +380,8 @@
                         <span class="social-links">
                             <a href="http://www.facebook.com/huttonofficial" title="Síguenos en Facebook!"><span
                                     class="shopify-social-icon-facebook-circle"></span></a>
-                            <a href="http://twitter.com/hutton_official" title="Síguenos en Twitter!"><span
-                                    class="shopify-social-icon-twitter-circle"></span></a>
+{#                            <a href="http://twitter.com/hutton_official" title="Síguenos en Twitter!"><span#}
+{#                                    class="shopify-social-icon-twitter-circle"></span></a>#}
 {#                            <a href="https://pinterest.com/shopify/" title="Síguenos en Pinterest!"><span class="shopify-social-icon-pinterest-circle"></span></a>#}
 {#                            <a href="https://plus.google.com/+shopify" title="Síguenos en Google+!" rel="publisher"><span class="shopify-social-icon-googleplus-circle"></span></a>#}
                             <a href="http://instagram.com/hutton_official" title="Síguenos en Instagram!"><span
@@ -381,7 +396,8 @@
 
                 <!-- Begin copyright -->
                 <div class="span12 tc copyright">
-                    <p>Copyright &copy; 2015 | <a href="http://www.towpeb.com" rel="nofollow" target="_blank">Powered by
+                    <p>Copyright &copy; 2015 | <a href="http://www.towpeb.com" rel="nofollow" target="_blank">Desarrollado
+                        por
                         TOWPeb</a></p>
                 </div>
                 <!-- End copyright -->
