@@ -29,6 +29,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+TIME_ZONE = 'America/Havana'
 
 # Application definition
 
@@ -120,6 +121,8 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 MEDIA_URL = '/media/'
@@ -143,3 +146,9 @@ EMAIL_FILE_PATH = os.path.join(BASE_DIR, 'emails')  # change this to a proper lo
 # EMAIL_USE_TLS = True
 
 # EMAIL_HOST_PASSWORD =
+
+THUMBNAIL_DEBUG = True
+
+# THUMBNAIL_ENGINE = 'sorl.thumbnail.engines.convert_engine.Engine'
+
+THUMBNAIL_ENGINE = 'sorl.thumbnail.engines.wand_engine.Engine'

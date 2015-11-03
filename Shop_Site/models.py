@@ -205,7 +205,9 @@ class Purchase(models.Model):
         total = 4
         for p in self.products.all():
             total += p.product.price * p.amount
-        return str(total) + ' €', str(total), total * 100
+        print(total)
+        print(str(total * 100).split('0')[0])
+        return str(total) + ' €', str(total), str(total * 100).split('.')[0]
 
     def discount(self):
         if self.on_hold:

@@ -4,11 +4,9 @@ import random
 import string
 
 import braintree
-
 from django.http import HttpResponseRedirect, Http404, HttpResponse
-
+from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render, redirect
-
 from django.core.validators import validate_email
 
 from Shop_Site.extra_functions import hash, create_unique_id, create_sha, create_sha_2
@@ -37,10 +35,12 @@ def get_login(cookies):
 
 def home(request):
     if request.method == 'GET':
+
         try:
             request.COOKIES['successful_shop']
             ret = add_info_home(request, {'successful_purchase': True})
             ret.delete_cookie("successful_shop")
+            ret.delete_cookie("purchase")
             return ret
         except KeyError:
             print("yuju")
@@ -857,8 +857,10 @@ def add_mail(request):
             return HttpResponse(json.dumps({'status': 0}), content_type='application/json')
 
 
+# TODO: What this should do when there is no purchase
 def payment_billing(request):
     if request.method == 'GET':
+        site_url = 'http://towpeb.xyz/completed_payment/'
         # try:
         #     token = braintree.ClientToken.generate()
         #     print(token)
@@ -878,11 +880,14 @@ def payment_billing(request):
                 on_hold.save()
                 price = on_hold.total_price_with_taxes()[2]
                 signature = create_sha(price, on_hold.transaction_id, '092508472', 978, 0,
-                                       'https://www.hutton.es/completed_payment/', 'qwertyasdf0123456789')
+                                       site_url, 'qwertyasdf0123456789')
+                print(on_hold.transaction_id)
+                print(signature)
                 return add_info_home(request,
                                      {
                                          'on_hold': on_hold, 'shops': [], 'token': None,
                                          'price_form': price,
+                                         'name': on_hold.client.full_name,
                                          'signature': signature
                                      }
                                      , 'info_card.html')
@@ -894,7 +899,7 @@ def payment_billing(request):
                 purchase.save()
                 price = purchase.total_price_with_taxes()[2]
                 signature = create_sha(price, purchase.transaction_id, '092508472', 978, 0,
-                                       'https://www.hutton.es/completed_payment/', 'qwertyasdf0123456789')
+                                       site_url, 'qwertyasdf0123456789')
                 return add_info_home(request, {
                     'on_hold': purchase, 'shops': [], 'token': None,
                     'price_form': price,
@@ -1019,7 +1024,7 @@ def payment_methods(request):
                 token = 'eyJ2ZXJzaW9uIjoyLCJhdXRob3JpemF0aW9uRmluZ2VycHJpbnQiOiJmMDU0MTRmZTc1MGNiYmIwOGQ0YTM1MGIwZmYyYmMxMWE5ZDc0ZWMzNmMxM2QwYjkzNjExYWNiMTUyYTRmNjhhfGNyZWF0ZWRfYXQ9MjAxNS0wOS0wNFQyMDo0NTozMS4zMjE0ODU4MzErMDAwMFx1MDAyNm1lcmNoYW50X2lkPTM0OHBrOWNnZjNiZ3l3MmJcdTAwMjZwdWJsaWNfa2V5PTJuMjQ3ZHY4OWJxOXZtcHIiLCJjb25maWdVcmwiOiJodHRwczovL2FwaS5zYW5kYm94LmJyYWludHJlZWdhdGV3YXkuY29tOjQ0My9tZXJjaGFudHMvMzQ4cGs5Y2dmM2JneXcyYi9jbGllbnRfYXBpL3YxL2NvbmZpZ3VyYXRpb24iLCJjaGFsbGVuZ2VzIjpbXSwiZW52aXJvbm1lbnQiOiJzYW5kYm94IiwiY2xpZW50QXBpVXJsIjoiaHR0cHM6Ly9hcGkuc2FuZGJveC5icmFpbnRyZWVnYXRld2F5LmNvbTo0NDMvbWVyY2hhbnRzLzM0OHBrOWNnZjNiZ3l3MmIvY2xpZW50X2FwaSIsImFzc2V0c1VybCI6Imh0dHBzOi8vYXNzZXRzLmJyYWludHJlZWdhdGV3YXkuY29tIiwiYXV0aFVybCI6Imh0dHBzOi8vYXV0aC52ZW5tby5zYW5kYm94LmJyYWludHJlZWdhdGV3YXkuY29tIiwiYW5hbHl0aWNzIjp7InVybCI6Imh0dHBzOi8vY2xpZW50LWFuYWx5dGljcy5zYW5kYm94LmJyYWludHJlZWdhdGV3YXkuY29tIn0sInRocmVlRFNlY3VyZUVuYWJsZWQiOnRydWUsInRocmVlRFNlY3VyZSI6eyJsb29rdXBVcmwiOiJodHRwczovL2FwaS5zYW5kYm94LmJyYWludHJlZWdhdGV3YXkuY29tOjQ0My9tZXJjaGFudHMvMzQ4cGs5Y2dmM2JneXcyYi90aHJlZV9kX3NlY3VyZS9sb29rdXAifSwicGF5cGFsRW5hYmxlZCI6dHJ1ZSwicGF5cGFsIjp7ImRpc3BsYXlOYW1lIjoiQWNtZSBXaWRnZXRzLCBMdGQuIChTYW5kYm94KSIsImNsaWVudElkIjpudWxsLCJwcml2YWN5VXJsIjoiaHR0cDovL2V4YW1wbGUuY29tL3BwIiwidXNlckFncmVlbWVudFVybCI6Imh0dHA6Ly9leGFtcGxlLmNvbS90b3MiLCJiYXNlVXJsIjoiaHR0cHM6Ly9hc3NldHMuYnJhaW50cmVlZ2F0ZXdheS5jb20iLCJhc3NldHNVcmwiOiJodHRwczovL2NoZWNrb3V0LnBheXBhbC5jb20iLCJkaXJlY3RCYXNlVXJsIjpudWxsLCJhbGxvd0h0dHAiOnRydWUsImVudmlyb25tZW50Tm9OZXR3b3JrIjp0cnVlLCJlbnZpcm9ubWVudCI6Im9mZmxpbmUiLCJ1bnZldHRlZE1lcmNoYW50IjpmYWxzZSwiYnJhaW50cmVlQ2xpZW50SWQiOiJtYXN0ZXJjbGllbnQzIiwiYmlsbGluZ0FncmVlbWVudHNFbmFibGVkIjpmYWxzZSwibWVyY2hhbnRBY2NvdW50SWQiOiJhY21ld2lkZ2V0c2x0ZHNhbmRib3giLCJjdXJyZW5jeUlzb0NvZGUiOiJVU0QifSwiY29pbmJhc2VFbmFibGVkIjpmYWxzZSwibWVyY2hhbnRJZCI6IjM0OHBrOWNnZjNiZ3l3MmIiLCJ2ZW5tbyI6Im9mZiJ9'
             if result:
                 return add_info_home(request, {'on_hold': on_hold, 'token': token, 'error': error_message},
-                                 'info_card.html')
+                                     'info_card.html')
             else:
                 return HttpResponseRedirect('/')
     else:
@@ -1027,17 +1032,27 @@ def payment_methods(request):
         # DONE: If result.is_success this should go somewhere. Is not result.is_success then when should go back and say
 
 
+@csrf_exempt
 def completed_payment(request):
+    print('Me estan llamando')
     if request.method == 'POST':
         try:
             amount = request.POST['Ds_Amount']
+            print(amount)
             currency = request.POST['Ds_Currency']
+            print(currency)
             transaction_id = request.POST['Ds_Order']
+            print(transaction_id)
             merchant_code = request.POST['Ds_MerchantCode']
+            print(merchant_code)
             response = request.POST['Ds_Response']
+            print(response)
             signature = request.POST['Ds_Signature']
-            my_signature = create_sha_2(amount, transaction_id, merchant_code, currency, response)
-            if signature == my_signature:
+            print(signature)
+            my_signature = create_sha_2(amount, transaction_id, merchant_code, currency, response,
+                                        "qwertyasdf0123456789")
+            print(my_signature)
+            if signature.upper() == my_signature.upper():
                 try:
                     value = int(response[len(response) - 2:])
                 except ValueError:
@@ -1047,14 +1062,18 @@ def completed_payment(request):
                         purchase = models.Purchase.objects.get(transaction_id=transaction_id)
                         purchase.discount()
                         purchase.save()
+                        print('We shop!')
                     except models.Purchase.DoesNotExist:
                         print('Error in transaction!!!!! ' + str(transaction_id) + ' does not exist!!!')
-
+                return HttpResponse(status=200)
             else:
+                print('There was something wrong')
                 raise Http404('Get out of my site!!!!!')
         except KeyError:
+            print('Key Error')
             raise Http404('Error in POST method')
     else:
+        print('Ihis is a GET')
         raise Http404('Not GET method founded')
 
 
@@ -1078,6 +1097,7 @@ def completed_payment_fail(request):
             '9912': 'Emisor no disponible'
         }
         try:
+            print(request.GET)
             response = request.GET['Ds_Response']
             try:
                 error = codes[response]
@@ -1085,7 +1105,41 @@ def completed_payment_fail(request):
                 error = 'Transacción denegada'
             return add_info_home(request, {'error': error}, 'fail.html')
         except KeyError:
-            raise Http404('Wrong request')
+            error = 'Transacción denegada'
+            return add_info_home(request, {'error': error}, 'fail.html')
+    else:
+        raise Http404('Not method founded')
+
+
+def completed_payment_ok_old(request):
+    if request.method == 'GET':
+        try:
+            amount = request.GET['Ds_Amount']
+            print(amount)
+            currency = request.GET['Ds_Currency']
+            print(currency)
+            transaction_id = request.GET['Ds_Order']
+            print(transaction_id)
+            merchant_code = request.GET['Ds_MerchantCode']
+            print(merchant_code)
+            response = request.GET['Ds_Response']
+            print(response)
+            signature = request.GET['Ds_Signature']
+            print(signature)
+            my_signature = create_sha_2(amount, transaction_id, merchant_code, currency, response,
+                                        "qwertyasdf0123456789")
+
+            if signature == my_signature:
+                ret = HttpResponseRedirect('/')
+                ret.set_cookie('successful_shop', True)
+                return ret
+            else:
+                raise Http404('Error in GET method')
+
+        except KeyError:
+            print('Key Error')
+            raise Http404('Error in GET method')
+
     else:
         raise Http404('Not method founded')
 

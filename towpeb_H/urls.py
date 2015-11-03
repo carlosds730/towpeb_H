@@ -49,5 +49,4 @@ urlpatterns = static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + [
     url(r'^shop/?$', views.shop, name='shop'),
     url(r'^add_mail/?$', views.add_mail, name='add_mail'),
     url(r'^$', views.home)
-
 ]

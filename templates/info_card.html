@@ -15,7 +15,8 @@
     </div>
 {% endblock %}
 {% block form_content %}
-    <form class="edit_checkout animate-floating-labels" action="/payment-methods" accept-charset="UTF-8"
+    <form class="edit_checkout animate-floating-labels" action="https://sis-t.redsys.es:25443/sis/realizarPago"
+          accept-charset="UTF-8"
           id="payment_form" method="post">{% csrf_token %}
         <div class="section" data-payment-method="">
             <div class="section__header">
@@ -46,7 +47,8 @@
                 <div data-payment-subform="required">
                     <div class="content-box">
                         <div class="radio-wrapper content-box__row ">
-                            <label class="radio__label content-box__emphasis">
+                            <input id="submit_button" type="submit" style="display: none;">
+                            <label class="radio__label content-box__emphasis" for="submit_button">
                                 Tarjeta de crédito
                             </label>
                         </div>
@@ -57,11 +59,13 @@
             <input type="hidden" name="Ds_Merchant_Amount" value="{{ price_form }}">
             <input type="hidden" name="Ds_Merchant_Currency" value="978">
             <input type="hidden" name="Ds_Merchant_Order" value="{{ on_hold.transaction_id }}">
-            <input type="hidden" name="Ds_Merchant_Titular" value="{{ on_hold.client.full_name }}">
+            {% if name %}
+                <input type="hidden" name="Ds_Merchant_Titular" value="{{ on_hold.client.full_name }}">
+            {% endif %}
             <input type="hidden" name="Ds_Merchant_MerchantCode" value="092508472">
-            <input type="hidden" name="Ds_Merchant_MerchantURL" value="https://www.hutton.es/completed_payment/">
-            <input type="hidden" name="Ds_Merchant_UrlOK" value="https://www.hutton.es/completed_payment_ok/">
-            <input type="hidden" name="Ds_Merchant_UrlKO" value="https://www.hutton.es/completed_payment_fail/">
+            <input type="hidden" name="Ds_Merchant_MerchantURL" value="http://towpeb.xyz/completed_payment/">
+            <input type="hidden" name="Ds_Merchant_UrlOK" value="http://towpeb.xyz/completed_payment_ok/">
+            <input type="hidden" name="Ds_Merchant_UrlKO" value="http://towpeb.xyz/completed_payment_fail/">
             <input type="hidden" name="Ds_Merchant_MerchantName" value="GRUPO TEXTIL HUTTON S.L">
             <input type="hidden" name="Ds_Merchant_ConsumerLanguage" value="001">
             <input type="hidden" name="Ds_Merchant_MerchantSignature" value="{{ signature }}">
