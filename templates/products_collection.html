@@ -58,17 +58,17 @@
                     {#DONE: Each product takes a div like the one above. Add as many as products as there are, the design takes care of showing it in rows#}
                     {% for p in products %}
                         <div class="product span3 adaptive-grid">
-                            {% if not p.6 %}
-                                <span class="circle sold-out">Agotado</span>
-                            {% elif p.8 %}
-                                <span class="circle sale">Oferta Especial!</span>
-                            {% endif %}
+
                             {#TODO: All this images should be of the same size#}
                             <div class="image">
                                 {% if not p.6 %}
-                                        <img src="{{ p.3 }}"
-                                             alt="{{ p.2 }}"/>
-                                    </a>
+                                    <span class="circle sold-out">Agotado</span>
+                                {% elif p.8 %}
+                                    <span class="circle sale">Oferta Especial!</span>
+                                {% endif %}
+                                {% if not p.6 %}
+                                    <img src="{{ p.3 }}"
+                                         alt="{{ p.2 }}"/>
                                 {% else %}
 
                                     <a href="/product/{{ p.0 }}/">
@@ -131,18 +131,7 @@
                             p = data['products'][i];
                             var container = document.createElement("div");
                             container.setAttribute('class', 'product span3 adaptive-grid');
-                            if (p[6] == 0) {
-                                var span_sold_out = document.createElement("span");
-                                span_sold_out.setAttribute('class', 'circle sold-out');
-                                span_sold_out.innerText = 'Agotado';
-                                container.appendChild(span_sold_out);
-                            }
-                            else if (p[8]) {
-                                var span_sale = document.createElement("span");
-                                span_sale.setAttribute('class', 'circle sale');
-                                span_sale.innerText = 'Oferta Especial!';
-                                container.appendChild(span_sale);
-                            }
+
                             var image_div = document.createElement('div');
                             image_div.setAttribute('class', 'image');
                             var a_1 = document.createElement('a');
@@ -154,6 +143,20 @@
                             image.setAttribute('alt', p[2].toString());
                             a_1.appendChild(image);
                             image_div.appendChild(a_1);
+
+                            if (p[6] == 0) {
+                                var span_sold_out = document.createElement("span");
+                                span_sold_out.setAttribute('class', 'circle sold-out');
+                                span_sold_out.innerText = 'Agotado';
+                                image_div.appendChild(span_sold_out);
+                            }
+                            else if (p[8]) {
+                                var span_sale = document.createElement("span");
+                                span_sale.setAttribute('class', 'circle sale');
+                                span_sale.innerText = 'Oferta Especial!';
+                                image_div.appendChild(span_sale);
+                            }
+
                             container.appendChild(image_div);
 
                             var detail_div = document.createElement('div');

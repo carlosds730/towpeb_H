@@ -42,6 +42,7 @@ urlpatterns = static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + [
     url(r'^privacy/?$', views.privacy, name='privacy'),
     url(r'^conditions/?$', views.conditions, name='conditions'),
     url(r'^cookies/?$', views.cookies, name='cookies'),
+    url(r'^lookbook/?$', views.lookbook, name='lookbook'),
     url(r'^shutdown/?$', views.shutdown, name='shutdown'),
     url(r'^info_client/?$', views.info_client, name='info_client'),
     # url(r'^shipping_info/?$', views.shipping_info, name='shipping_info'),

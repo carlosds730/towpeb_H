@@ -237,6 +237,11 @@
                             return false;
                         });
                     }
+                    else {
+                        $("#payment_button").removeClass("disabled").css("cursor", "pointer").click(function () {
+
+                        });
+                    }
 
                     function delayedAlert() {
                         timeoutID = window.setTimeout(function () {

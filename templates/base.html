@@ -40,7 +40,9 @@
 
         <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Arvo:300,400,700">
 
-        <link rel="stylesheet" type="text/css" href="{% static 'css/cookie.css' %}">
+        {% if not no_cookies %}
+            <link rel="stylesheet" type="text/css" href="{% static 'css/cookie.css' %}">
+        {% endif %}
 
         <script src="{% static 'js/html5shiv87ea.js' %}" type="text/javascript"></script>
 
@@ -53,6 +55,9 @@
                 type="text/javascript"></script>
 
         <script src="{% static 'js/api.jquery-c602350dadbc8cd60f9559f7c451f118.js' %}" type="text/javascript"></script>
+        {% if not no_cookies %}
+            <script src="{% static 'js/cookie.js' %}" type="text/javascript"></script>
+        {% endif %}
 
 
     {% endblock %}
@@ -60,16 +65,31 @@
         Hutton
     </title>
 </head>
-<div id="cookieMessageWrapper">
-    <div id="cookieMessage">
-        <strong>Este Sitio Utiliza Cookies.</strong> Usted puede leer al respecto en Nuestra
-        <a href="/cookies/#home">
-            <strong>Politica De Privacidad</strong>
-        </a>.
-        <button id="cookieClose">Aceptar</button>
-    </div>
-</div>
+
 <body>
+{% if not no_cookies %}
+    <div class="notification_zone_big" id="cookiesThing">
+        <div style="position: absolute; width: 100%;height: 100%;background-color: #004024;opacity: 0.85;filter: alpha(opacity=85);">
+        </div>
+        <div id="cookieMessageWrapper">
+            <div id="cookieMessage">
+                Hutton utiliza cookies para garantizar que te ofrecemos la mejor experiencia como usuario de nuestra
+                web. Si
+                continúas, entendemos que das tu consentimiento para recibir todas las cookies en todas las páginas web
+                de
+                Hutton.
+                <a href="/cookies/#home">
+                    <strong style="color: white">(Leer Politica De Cookies)</strong>
+                </a>
+                <br>
+                <button id="cookieClose">ACEPTAR</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        ValidateCookie();
+    </script>
+{% endif %}
 {% if notification %}
     <div class="notification_zone_big" id="product_added">
         <div style="position: absolute; width: 100%;height: 100%;background-color: #004024;opacity: 0.85;filter: alpha(opacity=85);">
@@ -157,8 +177,7 @@
                         <a href="/" class=" current navlink"><span>Inicio</span></a>
                     </li>
                     <li>
-                        {# DONE: Que se supone q vaya aqui INFO q me tienes q mandar#}
-                        <a href="/about_us/#home" class="current navlink"><span>Sobre nostros</span></a>
+                        <a href="/lookbook/#home" class=" current navlink"><span>Lookbook</span></a>
                     </li>
                     <li>
                         <a style="cursor: pointer" class="navlink"><span>Productos</span></a>
@@ -170,8 +189,7 @@
                         </ul>
                     </li>
                     <li>
-                        {# DONE: Explicame aqui igual q es esto y mandame lo que quieres q vaya ahi #}
-                        <a href="/sizes/" class=" current navlink"><span>Guía de tallas</span></a>
+                        <a href="/shop/#home" class=" current navlink"><span>Tienda</span></a>
                     </li>
                     <li><span class="account-links">Usuarios</span>
                         <span class="more"><i class="fa fa-user"></i></span>
@@ -227,18 +245,23 @@
                         <nav class="main">
                             <div class="inner_text_menu">
                                 <ul class="menu_big">
-                                    <li></li>
-                                    <li><a href="#">Lookbook</a></li>
-                                    <li>
+                                    <li>&nbsp;</li>
+                                    <li><a href="/lookbook/#home">Lookbook</a></li>
+                                    <li class="desplegable_sub_menu">
                                         Productos
                                         <ul class="sub_menu_big">
+                                            <div class="sub_menu_holder">
+
+                                            </div>
                                             {% for c in categories %}
-                                                <li><a href="/categories/{{ c.pk }}/">{{ c.name }}</a></li>
+                                                <a href="/categories/{{ c.pk }}/">
+                                                    <li>{{ c.name }}</li>
+                                                </a>
                                             {% endfor %}
                                         </ul>
                                     </li>
                                     <li><a href="/shop/#home" title="Tienda">Tienda</a></li>
-                                    <li></li>
+                                    <li>&nbsp;</li>
                                 </ul>
                                 {#                                {% for c in categories %}#}
                                 {#                                    <a href="/categories/{{ c.pk }}/">{{ c.name }}</a>#}
@@ -283,10 +306,10 @@
                                     <img class="crazy_pic_img" src="{% static 'img/Carbones Hutton.jpg' %}">
                                 </a>
 
-                                <div class="fancy_text" style="padding-top: 15%">
-                                    {#TODO: Change this text-image for a propper one. Tell me where this link should go#}
-                                    <img src="{% static 'img/hutton_texto.png' %}">
-                                </div>
+                                {#                                <div class="fancy_text" style="padding-top: 15%">#}
+                                {#TODO: Change this text-image for a propper one. Tell me where this link should go#}
+                                {#                                    <img src="{% static 'img/hutton_texto.png' %}">#}
+                                {#                                </div>#}
 
                             </div>
                             <div class="separator_line" style="clear:both; margin-bottom: 10px"></div>
@@ -296,10 +319,10 @@
                                 </a>
                             </div>
                             <div class="crazy_pics_span2">
-                                <div class="fancy_text">
-                                    {#TODO: Change this text-image for a propper one. Tell me where this link should go#}
-                                    <img src="{% static 'img/hutton_texto.png' %}">
-                                </div>
+                                {#                                <div class="fancy_text">#}
+                                {#TODO: Change this text-image for a propper one. Tell me where this link should go#}
+                                {#                                    <img src="{% static 'img/hutton_texto.png' %}">#}
+                                {#                                </div>#}
                             </div>
                         </div>
                     </div>
@@ -544,9 +567,25 @@
             }
 
         }
+
+        $(".desplegable_sub_menu").hover(
+                function () {
+                    $(this).children(".sub_menu_big").fadeIn();
+                }, function () {
+                    $(this).children(".sub_menu_big").fadeOut();
+                }
+        );
+
+        $(".sub_menu_big li").hover(
+                function () {
+                    $(this).css("color", "white");
+                }, function () {
+                    $(this).css("color", "#004024");
+                }
+        );
     </script>
 
-    <script src="{% static 'js/cookie.js' %}" type="text/javascript"></script>
+
 {% endblock %}
 </body>
 </html>

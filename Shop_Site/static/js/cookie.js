@@ -1,27 +1,49 @@
-$(document).ready(function () {
-
+function ValidateCookie() {
     var strCookieName = "cookie-compliance";
     var strApprovedVal = "approved";
 
     var cookieVal = readCookie(strCookieName);
 
-    var $displayMsg = $('#cookieMessageWrapper');
+    var $displayMsg = $("#cookiesThing");
+
 
     if (cookieVal != strApprovedVal) {
 
-        setTimeout(function () {
-            $displayMsg.slideDown(200);
-        }, 200);
+        $displayMsg.fadeIn();
     } else if (!$displayMsg.is(':hidden')) {
-        $displayMsg.slideUp();
+        $displayMsg.fadeIn();
     }
-    ;
+
 
     $('#cookieClose').click(function () {
-        $displayMsg.slideUp();
+        $displayMsg.fadeOut();
         createCookie(strCookieName, strApprovedVal, 1);
     });
-});
+}
+
+//$(document).ready(function () {
+//
+//    var strCookieName = "cookie-compliance";
+//    var strApprovedVal = "approved";
+//
+//    var cookieVal = readCookie(strCookieName);
+//
+//    var $displayMsg = $("#cookiesThing");
+//
+//
+//    if (cookieVal != strApprovedVal) {
+//
+//        $displayMsg.fadeIn();
+//    } else if (!$displayMsg.is(':hidden')) {
+//        $displayMsg.fadeIn();
+//    }
+//
+//
+//    $('#cookieClose').click(function () {
+//        $displayMsg.fadeOut();
+//        createCookie(strCookieName, strApprovedVal, 1);
+//    });
+//});
 
 //Cookie functions
 function createCookie(name, value, days) {

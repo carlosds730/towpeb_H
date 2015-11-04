@@ -46,6 +46,8 @@ INSTALLED_APPS = (
 
 SESSION_COOKIE_DOMAIN = None
 
+WEB_SITE_URL = 'http://www.towpeb.xyz/'
+
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -137,17 +139,19 @@ EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
 
 EMAIL_FILE_PATH = os.path.join(BASE_DIR, 'emails')  # change this to a proper location
 
-# EMAIL_HOST =
+EMAIL_HOST = 'smpt.hutton.es'
 
-# EMAIL_HOST_USER =
+# EMAIL_HOST = 'mail.hutton.es'
+
+EMAIL_HOST_USER = 'newsletter@hutton.es'
+
+EMAIL_PORT = 578
 
 # EMAIL_PORT = 587
 
-# EMAIL_USE_TLS = True
+EMAIL_USE_TLS = True
 
-# EMAIL_HOST_PASSWORD =
-
-THUMBNAIL_DEBUG = True
+EMAIL_HOST_PASSWORD = 'hutton123'
 
 # THUMBNAIL_ENGINE = 'sorl.thumbnail.engines.convert_engine.Engine'
 
