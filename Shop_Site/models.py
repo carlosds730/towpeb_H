@@ -1,10 +1,13 @@
 # -*- coding: utf8 -*-
 import random
+from urllib.parse import urljoin
 
 import django.utils.timezone as tz
 from django.db import models
 from django.core.exceptions import ValidationError
 from sorl.thumbnail import ImageField
+
+from towpeb_H.settings import WEB_SITE_URL as web_site_url
 
 
 # TODO: Terminar de poner la tallas q faltan, estas fueron la unicas que se me ocurrieron
@@ -74,6 +77,13 @@ class Products(models.Model):
         for attr in self.attributes.all():
             count += attr.amount
         return count
+
+    def get_absolute_url(self):
+        from django.core.urlresolvers import reverse
+        return reverse('product', args=[str(self.pk)])
+
+    def get_full_url(self):
+        return urljoin(web_site_url, self.get_absolute_url())
 
 
 class Attribute(models.Model):

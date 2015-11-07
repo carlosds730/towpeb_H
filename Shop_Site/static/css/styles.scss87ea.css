@@ -3533,7 +3533,7 @@ button.close {
 .notification_zone {
     position: fixed;
     display: none;
-    /*width: 169px;*/
+    width: 222px;
     /*background-color: #004024;*/
     /*opacity: 0.8;*/
     bottom: 15px;

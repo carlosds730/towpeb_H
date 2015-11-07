@@ -341,7 +341,7 @@ p {
 }
 
 p + p {
-    margin-top: 1.5em
+    /*margin-top: 1.5em*/
 }
 
 ::-moz-selection {

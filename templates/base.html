@@ -15,9 +15,9 @@
     <meta charset="utf-8">
 
     <!--Here goes the icon-->
-    <link rel="shortcut icon" href="{% static 'img/logo_w.png' %}" type="image/png"/>
+    <link rel="shortcut icon" href="{% static 'countdown/images/logo_w.png' %}" type="image/png"/>
     <!--[if IE]><meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'><![endif]-->
-    <link rel="shortcut icon" href="{% static 'img/logo_w.png' %}" type="image/png"/>
+    <link rel="shortcut icon" href="{% static 'countdown/images/logo_w.png' %}" type="image/png"/>
 
     {% block TitleMetadata %}
 
@@ -213,7 +213,7 @@
 
                     </li>
                     <li class="search-field">
-                        {#TODO: la busqueda la realizo por los labels y por los nombres de los productos y categorias, verdad?#}
+                        {#DONE: la busqueda la realizo por los labels y por los nombres de los productos y categorias, verdad?#}
                         <form class="search" action="/search/" method="post">{% csrf_token %}
                             <button type="submit" alt="Go" class="go"><i class="fa fa-search"></i></button>
                             <input type="text" name="query" class="search_box" placeholder="Buscar" value=""/>
@@ -294,7 +294,7 @@
                 {% block products %}
                     <div class="span12">
                         <div class="row products">
-                            {#TODO: Estas imágenes no pueden tener fondo blanco porque se ve muy feo#}
+                            {#DONE: Estas imágenes no pueden tener fondo blanco porque se ve muy feo#}
                             <div class="crazy_pics_span7 crazy_pics right_margin">
                                 <a href="/product/4/">
                                     <img class="crazy_pic_img pic_at_left"
@@ -387,7 +387,7 @@
                 <div class="span5 main_menu">
                     <div class="p30">
                         <h4>Recibe todas nuestras novedades</h4>
-                        {#  TODO: Que hacer con esto q se supone q se haga con ese correo                      #}
+                        {#  DONE: Que hacer con esto q se supone q se haga con ese correo                      #}
                         <form action="/" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form"
                               target="_blank">
                             <input class="email_holder" type="email" value="" placeholder="Email" name="EMAIL"

@@ -23,7 +23,7 @@
     <form class="edit_checkout animate-floating-labels" action="/shipping_info/" accept-charset="UTF-8" method="post">
         {% csrf_token %}
         <div class="step__sections">
-            {#TODO: This info should be loaded dynamically#}
+            {#This info should be loaded dynamically#}
             <div class="section">
                 <div class="section__header">
                     <h2 class="section__title">Dirección de envío</h2>
@@ -55,7 +55,7 @@
                                     {#                                    <input name="checkout[activate_customer_account]" type="hidden" value="0"/>#}
                                     <input class="input-checkbox" onchange="Toogle(this)" type="checkbox" name="checkout[activate_customer_account]" id="checkout_activate_customer_account"/>
                                 </div>
-                                {#TODO: Ver qué tipo de envío poner#}
+                                {#DONE: Ver qué tipo de envío poner#}
                                 <label class="checkbox__label" for="checkout_activate_customer_account">
                                     Envío rápido
                                 </label>

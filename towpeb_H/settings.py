@@ -59,6 +59,9 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.security.SecurityMiddleware',
 )
 
+TPV_KEY = 'qwertyasdf0123456789'
+TPV_FUC = '092508472'
+
 # BRAINTREE_ENV = braintree.Environment.Sandbox
 BRAINTREE_MERCHANT = 'rgrr3976xdtj9r9x'
 BRAINTREE_PUBLIC_KEY = 'wp9wm59tpzg5ht43'

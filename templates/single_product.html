@@ -3,11 +3,7 @@
 
 {% block content %}
     <section id="content" class="clearfix">
-        <div id="product" class="theatre-marquis-letter" itemscope itemtype="http://schema.org/Product">
-            <meta itemprop="url" content="http://minimal-vintage.myshopify.com/products/theatre-marquis-letter"/>
-            <meta itemprop="image"
-                  content="//cdn.shopify.com/s/files/1/0153/0847/products/DSC_0078_grande.jpeg?v=1404682281"/>
-
+        <div id="product">
             <div class="row clearfix">
 
                 <div class="spann12 row clearfix">
@@ -120,7 +116,7 @@
                                 <div class="purchase-section multiple">
                                     <div class="purchase">
                                         <input type="submit" id="add-to-cart" class="btn"
-                                                   name="add" value="Añadir al carrito"/>
+                                               name="add" value="Añadir al carrito"/>
                                     </div>
                                 </div>
                             </div>
@@ -131,9 +127,9 @@
                         <!-- Begin social buttons -->
                         <div class="social">
 
-
+                            {#TODO: data-permalink is the link #}
                             <div class="social-sharing "
-                                 data-permalink="http://minimal-vintage.myshopify.com/products/theatre-marquis-letter">
+                                 data-permalink="{{ product.get_full_url }}">
 
 
                                 <a target="_blank"
@@ -182,7 +178,7 @@
             </div>
 
             <!-- Begin related product -->
-            {#TODO: Aqui dice productos relacionados q se supone q sea eso y si son otros productos de la misma categoria x donde los ordeno#}
+            {#DONE: Aqui dice productos relacionados q se supone q sea eso y si son otros productos de la misma categoria x donde los ordeno#}
             <div class="row">
                 <div class="span12">
                     <h3 class="collection-title">Te puede interesar</h3>
@@ -194,7 +190,7 @@
                     {#DONE: Each related product has a div like this one (remove the first span to remove the "Agotado" sign)#}
                     {% for x in related_products %}
                         {% if x %}
-                            <div class="product span3 ">
+                            <div class="product span3 adaptive-grid">
                                 <div class="image">
                                     <a href="/product/{{ x.pk }}/">
                                         <img src="{{ x.image.url }}" alt="{{ x.short_description }}"/>
@@ -204,9 +200,9 @@
                                     <a href="/product/{{ x.pk }}/" class="clearfix">
                                         <h4 class="title">{{ x.name }}</h4>
                                         <span class="vendor">{{ x.short_description }}</span>
-                          <span class="price">
-                            <em>Desde</em> {{ x.min_price }} €
-                          </span>
+                                          <span class="price">
+                                            <em>Desde</em> {{ x.min_price }} €
+                                          </span>
                                     </a>
                                 </div>
                             </div>

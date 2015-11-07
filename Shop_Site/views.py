@@ -13,6 +13,8 @@ from Shop_Site.extra_functions import hash, create_unique_id, create_sha, create
 from Shop_Site import models
 from Shop_Site import stopwords
 from towpeb_H.settings import WEB_SITE_URL as site_url
+from towpeb_H.settings import TPV_KEY as tpv_key
+from towpeb_H.settings import TPV_FUC as tpv_fuc
 
 
 def random_string(length=16):
@@ -34,9 +36,15 @@ def get_login(cookies):
         return None
 
 
+def countdown(request):
+    if request.method == 'GET':
+        return render(request, 'countdown.html')
+    if request.is_ajax():
+        pass
+
+
 def home(request):
     if request.method == 'GET':
-
         try:
             request.COOKIES['successful_shop']
             ret = add_info_home(request, {'successful_purchase': True})
@@ -44,7 +52,6 @@ def home(request):
             ret.delete_cookie("purchase")
             return ret
         except KeyError:
-            print("yuju")
             return add_info_home(request, {})
 
 
@@ -636,6 +643,7 @@ def send_mail_owners():
     pass
 
 
+# TODO: DO this
 def send_mail(email, password):
     print('http://127.0.0.1:8000/change_password/?email=' + email + '&key=' + password)
 
@@ -643,7 +651,9 @@ def send_mail(email, password):
 def info_client(request):
     if request.method == 'GET':
         log = get_login(request.COOKIES)
+        already_login = False
         if log:
+            already_login = True
             on_hold = None
             shops = []
             for purchase in models.Purchase.objects.filter(client__pk=log[0]):
@@ -670,18 +680,20 @@ def info_client(request):
                                              'zip_code': client.address.postal_code,
                                              'apto': client.address.apt_suite,
                                              'phone': client.address.phone,
-                                             'already_login': True
+                                             'already_login': already_login
                                          }, 'info_client.html')
                 except Exception:
                     return add_info_home(request, {'on_hold': on_hold, 'shops': shops, 'name': client.name,
                                                    'email': client.email,
-                                                   'last_name': client.last_name, }, 'info_client.html')
+                                                   'last_name': client.last_name, 'already_login': already_login},
+                                         'info_client.html')
             except models.Clients.DoesNotExist:
                 return HttpResponseRedirect('/login/')
         else:
             purchase = get_purchase(request.COOKIES)
             if purchase:
-                return add_info_home(request, {'on_hold': purchase, 'shops': []}, 'info_client.html')
+                return add_info_home(request, {'on_hold': purchase, 'shops': [], 'already_login': already_login},
+                                     'info_client.html')
             else:
                 raise Http404('Purchase Error')
     if request.method == 'POST':
@@ -735,7 +747,7 @@ def info_client(request):
                                          'phone': request.POST['phone'],
                                      }
                                      , 'info_client.html')
-            if save:
+            if save or log:
                 try:
                     client = models.Clients.objects.get(email=request.POST['email'])
                     try:
@@ -856,19 +868,20 @@ def add_mail(request):
 
             validate_email(mail)
 
-            m = models.Newsletter_Clients.objects.create(email=mail)
+            m, _ = models.Newsletter_Clients.objects.get_or_create(email=mail)
             m.save()
             return HttpResponse(json.dumps({'status': 1}), content_type='application/json')
         except KeyError:
             return HttpResponse(json.dumps({'status': 0}), content_type='application/json')
-        except Exception:
+        except Exception as ee:
             return HttpResponse(json.dumps({'status': 0}), content_type='application/json')
 
 
-# TODO: What this should do when there is no purchase
+# DONE: What this should do when there is no purchase
 def payment_billing(request):
     if request.method == 'GET':
-        completed_pay_url = site_url + 'completed_payment/'
+        completed_pay_url = site_url + 'completed_payment'
+        completed_payment_url = completed_pay_url + '/'
         # completed_pay_url = 'http://towpeb.xyz/completed_payment/'
 
         # try:
@@ -890,8 +903,8 @@ def payment_billing(request):
                 on_hold.transaction_id = create_unique_id(on_hold.pk)
                 on_hold.save()
                 price = on_hold.total_price_with_taxes()[2]
-                signature = create_sha(price, on_hold.transaction_id, '092508472', 978, 0,
-                                       site_url, 'qwertyasdf0123456789')
+                signature = create_sha(price, on_hold.transaction_id, tpv_fuc, 978, 0,
+                                       completed_payment_url, tpv_key)
                 print(on_hold.transaction_id)
                 print(signature)
                 return add_info_home(request,
@@ -899,10 +912,13 @@ def payment_billing(request):
                                          'on_hold': on_hold, 'shops': [], 'token': None,
                                          'price_form': price,
                                          'completed_pay_url': completed_pay_url,
+                                         'tpv_fuc': tpv_fuc,
                                          'name': on_hold.client.full_name,
                                          'signature': signature
                                      }
                                      , 'info_card.html')
+            else:
+                raise Http404('Carrito no encontrado')
         else:
             purchase = get_purchase(request.COOKIES)
 
@@ -910,15 +926,18 @@ def payment_billing(request):
                 purchase.transaction_id = create_unique_id(purchase.pk)
                 purchase.save()
                 price = purchase.total_price_with_taxes()[2]
-                signature = create_sha(price, purchase.transaction_id, '092508472', 978, 0,
-                                       site_url, 'qwertyasdf0123456789')
+                signature = create_sha(price, purchase.transaction_id, tpv_fuc, 978, 0,
+                                       completed_payment_url, tpv_key)
                 return add_info_home(request, {
                     'on_hold': purchase, 'shops': [], 'token': None,
                     'price_form': price,
+                    'tpv_fuc': tpv_fuc,
                     'completed_pay_url': completed_pay_url,
                     'signature': signature
                 },
                                      'info_card.html')
+            else:
+                raise Http404('Carrito no encontrado')
 
 
 def change_password(request):
@@ -1012,7 +1031,7 @@ def payment_methods(request):
         error_message = None
 
         # DONE: succes_id should be saved in database.
-        # TODO: Deleting things from the database and send the proper emails.
+        # UNUSED: Deleting things from the database and send the proper emails.
         if result and result.is_success:
             ret = HttpResponseRedirect('/')
             ret.set_cookie('successful_shop', True)
@@ -1063,7 +1082,7 @@ def completed_payment(request):
             signature = request.POST['Ds_Signature']
             print(signature)
             my_signature = create_sha_2(amount, transaction_id, merchant_code, currency, response,
-                                        "qwertyasdf0123456789")
+                                        tpv_key)
             print(my_signature)
             if signature.upper() == my_signature.upper():
                 try:
@@ -1140,7 +1159,7 @@ def completed_payment_ok_old(request):
             signature = request.GET['Ds_Signature']
             print(signature)
             my_signature = create_sha_2(amount, transaction_id, merchant_code, currency, response,
-                                        "qwertyasdf0123456789")
+                                        tpv_key)
 
             if signature == my_signature:
                 ret = HttpResponseRedirect('/')

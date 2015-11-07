@@ -1,0 +1,149 @@
+{% load staticfiles %}
+
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+    <meta charset="utf-8"/>
+    <link rel="shortcut icon" href="{% static 'countdown/images/logo_w.png' %}" type="image/png"/>
+
+    <!-- TODO: Anhadir las keywords -->
+    <meta name="keywords" content="comprar polera online "/>
+
+    <title>Hutton</title>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="{% static 'countdown/css/reset.css' %}">
+    <link rel="stylesheet" href="{% static 'countdown/fonts/stylesheet.css' %}">
+    <link rel="stylesheet" href="{% static 'countdown/css/style.css' %}">
+
+    <!--[if lt IE 9]>
+		<link rel="stylesheet" href="css/ie.css">
+	<![endif]-->
+
+    <!-- IE fix for HTML5 tags -->
+    <!--[if lt IE 9]>
+		<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+
+    <!-- jQuery and Modernizr-->
+    <script src="{% static 'js/jquery.min.js' %}"></script>
+    <script src="{% static 'countdown/js/modernizr.custom.js' %}"></script>
+
+    <!-- Countdown timer and other animations -->
+    <script src="{% static 'countdown/js/jquery.countdown.js' %}"></script>
+    <script src="{% static 'countdown/js/script.js' %}"></script>
+    <script src="{% static 'js/ajasxSetup.js' %}"></script>
+
+</head>
+
+<body>
+
+<header>
+
+</header>
+<div class="notification_zone" id="email_added">
+    <div id="email_added_holder"
+         style="position: absolute; width: 100%;height: 100%;background-color: #004024;opacity: 0.85;filter: alpha(opacity=85); border-radius: 31px">
+    </div>
+    <div class="alert alert-danger-new alert-dismissable fade in"
+         style="margin-bottom: 0px; padding-top: 15px; padding-right: 20px; position: relative; border-radius: 31px">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true" onclick="Close(0)"
+                style="top: -11px; right: 0px">&times;</button>
+        <div class="text_notification" id="email_notify_text" style="color: white">
+            Su email se ha añadido satisfactoriamente.
+        </div>
+    </div>
+</div>
+
+<div id="main">
+
+
+    <div id="counter"></div>
+
+    <form action="" method="get">
+        <input type="text" class="email" id="mail" name="mail" placeholder="Introduzca su e-mail aquí..." required/>
+        <input type="submit" class="submit" value="Notificarme"/>
+    </form>
+
+    <!-- <div class="social-media-arrow"></div> -->
+
+    <footer>
+        <ul>
+            <li><a class="facebook" href="https://www.facebook.com/huttonofficial/" target="_blank"></a></li>
+            <li><a class="instagram" href="https://instagram.com/hutton_official/" target="_blank"></a></li>
+            <li><a class="youtube" href="https://www.youtube.com/user/huttonoffical" target="_blank"></a></li>
+        </ul>
+    </footer>
+</div>
+
+</body>
+<script>
+    function Close(num) {
+        if (num == 1)
+            $("#product_added").fadeOut();
+        else {
+            if (num == 3) {
+                $(".alert").slideUp();
+                {#                    $(".alert").fadeOut();#}
+
+            }
+            else
+                $("#email_added").fadeOut();
+        }
+
+    }
+
+    $(".submit").click(function () {
+
+        $("#email_added").fadeOut(0);
+        document.getElementById("email_added_holder").style.backgroundColor = "#004024";
+        document.getElementById("email_notify_text").innerText = "Su email se ha añadido satisfactoriamente.";
+
+        var mail = document.getElementById('mail');
+        var request = $.post('/add_mail/', {'mail': mail.value});
+
+        request.done(function (data) {
+            mail.value = "";
+            var timeoutID1;
+
+            if (data['status'] == "1") {
+                $("#email_added").fadeIn();
+            }
+            else {
+                document.getElementById("email_added_holder").style.backgroundColor = "red";
+                document.getElementById("email_notify_text").innerText = "No hemos podido añadir su correo. Inténtelo más tarde";
+                $("#email_added").fadeIn();
+            }
+
+            function removeAlert() {
+                timeoutID1 = window.setTimeout(function () {
+                    $("#email_added").fadeOut();
+                }, 7000);
+            }
+
+            {#            removeAlert();#}
+        });
+        request.error(function (data) {
+            mail.value = "";
+            $("#email_added").fadeIn();
+
+            var timeoutID1;
+
+            function removeAlert() {
+                timeoutID1 = window.setTimeout(function () {
+                    $("#email_added").fadeOut();
+                    document.getElementById("email_added_holder").style.backgroundColor = "#004024";
+                }, 7000);
+            }
+
+            removeAlert();
+
+        });
+        return false
+    });
+</script>
+
+</html>

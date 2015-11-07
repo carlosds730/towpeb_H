@@ -1,4 +1,4 @@
-{% extends 'info_client.html' %}
+{% extends 'info_client_base.html' %}
 {% load thumbnail %}
 {% load staticfiles %}
 
@@ -62,10 +62,10 @@
             {% if name %}
                 <input type="hidden" name="Ds_Merchant_Titular" value="{{ on_hold.client.full_name }}">
             {% endif %}
-            <input type="hidden" name="Ds_Merchant_MerchantCode" value="092508472">
-            <input type="hidden" name="Ds_Merchant_MerchantURL" value="http://towpeb.xyz/completed_payment/">
-            <input type="hidden" name="Ds_Merchant_UrlOK" value="http://towpeb.xyz/completed_payment_ok/">
-            <input type="hidden" name="Ds_Merchant_UrlKO" value="http://towpeb.xyz/completed_payment_fail/">
+            <input type="hidden" name="Ds_Merchant_MerchantCode" value="{{ tpv_fuc }}">
+            <input type="hidden" name="Ds_Merchant_MerchantURL" value="{{ completed_pay_url }}/">
+            <input type="hidden" name="Ds_Merchant_UrlOK" value="{{ completed_pay_url }}_ok/">
+            <input type="hidden" name="Ds_Merchant_UrlKO" value="{{ completed_pay_url }}_fail/">
             <input type="hidden" name="Ds_Merchant_MerchantName" value="GRUPO TEXTIL HUTTON S.L">
             <input type="hidden" name="Ds_Merchant_ConsumerLanguage" value="001">
             <input type="hidden" name="Ds_Merchant_MerchantSignature" value="{{ signature }}">
