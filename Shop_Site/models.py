@@ -1,6 +1,7 @@
 # -*- coding: utf8 -*-
 import random
 from urllib.parse import urljoin
+from decimal import *
 
 import django.utils.timezone as tz
 from django.db import models
@@ -8,6 +9,7 @@ from django.core.exceptions import ValidationError
 from sorl.thumbnail import ImageField
 
 from towpeb_H.settings import WEB_SITE_URL as web_site_url
+
 
 
 
@@ -184,6 +186,8 @@ class Purchase(models.Model):
     on_hold = models.BooleanField(verbose_name='En espera', default=True,
                                   help_text='Define si la compra no se ha realizado')
 
+    # when the hasn't been payed date represents the date the of the first purchase made in this cart.
+    # when the Purchase has been settled for payment date represents the date when this happened.
     date = models.DateField(verbose_name='Fecha', default=tz.now(), blank=True, null=True,
                             help_text='Fecha en que se realiza la compra')
 
@@ -215,7 +219,7 @@ class Purchase(models.Model):
         return str(total) + ' €', str(total)
 
     def total_price_with_taxes(self):
-        total = 4
+        total = shipping_Cost()[0]
         for p in self.products.all():
             total += p.product.price * p.amount
         print(total)
@@ -259,6 +263,9 @@ class Sale_Product(models.Model):
         total = self.product.price * self.amount
         return 'Talla: ' + str(
             self.attribute.size + ' - ' 'Color: ' + self.product.color + ' - ' + 'Precio Total: ' + str(total) + '€')
+
+    def to_show_email(self):
+        return self.product.name + ' Talla:' + str(self.attribute)
 
 
 class Pictures(models.Model):
@@ -312,3 +319,7 @@ class Newsletter_Clients(models.Model):
 
     def __str__(self):
         return str(self.email)
+
+
+def shipping_Cost():
+    return 4, "4.00"

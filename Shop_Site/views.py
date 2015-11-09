@@ -4,9 +4,11 @@ import random
 import string
 
 import braintree
+import django.utils.timezone as tz
 from django.http import HttpResponseRedirect, Http404, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render, redirect
+
 from django.core.validators import validate_email
 
 from Shop_Site.extra_functions import hash, create_unique_id, create_sha, create_sha_2
@@ -901,6 +903,7 @@ def payment_billing(request):
                     shops.append(purchase)
             if on_hold:
                 on_hold.transaction_id = create_unique_id(on_hold.pk)
+                on_hold.date = tz.now()
                 on_hold.save()
                 price = on_hold.total_price_with_taxes()[2]
                 signature = create_sha(price, on_hold.transaction_id, tpv_fuc, 978, 0,
@@ -924,6 +927,7 @@ def payment_billing(request):
 
             if purchase:
                 purchase.transaction_id = create_unique_id(purchase.pk)
+                purchase.date = tz.now()
                 purchase.save()
                 price = purchase.total_price_with_taxes()[2]
                 signature = create_sha(price, purchase.transaction_id, tpv_fuc, 978, 0,
