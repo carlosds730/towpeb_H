@@ -15,6 +15,7 @@ from towpeb_H.settings import WEB_SITE_URL as web_site_url
 
 
 
+
 # TODO: Terminar de poner la tallas q faltan, estas fueron la unicas que se me ocurrieron
 sizes = [('S', 'S'), ('M', 'M'), ('L', 'L'), ('XL', 'XL')]
 
@@ -25,6 +26,18 @@ def validate(number):
     if number >= 0:
         return number
     raise ValidationError('%s No es un precio valido' % number)
+
+
+class LookBookImg(models.Model):
+    class Meta:
+        verbose_name = 'LookBookImage'
+        verbose_name_plural = 'LookBookImages'
+        ordering = ['sort_order']
+
+    image = ImageField(verbose_name='Imagen', upload_to='Pictures',
+                       help_text='Foto para el lookbook')
+
+    sort_order = models.IntegerField(verbose_name='Orden', help_text='Valor para ordenar')
 
 
 class Products(models.Model):
@@ -157,6 +170,9 @@ class Clients(models.Model):
     password = models.CharField(verbose_name='Password', max_length=400,
                                 help_text='Password del cliente, NO SE PUEDE EDITAR')
 
+    is_ghost = models.BooleanField(verbose_name='Fantasma',
+                                   help_text='Es para cuando un cliente pidió no salvar sus datos', default=False)
+
     def __str__(self):
         return str(self.name)
 
@@ -174,6 +190,7 @@ class Purchase(models.Model):
         verbose_name = 'Carrito'
         verbose_name_plural = 'Carritos'
 
+    # TODO: Why?
     products = models.ManyToManyField('Sale_Product', related_name='purchase', blank=True, verbose_name='Productos',
                                       help_text='Los productos que pertenecen a una compra')
 
@@ -190,7 +207,7 @@ class Purchase(models.Model):
     # when the Purchase has been settled for payment date represents the date when this happened.
     date = models.DateField(verbose_name='Fecha', default=tz.now(), blank=True, null=True,
                             help_text='Fecha en que se realiza la compra')
-
+    # TODO: Why?
     amount = models.IntegerField(verbose_name='Cantidad', default=1,
                                  help_text='Cantidad de productos que se quieren comprar')
 
@@ -266,6 +283,26 @@ class Sale_Product(models.Model):
 
     def to_show_email(self):
         return self.product.name + ' Talla:' + str(self.attribute)
+
+    def addSaleProductToPurchase(self, purchase):
+        if self.purchase.count() == 1 and (purchase in self.purchase.all()):
+            # There's no need to do anything.
+            pass
+        else:
+            same = purchase.products.filter(product__name=self.product.name, product__attributes=self.attribute)
+            if same.count() > 0:
+                product = same.first()
+                product.amount += self.amount
+                product.save()
+                self.purchase.clear()
+                self.save()
+            else:
+                self.purchase.clear()
+                self.save()
+                self.purchase.add(purchase)
+                purchase.amount += 1
+                purchase.save()
+                self.save()
 
 
 class Pictures(models.Model):

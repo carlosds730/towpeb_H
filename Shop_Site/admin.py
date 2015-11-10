@@ -47,7 +47,7 @@ class ClientAdmin(admin.ModelAdmin):
     inlines = [AddressAdminInline]
     list_display = ['name', 'email']
     search_fields = ['name', 'address', 'email']
-    list_filter = ['name', 'email']
+    list_filter = ['name', 'email', 'is_ghost']
     readonly_fields = ['password']
 
 
@@ -67,6 +67,9 @@ class NewsletterClientsAdmin(admin.ModelAdmin):
     list_filter = ['email']
 
 
+class LookBookImgAdmin(AdminImageMixin, admin.ModelAdmin):
+    models = models.LookBookImg
+    list_display = ['image', 'sort_order']
 
 admin.site.register(LogEntry, LogEntryAdmin)
 admin.site.register(models.Products, ProductsAdmin)
@@ -74,3 +77,4 @@ admin.site.register(models.Category, CategoryAdmin)
 admin.site.register(models.Clients, ClientAdmin)
 admin.site.register(models.Purchase, PurchaseAdmin)
 admin.site.register(models.Newsletter_Clients, NewsletterClientsAdmin)
+admin.site.register(models.LookBookImg, LookBookImgAdmin)

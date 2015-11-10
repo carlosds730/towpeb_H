@@ -46,7 +46,7 @@ INSTALLED_APPS = (
 
 SESSION_COOKIE_DOMAIN = None
 
-WEB_SITE_URL = 'http://www.towpeb.xyz/'
+WEB_SITE_URL = 'http://www.hutton.es/'
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -113,7 +113,7 @@ DATABASES = {
 
 LANGUAGE_CODE = 'es-us'
 
-TIME_ZONE = 'UTC'
+# TIME_ZONE = 'UTC'
 
 USE_I18N = True
 

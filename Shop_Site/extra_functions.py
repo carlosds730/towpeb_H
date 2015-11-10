@@ -1,7 +1,8 @@
-
 import hashlib
 import random
 import string
+
+from towpeb_H.settings import TPV_KEY
 
 
 def hash(text):
@@ -12,14 +13,14 @@ def hash(text):
 
 
 def create_sha(merchant_amount, merchant_order, merchant_merchantcode, merchant_currency, merchant_transactiontype,
-               merchant_merchanturl, secret_key='qwertyasdf0123456789'):
+               merchant_merchanturl, secret_key=TPV_KEY):
     return hashlib.sha1((str(merchant_amount) + str(merchant_order) + str(merchant_merchantcode) + str(
         merchant_currency) + str(merchant_transactiontype) + str(merchant_merchanturl) + str(
         secret_key)).encode()).hexdigest()
 
 
 def create_sha_2(merchant_amount, merchant_order, merchant_merchantcode, merchant_currency, merchant_response,
-                 secret_key='qwertyasdf0123456789'):
+                 secret_key=TPV_KEY):
     return hashlib.sha1((str(merchant_amount) + str(merchant_order) + str(merchant_merchantcode) + str(
         merchant_currency) + str(merchant_response) + str(
         secret_key)).encode()).hexdigest()

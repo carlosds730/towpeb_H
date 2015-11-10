@@ -8,8 +8,9 @@ import django.utils.timezone as tz
 from django.http import HttpResponseRedirect, Http404, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render, redirect
-
 from django.core.validators import validate_email
+
+from django.core.mail import EmailMessage
 
 from Shop_Site.extra_functions import hash, create_unique_id, create_sha, create_sha_2
 from Shop_Site import models
@@ -17,6 +18,7 @@ from Shop_Site import stopwords
 from towpeb_H.settings import WEB_SITE_URL as site_url
 from towpeb_H.settings import TPV_KEY as tpv_key
 from towpeb_H.settings import TPV_FUC as tpv_fuc
+from Shop_Site.repots import CreatePDF
 
 
 def random_string(length=16):
@@ -64,8 +66,11 @@ def add_info_home(request, data, url='base.html'):
         log = get_login(request.COOKIES)
         cant = 0
         if log:
-            p = models.Purchase.objects.get(client__pk=int(log[0]), on_hold=True)
-            cant = p.amount
+            p = models.Purchase.objects.filter(client__pk=int(log[0]), on_hold=True).last()
+            if not p:
+                cant = 0
+            else:
+                cant = p.amount
         else:
             _pk = int(request.COOKIES['purchase'])
             p = models.Purchase.objects.get(pk=_pk)
@@ -123,14 +128,16 @@ def login(request):
                     purchase = get_purchase(request.COOKIES)
                     if purchase:
                         try:
-                            old_purchase = models.Purchase.objects.get(client__pk=client.pk, on_hold=True)
-                            old_purchase.client = None
-                            old_purchase.on_hold = False
-                            old_purchase.save()
+                            old_purchases = models.Purchase.objects.filter(client__pk=client.pk, on_hold=True)
+                            for old_purchase in old_purchases:
+                                old_purchase.client = None
+                                old_purchase.on_hold = False
+                                old_purchase.save()
                         except models.Purchase.DoesNotExist:
                             pass
                         purchase.client = client
                         purchase.save()
+                        models.Purchase.objects.filter(client=None, on_hold=False).delete()
                     return tmp
                 else:
                     return render(request, 'login.html', {
@@ -176,7 +183,7 @@ def register(request):
             email = request.POST['email']
             password = request.POST['password']
             try:
-                models.Clients.objects.get(email=email)
+                models.Clients.objects.get(email=email, is_ghost=False)
                 return render(request, 'register.html', {
                     'error': 'Ya existe un usuario registrado con ese correo',
                     'name': request.POST['name'],
@@ -187,11 +194,21 @@ def register(request):
                 })
             except models.Clients.DoesNotExist:
                 try:
-                    client = models.Clients.objects.create(name=request.POST['name'],
-                                                           last_name=request.POST['last_name'],
-                                                           email=email, password=hash(password))
+                    client = models.Clients.objects.get(email=email, is_ghost=True)
+                    client.name = request.POST['name']
+                    client.last_name = request.POST['last_name']
+                    client.password = hash(password)
+                    client.is_ghost = False
                 except KeyError:
-                    client = models.Clients.objects.create(email=email, password=hash(password))
+                    client.password = hash(password)
+                    client.is_ghost = False
+                except models.Clients.DoesNotExist:
+                    try:
+                        client = models.Clients.objects.create(name=request.POST['name'],
+                                                               last_name=request.POST['last_name'],
+                                                               email=email, password=hash(password))
+                    except KeyError:
+                        client = models.Clients.objects.create(email=email, password=hash(password))
                 client.save()
                 purchase = get_purchase(request.COOKIES)
                 if purchase:
@@ -291,7 +308,7 @@ def categories(request, pk):
         try:
             log = get_login(request.COOKIES)
             if log:
-                purchase = models.Purchase.objects.get(client__pk=int(log[0]), on_hold=True)
+                purchase = models.Purchase.objects.filter(client__pk=int(log[0]), on_hold=True).last()
             else:
                 artificial_purchase = int(request.COOKIES['purchase'])
                 purchase = models.Purchase.objects.get(pk=artificial_purchase)
@@ -421,7 +438,7 @@ def add_to_cart(request):
         try:
             log = get_login(request.COOKIES)
             if log:
-                purchase = models.Purchase.objects.get(client__pk=int(log[0]), on_hold=True)
+                purchase = models.Purchase.objects.filter(client__pk=int(log[0]), on_hold=True).last()
             else:
                 purchase = None
         except KeyError:
@@ -616,7 +633,8 @@ def cookies(request):
 
 def lookbook(request):
     if request.method == 'GET':
-        return add_info_home(request, {'no_cookies': True}, url='lookbook.html')
+        pics = models.LookBookImg.objects.all()
+        return add_info_home(request, {'no_cookies': True, 'pics': pics}, url='lookbook.html')
 
 
 def eliminate(request):
@@ -640,14 +658,43 @@ def eliminate(request):
             raise Http404('')
 
 
-# TODO: SEND LOS PUTOS MAILS, DOWNLOAD LOS .tar.gz necesarios
-def send_mail_owners():
-    pass
+# DONE: SEND LOS PUTOS MAILS, DOWNLOAD LOS .tar.gz necesarios
+def send_mail_owners(purchase):
+    toclient = CreatePDF(purchase, True)
+    message = "Estimado cliente,\n Le adjuntamos el ticket de su compra en línea.\n Saludos,\n El equipo de Hutton"
+
+    mail_client = EmailMessage(subject='Ticket de compra online en Hutton', body=message,
+                               from_email='hutton@hutton.es', to=[purchase.client.email], headers={'Message-ID': 'foo'})
+
+    mail_client.attach_file(toclient)
+
+    mail_client.send(fail_silently=False)
+
+    toowner = CreatePDF(purchase, False)
+
+    message = "Información de la compra con Id %s" % purchase.transaction_id
+
+    mail_client = EmailMessage(subject='%s Nueva compra online' % purchase.transaction_id, body=message,
+                               from_email='store@hutton.es', to=['hutton@hutton.es'], headers={'Message-ID': 'foo'})
+
+    mail_client.attach_file(toowner)
+
+    mail_client.send(fail_silently=False)
 
 
 # TODO: DO this
-def send_mail(email, password):
-    print('http://127.0.0.1:8000/change_password/?email=' + email + '&key=' + password)
+def send_mail_pass(client):
+    # url = 'http://127.0.0.1:8000/change_password/?email=' + client.email + '&key=' + password
+    url = site_url + 'change_password/' + '?email=' + client.email + '&key=' + client.password
+    print(url)
+    html_content = '<p>Estimado %s </p> <p>Haga click en el siguiente enlace para cambiar su contraseña en Hutton.es</p> <a href="%s">%s</a> <p>Atentamente,</p><p>Equipo de Hutton</p> ' % (
+        client.full_name(), url, url)
+
+    msg = EmailMessage('Su nueva cuenta en Hutton.es', html_content, 'hutton@hutton.com', [client.email])
+    msg.content_subtype = "html"  # Main content is now text/html
+
+    msg.send()
+    print("message sent")
 
 
 def info_client(request):
@@ -771,6 +818,8 @@ def info_client(request):
                         add.client = client
                         add.save()
                     client.save()
+                    on_hold.client = client
+                    on_hold.save()
                     if log:
                         return HttpResponseRedirect('/payment/payments-billing/')
                     else:
@@ -797,7 +846,7 @@ def info_client(request):
                     add.save()
                     add.client = client
                     add.save()
-                    send_mail(client.email, client.password)
+                    send_mail_pass(client)
                     if log:
                         return HttpResponseRedirect('/payment/payments-billing/')
                     else:
@@ -820,6 +869,43 @@ def info_client(request):
                     client.save()
                     return HttpResponseRedirect('/payment/payments-billing/')
                 else:
+                    email = request.POST['email']
+                    try:
+                        client = models.Clients.objects.get(email=email)
+                        client.name = name
+                        client.last_name = last_name
+                    except models.Clients.DoesNotExist:
+                        password = random_string()
+                        client = models.Clients.objects.create(email=email, name=name, last_name=last_name,
+                                                               password=hash(password), is_ghost=True)
+
+                    client.save()
+
+                    purchase = get_purchase(request.COOKIES)
+                    purchase.client = client
+                    purchase.save()
+
+                    try:
+                        client.address.company = company
+                        client.address.address = address
+                        client.address.country = country
+                        client.address.city = city
+                        client.address.province = province
+                        client.address.postal_code = zip_code
+                        client.address.apt_suite = apto
+                        client.address.phone = phone
+                        client.address.save()
+                    except Exception:
+                        add = models.Address.objects.create(company=company,
+                                                            address=address, country=country, city=city,
+                                                            province=province,
+                                                            postal_code=zip_code, apt_suite=apto, phone=phone)
+                        add.save()
+                        add.client = client
+                        add.save()
+
+                    client.save()
+
                     ret = HttpResponseRedirect('/payment/payments-billing/')
                     ret.set_cookie('address', str(add.pk))
                     ret.set_cookie('name_shipment', str(name))
@@ -884,13 +970,6 @@ def payment_billing(request):
     if request.method == 'GET':
         completed_pay_url = site_url + 'completed_payment'
         completed_payment_url = completed_pay_url + '/'
-        # completed_pay_url = 'http://towpeb.xyz/completed_payment/'
-
-        # try:
-        #     token = braintree.ClientToken.generate()
-        #     print(token)
-        # except Exception:
-        #     token = 'eyJ2ZXJzaW9uIjoyLCJhdXRob3JpemF0aW9uRmluZ2VycHJpbnQiOiJmMDU0MTRmZTc1MGNiYmIwOGQ0YTM1MGIwZmYyYmMxMWE5ZDc0ZWMzNmMxM2QwYjkzNjExYWNiMTUyYTRmNjhhfGNyZWF0ZWRfYXQ9MjAxNS0wOS0wNFQyMDo0NTozMS4zMjE0ODU4MzErMDAwMFx1MDAyNm1lcmNoYW50X2lkPTM0OHBrOWNnZjNiZ3l3MmJcdTAwMjZwdWJsaWNfa2V5PTJuMjQ3ZHY4OWJxOXZtcHIiLCJjb25maWdVcmwiOiJodHRwczovL2FwaS5zYW5kYm94LmJyYWludHJlZWdhdGV3YXkuY29tOjQ0My9tZXJjaGFudHMvMzQ4cGs5Y2dmM2JneXcyYi9jbGllbnRfYXBpL3YxL2NvbmZpZ3VyYXRpb24iLCJjaGFsbGVuZ2VzIjpbXSwiZW52aXJvbm1lbnQiOiJzYW5kYm94IiwiY2xpZW50QXBpVXJsIjoiaHR0cHM6Ly9hcGkuc2FuZGJveC5icmFpbnRyZWVnYXRld2F5LmNvbTo0NDMvbWVyY2hhbnRzLzM0OHBrOWNnZjNiZ3l3MmIvY2xpZW50X2FwaSIsImFzc2V0c1VybCI6Imh0dHBzOi8vYXNzZXRzLmJyYWludHJlZWdhdGV3YXkuY29tIiwiYXV0aFVybCI6Imh0dHBzOi8vYXV0aC52ZW5tby5zYW5kYm94LmJyYWludHJlZWdhdGV3YXkuY29tIiwiYW5hbHl0aWNzIjp7InVybCI6Imh0dHBzOi8vY2xpZW50LWFuYWx5dGljcy5zYW5kYm94LmJyYWludHJlZWdhdGV3YXkuY29tIn0sInRocmVlRFNlY3VyZUVuYWJsZWQiOnRydWUsInRocmVlRFNlY3VyZSI6eyJsb29rdXBVcmwiOiJodHRwczovL2FwaS5zYW5kYm94LmJyYWludHJlZWdhdGV3YXkuY29tOjQ0My9tZXJjaGFudHMvMzQ4cGs5Y2dmM2JneXcyYi90aHJlZV9kX3NlY3VyZS9sb29rdXAifSwicGF5cGFsRW5hYmxlZCI6dHJ1ZSwicGF5cGFsIjp7ImRpc3BsYXlOYW1lIjoiQWNtZSBXaWRnZXRzLCBMdGQuIChTYW5kYm94KSIsImNsaWVudElkIjpudWxsLCJwcml2YWN5VXJsIjoiaHR0cDovL2V4YW1wbGUuY29tL3BwIiwidXNlckFncmVlbWVudFVybCI6Imh0dHA6Ly9leGFtcGxlLmNvbS90b3MiLCJiYXNlVXJsIjoiaHR0cHM6Ly9hc3NldHMuYnJhaW50cmVlZ2F0ZXdheS5jb20iLCJhc3NldHNVcmwiOiJodHRwczovL2NoZWNrb3V0LnBheXBhbC5jb20iLCJkaXJlY3RCYXNlVXJsIjpudWxsLCJhbGxvd0h0dHAiOnRydWUsImVudmlyb25tZW50Tm9OZXR3b3JrIjp0cnVlLCJlbnZpcm9ubWVudCI6Im9mZmxpbmUiLCJ1bnZldHRlZE1lcmNoYW50IjpmYWxzZSwiYnJhaW50cmVlQ2xpZW50SWQiOiJtYXN0ZXJjbGllbnQzIiwiYmlsbGluZ0FncmVlbWVudHNFbmFibGVkIjpmYWxzZSwibWVyY2hhbnRBY2NvdW50SWQiOiJhY21ld2lkZ2V0c2x0ZHNhbmRib3giLCJjdXJyZW5jeUlzb0NvZGUiOiJVU0QifSwiY29pbmJhc2VFbmFibGVkIjpmYWxzZSwibWVyY2hhbnRJZCI6IjM0OHBrOWNnZjNiZ3l3MmIiLCJ2ZW5tbyI6Im9mZiJ9'
 
         log = get_login(request.COOKIES)
         if log:
@@ -937,6 +1016,7 @@ def payment_billing(request):
                     'price_form': price,
                     'tpv_fuc': tpv_fuc,
                     'completed_pay_url': completed_pay_url,
+                    'name': purchase.client.full_name,
                     'signature': signature
                 },
                                      'info_card.html')
@@ -1022,7 +1102,7 @@ def payment_methods(request):
                     else:
                         raise Http404(str(transaction.errors.deep_errors))
                 try:
-                    send_mail_owners()
+                    send_mail_owners(purchase)
                 except Exception:
                     print('Call owners!!!!!!!!!!!!!!!!!!!!!!!')
             except Exception:
@@ -1098,6 +1178,7 @@ def completed_payment(request):
                         purchase = models.Purchase.objects.get(transaction_id=transaction_id)
                         purchase.discount()
                         purchase.save()
+                        send_mail_owners(purchase)
                         print('We shop!')
                     except models.Purchase.DoesNotExist:
                         print('Error in transaction!!!!! ' + str(transaction_id) + ' does not exist!!!')
