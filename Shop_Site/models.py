@@ -16,6 +16,7 @@ from towpeb_H.settings import WEB_SITE_URL as web_site_url
 
 
 
+
 # TODO: Terminar de poner la tallas q faltan, estas fueron la unicas que se me ocurrieron
 sizes = [('S', 'S'), ('M', 'M'), ('L', 'L'), ('XL', 'XL')]
 
@@ -207,7 +208,7 @@ class Purchase(models.Model):
     # when the Purchase has been settled for payment date represents the date when this happened.
     date = models.DateField(verbose_name='Fecha', default=tz.now(), blank=True, null=True,
                             help_text='Fecha en que se realiza la compra')
-    # TODO: Why?
+    # DONE: Why?
     amount = models.IntegerField(verbose_name='Cantidad', default=1,
                                  help_text='Cantidad de productos que se quieren comprar')
 

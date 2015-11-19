@@ -23,7 +23,7 @@ import django.utils.timezone as tz
 from Shop_Site import views
 from towpeb_H import settings
 
-if tz.now() > datetime.datetime(2015, 11, 14, 14, 0, 0, 0, tzinfo=tz.get_current_timezone()):
+if tz.now() > datetime.datetime(2015, 11, 19, 14, 0, 0, 0, tzinfo=tz.get_current_timezone()):
     urlpatterns = static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + [
         url(r'^admin/', include(admin.site.urls)),
         url(r'^login/?$', views.login, name='login'),

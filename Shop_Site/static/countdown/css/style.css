@@ -39,7 +39,7 @@ header p {
     width: 700px;
     margin: 200px auto 0 auto;
     padding: 20px 0 0 25px;
-    background: url(../images/body-pattern-transparent.tif) top left repeat;
+    /*background: url(../images/body-pattern-transparent.tif) top left repeat;*/
 }
 
 /* ---- Links ---- */

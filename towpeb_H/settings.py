@@ -25,9 +25,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'f-!cid_mmvn(8f+7wz6^vh#qwx3-zf303i-y)%kb3pkb9r(%be'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 TIME_ZONE = 'America/Havana'
 
@@ -44,9 +44,9 @@ INSTALLED_APPS = (
     'Shop_Site'
 )
 
-SESSION_COOKIE_DOMAIN = None
+SESSION_COOKIE_DOMAIN = '.towpeb.xyz'
 
-WEB_SITE_URL = 'http://www.hutton.es/'
+WEB_SITE_URL = 'http://www.towpeb.xyz/'
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -152,7 +152,7 @@ EMAIL_PORT = 578
 
 # EMAIL_PORT = 587
 
-EMAIL_USE_TLS = True
+EMAIL_USE_TLS = False
 
 EMAIL_HOST_PASSWORD = 'hutton123'
 

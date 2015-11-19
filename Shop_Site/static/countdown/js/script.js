@@ -4,7 +4,7 @@ $(document).ready(function () {
     /* ---- Countdown timer ---- */
 
     $('#counter').countdown({
-        timestamp: (new Date(2015, 10, 12, 20, 00, 00))
+        timestamp: (new Date(2015, 10, 19, 20, 00, 00))
     });
 
 

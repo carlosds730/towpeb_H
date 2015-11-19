@@ -9,7 +9,6 @@ from django.http import HttpResponseRedirect, Http404, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render, redirect
 from django.core.validators import validate_email
-
 from django.core.mail import EmailMessage
 
 from Shop_Site.extra_functions import hash, create_unique_id, create_sha, create_sha_2
@@ -1178,7 +1177,10 @@ def completed_payment(request):
                         purchase = models.Purchase.objects.get(transaction_id=transaction_id)
                         purchase.discount()
                         purchase.save()
-                        send_mail_owners(purchase)
+                        try:
+                            send_mail_owners(purchase)
+                        except Exception:
+                            print("We couldn't send the email")
                         print('We shop!')
                     except models.Purchase.DoesNotExist:
                         print('Error in transaction!!!!! ' + str(transaction_id) + ' does not exist!!!')
