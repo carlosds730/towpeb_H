@@ -25,7 +25,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'f-!cid_mmvn(8f+7wz6^vh#qwx3-zf303i-y)%kb3pkb9r(%be'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -44,9 +44,9 @@ INSTALLED_APPS = (
     'Shop_Site'
 )
 
-SESSION_COOKIE_DOMAIN = '.towpeb.xyz'
+SESSION_COOKIE_DOMAIN = '.hutton.es'
 
-WEB_SITE_URL = 'http://www.towpeb.xyz/'
+WEB_SITE_URL = 'http://www.hutton.es/'
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -136,9 +136,9 @@ TEMPLATE_DIRS = (
     os.path.join(BASE_DIR, 'templates'),
 )
 
-# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
-EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
+# EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
 
 EMAIL_FILE_PATH = os.path.join(BASE_DIR, 'emails')  # change this to a proper location
 
@@ -146,7 +146,7 @@ EMAIL_HOST = 'smpt.hutton.es'
 
 # EMAIL_HOST = 'mail.hutton.es'
 
-EMAIL_HOST_USER = 'newsletter@hutton.es'
+EMAIL_HOST_USER = 'testing@hutton.es'
 
 EMAIL_PORT = 578
 
@@ -154,7 +154,7 @@ EMAIL_PORT = 578
 
 EMAIL_USE_TLS = False
 
-EMAIL_HOST_PASSWORD = 'hutton123'
+EMAIL_HOST_PASSWORD = '12345678a'
 
 # THUMBNAIL_ENGINE = 'sorl.thumbnail.engines.convert_engine.Engine'
 

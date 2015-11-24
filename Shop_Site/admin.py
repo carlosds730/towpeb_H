@@ -53,7 +53,7 @@ class ClientAdmin(admin.ModelAdmin):
 
 class PurchaseAdmin(admin.ModelAdmin):
     models = models.Purchase
-    list_display = ['__str__', 'delivery_address']
+    list_display = ['__str__', 'addreess']
     search_fields = ['delivery_address']
     list_filter = ['delivery_address']
     filter_horizontal = ['products']
@@ -69,7 +69,12 @@ class NewsletterClientsAdmin(admin.ModelAdmin):
 
 class LookBookImgAdmin(AdminImageMixin, admin.ModelAdmin):
     models = models.LookBookImg
-    list_display = ['image', 'sort_order']
+    list_display = ['__str__', 'sort_order']
+
+
+class FrontImgAdmin(AdminImageMixin, admin.ModelAdmin):
+    models = models.LookBookImg
+    list_display = ['__str__', 'sort_order']
 
 admin.site.register(LogEntry, LogEntryAdmin)
 admin.site.register(models.Products, ProductsAdmin)
@@ -78,3 +83,4 @@ admin.site.register(models.Clients, ClientAdmin)
 admin.site.register(models.Purchase, PurchaseAdmin)
 admin.site.register(models.Newsletter_Clients, NewsletterClientsAdmin)
 admin.site.register(models.LookBookImg, LookBookImgAdmin)
+admin.site.register(models.FrontImg, FrontImgAdmin)

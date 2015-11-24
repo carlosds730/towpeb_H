@@ -17,8 +17,10 @@ from towpeb_H.settings import WEB_SITE_URL as web_site_url
 
 
 
+
 # TODO: Terminar de poner la tallas q faltan, estas fueron la unicas que se me ocurrieron
-sizes = [('S', 'S'), ('M', 'M'), ('L', 'L'), ('XL', 'XL')]
+sizes = [('S', 'S'), ('M', 'M'), ('L', 'L'), ('XL', 'XL'), ('44', '44'), ('46', '46'), ('48', '48'), ('50', '50'),
+         ('52', '52'), ('54', '54'), ('56', '56'), ('única', 'única')]
 
 
 # Create your models here.
@@ -27,6 +29,26 @@ def validate(number):
     if number >= 0:
         return number
     raise ValidationError('%s No es un precio valido' % number)
+
+
+class FrontImg(models.Model):
+    class Meta:
+        verbose_name = 'Imagen de Portada'
+        verbose_name_plural = 'Imágenes de portada'
+        ordering = ['-sort_order']
+
+    image = ImageField(verbose_name='Imagen', upload_to='Pictures',
+                       help_text='Foto para aparecer en la portada')
+
+    sort_order = models.IntegerField(verbose_name='Prioridad',
+                                     help_text='Valor para ordenar. Aparecen las 4 fotos de mayor priodidad')
+
+    url = models.URLField(verbose_name='URL',
+                          help_text='URL al que debe ir la foto cuando den click sobre ella (puede estar en blanco)',
+                          blank=True, null=True)
+
+    def __str__(self):
+        return str(self.image.name.split('/')[-1])
 
 
 class LookBookImg(models.Model):
@@ -39,6 +61,9 @@ class LookBookImg(models.Model):
                        help_text='Foto para el lookbook')
 
     sort_order = models.IntegerField(verbose_name='Orden', help_text='Valor para ordenar')
+
+    def __str__(self):
+        return str(self.image.name.split('/')[-1])
 
 
 class Products(models.Model):
@@ -56,8 +81,8 @@ class Products(models.Model):
 
     mark = models.CharField(verbose_name='Marca', max_length=200, help_text='Marca del producto', blank=True, null=True)
 
-    description = models.TextField(verbose_name='Descripción', max_length=300,
-                                   help_text='Descripción del producto', null=True, blank=True)
+    description = models.TextField(verbose_name='Descripción', help_text='Descripción del producto', null=True,
+                                   blank=True)
 
     short_description = models.TextField(verbose_name='Descripción breve', max_length=100,
                                          help_text='Breve descripción del producto', null=True, blank=True)
@@ -91,6 +116,11 @@ class Products(models.Model):
     def min_price(self):
         return self.price
 
+    def get_thumb(self):
+        from sorl.thumbnail import get_thumbnail
+        im = get_thumbnail(self.image, '300x400')
+        return im.url
+
     def sold_out(self):
         count = 0
         for attr in self.attributes.all():
@@ -103,6 +133,9 @@ class Products(models.Model):
 
     def get_full_url(self):
         return urljoin(web_site_url, self.get_absolute_url())
+
+    def total_price(self):
+        return str(self.price) + ' €'
 
 
 class Attribute(models.Model):
@@ -217,6 +250,12 @@ class Purchase(models.Model):
 
     def __str__(self):
         return str(self.pk)
+
+    def addreess(self):
+        if self.client:
+            return str(self.client.address)
+        else:
+            return None
 
     def is_valid(self):
         for p in self.products.all():
@@ -344,8 +383,8 @@ class Address(models.Model):
 
     phone = models.CharField(verbose_name='Télefono', blank=True, null=True, max_length=50)
 
-    # def __str__(self):
-    #     return self.last_name + ', ' + self.first_name + ' ' + self.province + ', ' + self.country
+    def __str__(self):
+        return self.address + ", " + self.city + ", " + self.province
 
 
 class Newsletter_Clients(models.Model):
@@ -360,4 +399,4 @@ class Newsletter_Clients(models.Model):
 
 
 def shipping_Cost():
-    return 4, "4.00"
+    return 0, "0.00"

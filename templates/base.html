@@ -26,6 +26,8 @@
         <meta name="keywords" content="hutton, ropa, clothes"/>
     {% endblock %}
 
+    <meta name="robots" CONTENT="NOODP">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     {% block css_and_js %}
         {#        <link href="{% static 'css/compras/compra.css' %}" type="text/css" media="all" rel="stylesheet"/>#}
@@ -68,6 +70,8 @@
     <title>
         Hutton
     </title>
+    <meta name="description"
+          content="#Smarclothing | Tienda online oficial de la marca de ropa Hutton. 100% Made in Spain">
 </head>
 
 <body>
@@ -289,8 +293,13 @@
 
                 {% block slider %}
                     <!-- Begin big picture -->
+
                     <div class="span12" id="big_pict">
-                        <img src="{% static 'img/slideshow/Modelo_Coche.jpg' %}" alt=""/>
+                        {% thumbnail pics.0.image "1920x1080" as im %}
+                            <img src="{{ im.url }}">
+                        {% empty %}
+                            <img src="{% static 'img/slideshow/Modelo_Coche.jpg' %}" alt=""/>
+                        {% endthumbnail %}
                     </div>
                     <!-- End big picture -->
                 {% endblock %}
@@ -300,33 +309,63 @@
                         <div class="row products">
                             {#DONE: Estas imágenes no pueden tener fondo blanco porque se ve muy feo#}
                             <div class="crazy_pics_span7 crazy_pics right_margin">
-                                <a href="/product/4/">
-                                    <img class="crazy_pic_img pic_at_left"
-                                         src="{% static 'img/slideshow/Modelo_Chica_2.jpeg' %}">
-                                </a>
+                                {% if pics.1.url %}
+                                    <a href="{{ pics.1.url }}">
+                                        {% thumbnail pics.1.image "1675x877" as im %}
+                                            <img class="crazy_pic_img pic_at_left" src="{{ im.url }}">
+                                        {% empty %}
+                                            <img class="crazy_pic_img pic_at_left"
+                                                 src="{% static 'img/slideshow/Modelo_Chica_2.jpeg' %}">
+                                        {% endthumbnail %}
+                                    </a>
+                                {% else %}
+                                    {% thumbnail pics.1.image "1675x877" as im %}
+                                        <img class="crazy_pic_img pic_at_left" src="{{ im.url }}">
+                                    {% empty %}
+                                        <img class="crazy_pic_img pic_at_left"
+                                             src="{% static 'img/slideshow/Modelo_Chica_2.jpeg' %}">
+                                    {% endthumbnail %}
+                                {% endif %}
                             </div>
                             <div class="crazy_pics_span5  crazy_pics text_right">
-                                <a href="/shop/#home">
-                                    <img class="crazy_pic_img" src="{% static 'img/Carbones Hutton.jpg' %}">
-                                </a>
-
-                                {#                                <div class="fancy_text" style="padding-top: 15%">#}
-                                {#TODO: Change this text-image for a propper one. Tell me where this link should go#}
-                                {#                                    <img src="{% static 'img/hutton_texto.png' %}">#}
-                                {#                                </div>#}
-
+                                {% if pics.2.url %}
+                                    <a href="{{ pics.2.url }}">
+                                        {% thumbnail pics.2.image "320x320" as im %}
+                                            <img class="crazy_pic_img" src="{{ im.url }}">
+                                        {% empty %}
+                                            <img class="crazy_pic_img" src="{% static 'img/Carbones Hutton.jpg' %}">
+                                        {% endthumbnail %}
+                                    </a>
+                                    <div class="hutton_text">
+                                        <h1>HuttonStore</h1>
+                                    </div>
+                                {% else %}
+                                    {% thumbnail pics.2.image "320x320" as im %}
+                                        <img class="crazy_pic_img" src="{{ im.url }}">
+                                    {% empty %}
+                                        <img class="crazy_pic_img" src="{% static 'img/Carbones Hutton.jpg' %}">
+                                    {% endthumbnail %}
+                                {% endif %}
                             </div>
                             <div class="separator_line" style="clear:both; margin-bottom: 10px"></div>
                             <div class="crazy_pics_span10 crazy_pics">
-                                <a href="/product/7/">
-                                    <img class="crazy_pic_img" src="{% static 'img/slideshow/Modelo_Chica.jpeg' %}">
-                                </a>
-                            </div>
-                            <div class="crazy_pics_span2">
-                                {#                                <div class="fancy_text">#}
-                                {#TODO: Change this text-image for a propper one. Tell me where this link should go#}
-                                {#                                    <img src="{% static 'img/hutton_texto.png' %}">#}
-                                {#                                </div>#}
+                                {% if pics.3.url %}
+                                    <a href="{{ pics.3.url }}">
+                                        {% thumbnail pics.3.image "1919x933" as im %}
+                                            <img class="crazy_pic_img" src="{{ im.url }}">
+                                        {% empty %}
+                                            <img class="crazy_pic_img"
+                                                 src="{% static 'img/slideshow/Modelo_Chica.jpeg' %}">
+                                        {% endthumbnail %}
+                                    </a>
+                                {% else %}
+                                    {% thumbnail pics.3.image "1919x933" as im %}
+                                        <img class="crazy_pic_img" src="{{ im.url }}">
+                                    {% empty %}
+                                        <img class="crazy_pic_img"
+                                             src="{% static 'img/slideshow/Modelo_Chica.jpeg' %}">
+                                    {% endthumbnail %}
+                                {% endif %}
                             </div>
                         </div>
                     </div>
@@ -356,9 +395,9 @@
 
                         <p class="p10"><strong><a href="mailto:info@hutton.es">info@hutton.es</a></strong></p>
 
-                        <p class="p10"><strong>Flagshipstore</strong> Calle Padilla 4 ...</p>
+                        <p class="p10"><strong>Flagshipstore</strong> Calle Padilla 4 (Esq. Serrano) 28006 Madrid</p>
 
-                        <p>Teléfono: +123-456-789</p>
+                        <p>Teléfono: 910 293 032</p>
 
                     </div>
                 </div>

@@ -9,11 +9,14 @@
 
     <link rel='stylesheet' href="{% static 'gallery/unitegallery/css/unite-gallery.css' %}" type='text/css'/>
 
-    <script type='text/javascript'
-            src="{% static 'gallery/unitegallery/themes/default/ug-theme-default.js' %}"></script>
+    {#    <script type='text/javascript'#}
+    {#            src="{% static 'gallery/unitegallery/themes/default/ug-theme-default.js' %}"></script>#}
 
-    <link rel='stylesheet' href="{% static 'gallery/unitegallery/themes/default/ug-theme-default.css' %}"
-          type='text/css'/>
+    <script type='text/javascript'
+            src="{% static 'gallery/unitegallery/themes/slider/ug-theme-slider.js' %}"></script>
+
+    {#    <link rel='stylesheet' href="{% static 'gallery/unitegallery/themes/default/ug-theme-default.css' %}"#}
+    {#          type='text/css'/>#}
 {% endblock %}
 
 {% block content %}
@@ -23,8 +26,8 @@
             {% thumbnail pic.image "x50" as im %}
                 <img alt="LookBook Image"
                      src="{{ im.url }}"
-                     data-image="{{ pic.image.url }}"
-                     data-description="Preview Image 1 Description">
+                     data-image="{{ pic.image.url }}">
+                {#                     data-description="Preview Image 1 Description">#}
             {% endthumbnail %}
         {% endfor %}
 
@@ -35,11 +38,18 @@
         jQuery(document).ready(function () {
 
             jQuery("#gallery").unitegallery({
-                theme_enable_text_panel: false,
+                {#                slider_transition_speed: 0,#}
+                {#                theme_enable_text_panel: false,#}
                 strippanel_background_color: 'rgb(1, 39, 23)',
-                gallery_width: '100%',
-                gallery_height: '700',
-                gallery_min_width: '100%'
+                slider_control_zoom: false,
+                {#                gallery_width: '100%',#}
+                {#                gallery_width: '80%',#}
+                gallery_min_width: 200,
+                slider_scale_mode: "fit",
+                gallery_max_width: '100%',
+                gallery_autoplay: false,
+                {#                slider_scale_mode: "fill",	#}
+                {#                gallery_min_width: '100%'#}
             });
 
         });

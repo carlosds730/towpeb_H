@@ -48,14 +48,22 @@ def countdown(request):
 
 def home(request):
     if request.method == 'GET':
+        # from django.http import HttpResponse
+        # response = HttpResponse("Hd6KCA69", content_type="text/html")
+        # return response
+
+        try:
+            a = models.FrontImg.objects.all()[0:4]
+        except Exception:
+            a = []
         try:
             request.COOKIES['successful_shop']
-            ret = add_info_home(request, {'successful_purchase': True})
+            ret = add_info_home(request, {'successful_purchase': True, 'pics': a})
             ret.delete_cookie("successful_shop")
             ret.delete_cookie("purchase")
             return ret
         except KeyError:
-            return add_info_home(request, {})
+            return add_info_home(request, {'pics': a})
 
 
 def add_info_home(request, data, url='base.html'):
@@ -248,10 +256,10 @@ def get_all_products(products):
     res_prod = []
     for p in products.order_by('-pk'):
         if p.old_price:
-            res_prod.append((p.pk, p.name, p.short_description, p.image.url, None, p.color, p.sold_out(),
+            res_prod.append((p.pk, p.name, p.short_description, p.get_thumb(), None, p.color, p.sold_out(),
                              str(p.price), str(p.old_price), None, p.percent))
         else:
-            res_prod.append((p.pk, p.name, p.short_description, p.image.url, None, p.color, p.sold_out(),
+            res_prod.append((p.pk, p.name, p.short_description, p.get_thumb(), None, p.color, p.sold_out(),
                              str(p.price), None, None, p.percent))
     return res_prod
 
@@ -660,10 +668,11 @@ def eliminate(request):
 # DONE: SEND LOS PUTOS MAILS, DOWNLOAD LOS .tar.gz necesarios
 def send_mail_owners(purchase):
     toclient = CreatePDF(purchase, True)
-    message = "Estimado cliente,\n Le adjuntamos el ticket de su compra en línea.\n Saludos,\n El equipo de Hutton"
+    message = "Estimado " + purchase.client.full_name() + "\n Le informamos que su pedido se ha completado con éxito y se encuentra en proceso de envío.\n Desde Hutton le agradecemos la confianza depositada en nuestra marca y esperamos que su experiencia de compra sea excelente. \n Para cualquier duda o consulta le facilitamos nuestro correo electrónico operativo 24H.\n info@hutton.es\n Saludos,\n Hutton."
 
     mail_client = EmailMessage(subject='Ticket de compra online en Hutton', body=message,
-                               from_email='hutton@hutton.es', to=[purchase.client.email], headers={'Message-ID': 'foo'})
+                               from_email='huttontextil@gmail.com', to=[purchase.client.email],
+                               headers={'Message-ID': 'foo'})
 
     mail_client.attach_file(toclient)
 
@@ -674,7 +683,8 @@ def send_mail_owners(purchase):
     message = "Información de la compra con Id %s" % purchase.transaction_id
 
     mail_client = EmailMessage(subject='%s Nueva compra online' % purchase.transaction_id, body=message,
-                               from_email='store@hutton.es', to=['hutton@hutton.es'], headers={'Message-ID': 'foo'})
+                               from_email='huttontextil@gmail.com', to=['pedidos@hutton.es'],
+                               headers={'Message-ID': 'foo'})
 
     mail_client.attach_file(toowner)
 
@@ -689,7 +699,7 @@ def send_mail_pass(client):
     html_content = '<p>Estimado %s </p> <p>Haga click en el siguiente enlace para cambiar su contraseña en Hutton.es</p> <a href="%s">%s</a> <p>Atentamente,</p><p>Equipo de Hutton</p> ' % (
         client.full_name(), url, url)
 
-    msg = EmailMessage('Su nueva cuenta en Hutton.es', html_content, 'hutton@hutton.com', [client.email])
+    msg = EmailMessage('Su nueva cuenta en Hutton.es', html_content, 'info@hutton.es', [client.email])
     msg.content_subtype = "html"  # Main content is now text/html
 
     msg.send()
@@ -845,7 +855,11 @@ def info_client(request):
                     add.save()
                     add.client = client
                     add.save()
-                    send_mail_pass(client)
+                    print("yuju")
+                    try:
+                        send_mail_pass(client)
+                    except Exception:
+                        pass
                     if log:
                         return HttpResponseRedirect('/payment/payments-billing/')
                     else:
@@ -969,7 +983,11 @@ def payment_billing(request):
     if request.method == 'GET':
         completed_pay_url = site_url + 'completed_payment'
         completed_payment_url = completed_pay_url + '/'
-
+        try:
+            token = braintree.ClientToken.generate()
+            # print("token:" + token)
+        except Exception:
+            token = 'eyJ2ZXJzaW9uIjoyLCJhdXRob3JpemF0aW9uRmluZ2VycHJpbnQiOiJmMDU0MTRmZTc1MGNiYmIwOGQ0YTM1MGIwZmYyYmMxMWE5ZDc0ZWMzNmMxM2QwYjkzNjExYWNiMTUyYTRmNjhhfGNyZWF0ZWRfYXQ9MjAxNS0wOS0wNFQyMDo0NTozMS4zMjE0ODU4MzErMDAwMFx1MDAyNm1lcmNoYW50X2lkPTM0OHBrOWNnZjNiZ3l3MmJcdTAwMjZwdWJsaWNfa2V5PTJuMjQ3ZHY4OWJxOXZtcHIiLCJjb25maWdVcmwiOiJodHRwczovL2FwaS5zYW5kYm94LmJyYWludHJlZWdhdGV3YXkuY29tOjQ0My9tZXJjaGFudHMvMzQ4cGs5Y2dmM2JneXcyYi9jbGllbnRfYXBpL3YxL2NvbmZpZ3VyYXRpb24iLCJjaGFsbGVuZ2VzIjpbXSwiZW52aXJvbm1lbnQiOiJzYW5kYm94IiwiY2xpZW50QXBpVXJsIjoiaHR0cHM6Ly9hcGkuc2FuZGJveC5icmFpbnRyZWVnYXRld2F5LmNvbTo0NDMvbWVyY2hhbnRzLzM0OHBrOWNnZjNiZ3l3MmIvY2xpZW50X2FwaSIsImFzc2V0c1VybCI6Imh0dHBzOi8vYXNzZXRzLmJyYWludHJlZWdhdGV3YXkuY29tIiwiYXV0aFVybCI6Imh0dHBzOi8vYXV0aC52ZW5tby5zYW5kYm94LmJyYWludHJlZWdhdGV3YXkuY29tIiwiYW5hbHl0aWNzIjp7InVybCI6Imh0dHBzOi8vY2xpZW50LWFuYWx5dGljcy5zYW5kYm94LmJyYWludHJlZWdhdGV3YXkuY29tIn0sInRocmVlRFNlY3VyZUVuYWJsZWQiOnRydWUsInRocmVlRFNlY3VyZSI6eyJsb29rdXBVcmwiOiJodHRwczovL2FwaS5zYW5kYm94LmJyYWludHJlZWdhdGV3YXkuY29tOjQ0My9tZXJjaGFudHMvMzQ4cGs5Y2dmM2JneXcyYi90aHJlZV9kX3NlY3VyZS9sb29rdXAifSwicGF5cGFsRW5hYmxlZCI6dHJ1ZSwicGF5cGFsIjp7ImRpc3BsYXlOYW1lIjoiQWNtZSBXaWRnZXRzLCBMdGQuIChTYW5kYm94KSIsImNsaWVudElkIjpudWxsLCJwcml2YWN5VXJsIjoiaHR0cDovL2V4YW1wbGUuY29tL3BwIiwidXNlckFncmVlbWVudFVybCI6Imh0dHA6Ly9leGFtcGxlLmNvbS90b3MiLCJiYXNlVXJsIjoiaHR0cHM6Ly9hc3NldHMuYnJhaW50cmVlZ2F0ZXdheS5jb20iLCJhc3NldHNVcmwiOiJodHRwczovL2NoZWNrb3V0LnBheXBhbC5jb20iLCJkaXJlY3RCYXNlVXJsIjpudWxsLCJhbGxvd0h0dHAiOnRydWUsImVudmlyb25tZW50Tm9OZXR3b3JrIjp0cnVlLCJlbnZpcm9ubWVudCI6Im9mZmxpbmUiLCJ1bnZldHRlZE1lcmNoYW50IjpmYWxzZSwiYnJhaW50cmVlQ2xpZW50SWQiOiJtYXN0ZXJjbGllbnQzIiwiYmlsbGluZ0FncmVlbWVudHNFbmFibGVkIjpmYWxzZSwibWVyY2hhbnRBY2NvdW50SWQiOiJhY21ld2lkZ2V0c2x0ZHNhbmRib3giLCJjdXJyZW5jeUlzb0NvZGUiOiJVU0QifSwiY29pbmJhc2VFbmFibGVkIjpmYWxzZSwibWVyY2hhbnRJZCI6IjM0OHBrOWNnZjNiZ3l3MmIiLCJ2ZW5tbyI6Im9mZiJ9'
         log = get_login(request.COOKIES)
         if log:
             on_hold = None
@@ -990,12 +1008,12 @@ def payment_billing(request):
                 print(signature)
                 return add_info_home(request,
                                      {
-                                         'on_hold': on_hold, 'shops': [], 'token': None,
+                                         'on_hold': on_hold, 'shops': [], 'token': token,
                                          'price_form': price,
                                          'completed_pay_url': completed_pay_url,
                                          'tpv_fuc': tpv_fuc,
                                          'name': on_hold.client.full_name,
-                                         'signature': signature
+                                         'signature': signature,
                                      }
                                      , 'info_card.html')
             else:
@@ -1011,7 +1029,7 @@ def payment_billing(request):
                 signature = create_sha(price, purchase.transaction_id, tpv_fuc, 978, 0,
                                        completed_payment_url, tpv_key)
                 return add_info_home(request, {
-                    'on_hold': purchase, 'shops': [], 'token': None,
+                    'on_hold': purchase, 'shops': [], 'token': token,
                     'price_form': price,
                     'tpv_fuc': tpv_fuc,
                     'completed_pay_url': completed_pay_url,
@@ -1059,7 +1077,6 @@ def change_password(request):
 def payment_methods(request):
     if request.method == 'POST':
         nonce = request.POST['payment_method_nonce']
-        # nonce = "fake-valid-nonce"
 
         log = get_login(request.COOKIES)
         on_hold = None

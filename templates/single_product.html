@@ -68,6 +68,7 @@
                             <!-- Begin product options -->
                             <div class="product-options">
                                 <div class="select clearfix">
+                                    <h3>{{ product.total_price }}</h3>
                                     <div class="description">
                                         <p>{{ product.description }}</p>
                                     </div>
@@ -125,51 +126,51 @@
 
 
                         <!-- Begin social buttons -->
-                        <div class="social">
-
-                            {#TODO: data-permalink is the link #}
-                            <div class="social-sharing "
-                                 data-permalink="{{ product.get_full_url }}">
-
-
-                                <a target="_blank"
-                                   class="share-facebook">
-                                    <span class="icon icon-facebook"></span>
-                                    <span class="share-title">Share</span>
-
-                                    <span class="share-count">0</span>
-
-                                </a>
-
-
-                                <a target="_blank"
-                                   class="share-twitter">
-                                    <span class="icon icon-twitter"></span>
-                                    <span class="share-title">Tweet</span>
-
-                                    <span class="share-count">0</span>
-
-                                </a>
-
-
-                                <a target="_blank"
-                                   class="share-pinterest">
-                                    <span class="icon icon-pinterest"></span>
-                                    <span class="share-title">Pin it</span>
-
-                                    <span class="share-count">0</span>
-
-                                </a>
-
-
-                                <a target="_blank"
-                                   class="share-fancy">
-                                    <span class="icon icon-fancy"></span>
-                                    <span class="share-title">Fancy</span>
-                                </a>
-                            </div>
-
-                        </div>
+                        {#                        <div class="social">#}
+                        {##}
+                        {#TODO: data-permalink is the link #}
+                        {#                            <div class="social-sharing "#}
+                        {#                                 data-permalink="{{ product.get_full_url }}">#}
+                        {##}
+                        {##}
+                        {#                                <a target="_blank"#}
+                        {#                                   class="share-facebook">#}
+                        {#                                    <span class="icon icon-facebook"></span>#}
+                        {#                                    <span class="share-title">Share</span>#}
+                        {##}
+                        {#                                    <span class="share-count">0</span>#}
+                        {##}
+                        {#                                </a>#}
+                        {##}
+                        {##}
+                        {#                                <a target="_blank"#}
+                        {#                                   class="share-twitter">#}
+                        {#                                    <span class="icon icon-twitter"></span>#}
+                        {#                                    <span class="share-title">Tweet</span>#}
+                        {##}
+                        {#                                    <span class="share-count">0</span>#}
+                        {##}
+                        {#                                </a>#}
+                        {##}
+                        {##}
+                        {#                                <a target="_blank"#}
+                        {#                                   class="share-pinterest">#}
+                        {#                                    <span class="icon icon-pinterest"></span>#}
+                        {#                                    <span class="share-title">Pin it</span>#}
+                        {##}
+                        {#                                    <span class="share-count">0</span>#}
+                        {##}
+                        {#                                </a>#}
+                        {##}
+                        {##}
+                        {#                                <a target="_blank"#}
+                        {#                                   class="share-fancy">#}
+                        {#                                    <span class="icon icon-fancy"></span>#}
+                        {#                                    <span class="share-title">Fancy</span>#}
+                        {#                                </a>#}
+                        {#                            </div>#}
+                        {##}
+                        {#                        </div>#}
                         <!-- End social buttons -->
 
                     </div>
@@ -193,7 +194,7 @@
                             <div class="product span3 adaptive-grid">
                                 <div class="image">
                                     <a href="/product/{{ x.pk }}/">
-                                        <img src="{{ x.image.url }}" alt="{{ x.short_description }}"/>
+                                        <img src="{{ x.get_thumb }}" alt="{{ x.short_description }}"/>
                                     </a>
                                 </div>
                                 <div class="details">
@@ -218,6 +219,18 @@
 
     </section>
     <script>
+        function WorkSizes() {
+            var ps = document.getElementsByClassName('size_choice');
+            for (var i = 0; i < ps.length; i++) {
+                {#                alert(ps[i]);#}
+                ps[i].addEventListener('click', SizeElected, false);
+            }
+            document.getElementById("size_input").setAttribute("value", document.getElementsByClassName('size_choice')[0].getAttribute("data-size"));
+            document.getElementsByClassName('size_choice')[0].setAttribute("class", "size_choice selected");
+        }
+
+        WorkSizes();
+
         function Check() {
             var check = document.getElementById('quantity');
             var parse = parseInt(check.value);
@@ -236,15 +249,15 @@
             event.currentTarget.setAttribute("class", "size_choice selected");
         }
 
-        window.onload = function () {
-            var ps = document.getElementsByClassName('size_choice');
-            for (var i = 0; i < ps.length; i++) {
+        {#        window.onload = function () {#}
+        {#            var ps = document.getElementsByClassName('size_choice');#}
+        {#            for (var i = 0; i < ps.length; i++) {#}
                 {#                alert(ps[i]);#}
-                ps[i].addEventListener('click', SizeElected, false);
-            }
-            document.getElementById("size_input").setAttribute("value", document.getElementsByClassName('size_choice')[0].getAttribute("data-size"));
-            document.getElementsByClassName('size_choice')[0].setAttribute("class", "size_choice selected");
-        };
+        {#                ps[i].addEventListener('click', SizeElected, false);#}
+        {#            }#}
+        {#            document.getElementById("size_input").setAttribute("value", document.getElementsByClassName('size_choice')[0].getAttribute("data-size"));#}
+        {#            document.getElementsByClassName('size_choice')[0].setAttribute("class", "size_choice selected");#}
+        {#        };#}
 
 
     </script>

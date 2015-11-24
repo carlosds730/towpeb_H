@@ -85,5 +85,5 @@ else:
         url(r'^info_card/?$', views.info_card, name='info_card'),
         url(r'^shop/?$', views.shop, name='shop'),
         url(r'^add_mail/?$', views.add_mail, name='add_mail'),
-        url(r'^$', views.countdown)
+        url(r'^$', views.home)
     ]

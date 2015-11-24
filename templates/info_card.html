@@ -3,19 +3,19 @@
 {% load staticfiles %}
 
 {% block breadcrumbs %}
-    <div class="breadcrumb clearfix">
-        <span itemscope itemtype="http://data-vocabulary.org/Breadcrumb">
-                                 <a href="/info_client/" title="All Products" itemprop="url">
-                                     <span itemprop="title">Información del envío</span>
-                                 </a>
-                         </span>
-        <span class="arrow-space">&#62;</span>
-        <strong itemprop="title">Método de pago</strong>
-
-    </div>
+    {#    <div class="breadcrumb clearfix">#}
+    {#        <span itemscope itemtype="http://data-vocabulary.org/Breadcrumb">#}
+    {#                                 <a href="/info_client/" title="All Products" itemprop="url">#}
+    {#                                     <span itemprop="title">Información del envío</span>#}
+    {#                                 </a>#}
+    {#                         </span>#}
+    {#        <span class="arrow-space">&#62;</span>#}
+    {#        <strong itemprop="title">Método de pago</strong>#}
+    {##}
+    {#    </div>#}
 {% endblock %}
 {% block form_content %}
-    <form class="edit_checkout animate-floating-labels" action="https://sis-t.redsys.es:25443/sis/realizarPago"
+    <form class="edit_checkout animate-floating-labels" action="https://sis.redsys.es/sis/realizarPago"
           accept-charset="UTF-8"
           id="payment_form" method="post">{% csrf_token %}
         <div class="section" data-payment-method="">
@@ -39,7 +39,7 @@
                 {% endif %}
             </div>
             <div class="section__content">
-                <div id="paypal-container"></div>
+                <div style="margin-top: 10px; margin-bottom: 10px" id="paypal-container"></div>
             </div>
 
             <div class="section__content">
@@ -73,4 +73,27 @@
             <input type="hidden" name="Ds_Merchant_TransactionType" value="0">
         </div>
     </form>
+    {##}
+    {#    <div style="margin-bottom: 30px;">#}
+    {#        <a href="#" id="payment_button" class="remove btn-buy disabled"#}
+    {#           style="cursor: default; padding-top: 16px">#}
+    {#            <i class=" fa fa-shopping-cart">#}
+    {#            </i>#}
+    {#            Finalizar Compra#}
+    {#        </a>#}
+    {#    </div>#}
+    {#    <script src="{% static 'js/compra/braintree.js' %}"></script>#}
+    {#    <script type="text/javascript">#}
+    {#        braintree.setup("{{ token }}", "paypal", {#}
+    {#            container: "paypal-container",#}
+    {#            singleUse: true,#}
+    {#            PayPalOneTimePayment: true,#}
+    {#            locale: 'es_es',#}
+    {#            amount: {{ on_hold.total_price_two.1 }},#}
+    {#            currency: 'EUR'#}
+    {#        });#}
+    {#    </script>#}
+    {#    <h1>#}
+    {#        Disponible en breve!!!!!#}
+    {#    </h1>#}
 {% endblock %}

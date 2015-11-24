@@ -1,22 +1,8 @@
-
-.
-
--
--
--
--
--
--
--
--
--General_Styles-------- {
-}
-
 .ug-gallery-wrapper {
     overflow: hidden;
     position: relative;
     font-family: Arial, Helvetica, sans-serif;
-    background-color: #000000;
+    background-color: white;
 }
 
 .ug-error-message {
@@ -69,24 +55,6 @@
     width: 100% !important;
     margin: 0px !important;
     padding: 0px !important;
-}
-
-.
-
--
--
--
--
--
--
--
--
--
--
--
--
--
--SLIDER------------------ {
 }
 
 .ug-gallery-wrapper .ug-slider-wrapper {
@@ -442,25 +410,6 @@ img.ug-sepia-effect {
     filter: alpha(opacity=50);
     zoom: 1;
 }
-
-.
-
--
--
--
--
--
--
--
--
--
--
--
--
--
--BULLETS------------------ {
-}
-
 .ug-gallery-wrapper .ug-bullets {
     position: absolute;
     top: 0px;
@@ -479,24 +428,6 @@ img.ug-sepia-effect {
 
 .ug-gallery-wrapper .ug-bullets .ug-bullet:first-child {
     margin-left: 0px;
-}
-
-.
-
--
--
--
--
--
--
--
--
--
--
--
--
--
--TEXT_PANEL------------------ {
 }
 
 .ug-gallery-wrapper .ug-textpanel {

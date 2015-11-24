@@ -726,13 +726,13 @@ footer {
     width: 219px
 }
 
-.span3.adaptive-grid:nth-child(6n+7) {
-    clear: none
-}
+/*.span3.adaptive-grid:nth-child(6n+7) {*/
+    /*clear: none*/
+/*}*/
 
-.span3.adaptive-grid:nth-child(4n+4) {
-    clear: both
-}
+/*.span3.adaptive-grid:nth-child(4n+4) {*/
+    /*clear: both*/
+/*}*/
 
 ul.unstyled, ol.unstyled {
     margin: 0;
@@ -3289,6 +3289,30 @@ a:hover .share-count:after {
 
 #payment_button {
     cursor: pointer;
+    display: inline-block;
+    border-radius: 4px;
+    font-weight: 500;
+    font-size: large;
+    padding-left: 0.7em;
+    padding-right: 0.7em;
+    height: 50px;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    text-align: center;
+    -webkit-transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+    position: relative;
+    background: #50b3da;
+    color: white
+}
+
+#payment_button:hover {
+    background: #2b9ecc;
+    color: white
+}
+
+#payment_button > .fa-shopping-cart {
+    font-size: large;
 }
 
 .precio_total {
@@ -3811,7 +3835,7 @@ button.close {
 
 .sizes_list > li {
     float: left;
-    width: 30px;
+    /*width: 30px;*/
     text-align: center;
     border-left: 1px solid #004024;
     border-bottom: 1px solid #004024;
@@ -3942,4 +3966,17 @@ button.close {
     /*opacity: 0.75;*/
     opacity: 1;
     display: none;
+}
+
+.product_list_pc :last-of-type {
+    margin-bottom: 10px;
+}
+
+.hutton_text {
+    text-align: center;
+    padding-top: 10%;
+}
+
+.hutton_text > h1 {
+    font-family: ThirstyScriptExtraBoldDemo, sans-serif;
 }

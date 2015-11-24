@@ -49,17 +49,17 @@
                 <div class="main__header">
                     {#DONE: In the other templates set the real href's#}
                     {% block breadcrumbs %}
-                        <div class="breadcrumb clearfix">
-                            <strong>Información del envío</strong>
-                            <span class="arrow-space">&#62;</span>
-                        <span itemscope itemtype="http://data-vocabulary.org/Breadcrumb">
-
-                                 <a title="All Products"
-                                    itemprop="url">
-                                     <span itemprop="title">Método de pago</span>
-                                 </a>
-                         </span>
-                        </div>
+                        {#                        <div class="breadcrumb clearfix">#}
+                        {#                            <strong>Información del envío</strong>#}
+                        {#                            <span class="arrow-space">&#62;</span>#}
+                        {#                        <span itemscope itemtype="http://data-vocabulary.org/Breadcrumb">#}
+                        {##}
+                        {#                                 <a title="All Products"#}
+                        {#                                    itemprop="url">#}
+                        {#                                     <span itemprop="title">Método de pago</span>#}
+                        {#                                 </a>#}
+                        {#                         </span>#}
+                        {#                        </div>#}
                     {% endblock %}
                 </div>
                 <div class="main__content">
@@ -266,17 +266,28 @@
                                                                name="zip_code" id="checkout_shipping_address_zip"/>
                                                     </div>
                                                 </div>
-                                                <div class="field field--optional">
-                                                    <label class="field__label" for="checkout_shipping_address_phone">Teléfono
-                                                        (opcional)</label>
+                                                <div class="field field--required">
+                                                    <label class="field__label" for="checkout_shipping_address_phone">Teléfono</label>
 
                                                     <div class="field__input-wrapper">
-                                                        <input placeholder="Teléfono (opcional)" value="{{ phone }}"
-                                                               autocomplete="shipping tel" data-backup="phone"
+                                                        <input placeholder="Teléfono" required value="{{ phone }}"
+                                                               autocomplete="shipping address-level2"
+                                                               data-backup="phone"
                                                                class="field__input" size="30" type="tel" name="phone"
                                                                id="checkout_shipping_address_phone"/>
                                                     </div>
                                                 </div>
+                                                {#                                                <div class="field field--required">#}
+                                                {#                                                    <label class="field__label" for="checkout_shipping_address_phone">Teléfono</label>#}
+                                                {##}
+                                                {#                                                    <div class="field__input-wrapper field">#}
+                                                {#                                                        <input placeholder="Teléfono" value="{{ phone }}"#}
+                                                {#                                                               autocomplete="shipping tel" data-backup="phone"#}
+                                                {#                                                               class="field__input" size="30" type="tel"#}
+                                                {#                                                               name="phone"#}
+                                                {#                                                               id="checkout_shipping_address_phone"/>#}
+                                                {#                                                    </div>#}
+                                                {#                                                </div>#}
 
                                             </div>
                                             <!-- /.fieldset -->

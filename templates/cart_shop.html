@@ -13,21 +13,8 @@
                 <div class="container">
                     <div class="container_payments">
                         <a style="color: #004024"><strong id="total_price">Subtotal: {{ on_hold.total_price }}</strong></a>
-                        <br>
-                        {% if on_hold.is_valid %}
-                            <a href="/info_client/" id="payment_button" class="remove btn-buy">
-                                <i class=" fa fa-shopping-cart">
-                                </i>
-                                Comprar
-                            </a>
-                        {% else %}
-                            <a href="/info_client/" id="payment_button" class="remove btn-buy disabled"
-                               style="cursor: default">
-                                <i class=" fa fa-shopping-cart">
-                                </i>
-                                Comprar
-                            </a>
-                        {% endif %}
+                        {#                        <br>#}
+
                     </div>
                     <div class="carrito row clearfix">
                         {% for p in on_hold.products.all %}
@@ -156,7 +143,22 @@
                                 </div>
                             </div>
                         {% endfor %}
-                        {#                    <a style="color: #555555; padding-top: 10px; display: inline-block">* Los precios de los productos incluyen IVA</a>#}
+                        <div style="margin-bottom: 30px; float: right">
+                            {% if on_hold.is_valid %}
+                                <a href="/info_client/" id="payment_button" class="remove btn-buy">
+                                    <i class=" fa fa-shopping-cart" style="padding-top: 17px">
+                                    </i>
+                                    Comprar
+                                </a>
+                            {% else %}
+                                <a href="/info_client/" id="payment_button" class="remove btn-buy disabled"
+                                   style="cursor: default; padding-top: 19px">
+                                    <i class=" fa fa-shopping-cart">
+                                    </i>
+                                    Comprar
+                                </a>
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
             {% endif %}
