@@ -103,6 +103,9 @@
 .shopify-social-icon-yelp-circle:before { content: '\e882'; }
 .shopify-social-icon-yelp:before { content: '\e883'; }
 
+.shopify-social-icon-snap-circle:before {
+  content: url("snapchat.svg")
+}
 /* Colors */
 
 .shopify-social-icon-facebook-square.color:before,
@@ -202,4 +205,11 @@
 .shopify-social-icon-yelp-circle.color:before,
 .shopify-social-icon-yelp.color:before {
   color: #c41200;
+}
+
+.snap {
+  position: relative;
+  top: -8px;
+  font-size: medium;
+  font-family: Arvo, 'Lucida Grande', Helvetica, Arial, sans-serif;
 }

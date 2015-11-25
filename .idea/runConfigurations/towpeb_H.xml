@@ -12,7 +12,7 @@
     <option name="ADD_CONTENT_ROOTS" value="true" />
     <option name="ADD_SOURCE_ROOTS" value="true" />
     <module name="towpeb_H" />
-    <option name="launchJavascriptDebuger" value="true" />
+    <option name="launchJavascriptDebuger" value="false" />
     <option name="port" value="9000" />
     <option name="host" value="" />
     <option name="additionalOptions" value="" />
