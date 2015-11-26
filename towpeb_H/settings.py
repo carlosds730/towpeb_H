@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
 
+import braintree
 from braintree import Configuration, Environment
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -62,13 +63,13 @@ MIDDLEWARE_CLASSES = (
 TPV_KEY = 'qwertyasdf0123456789'
 TPV_FUC = '092508472'
 
-# BRAINTREE_ENV = braintree.Environment.Sandbox
-BRAINTREE_MERCHANT = 'rgrr3976xdtj9r9x'
-BRAINTREE_PUBLIC_KEY = 'wp9wm59tpzg5ht43'
-BRAINTREE_PRIVATE_KEY = '223d029cad5b5aa6dbcb93b3fba280a0'
+BRAINTREE_ENV = braintree.Environment.Sandbox
+BRAINTREE_MERCHANT = '96k3b4vd9q9nhbgy'
+BRAINTREE_PUBLIC_KEY = 'jstbmqbmbjtkyfsf'
+BRAINTREE_PRIVATE_KEY = '6dd9c7896bfb79dd15ab04b0e9ff01ff'
 
 Configuration.configure(
-    Environment.Sandbox,
+    BRAINTREE_ENV,
     BRAINTREE_MERCHANT,
     BRAINTREE_PUBLIC_KEY,
     BRAINTREE_PRIVATE_KEY
