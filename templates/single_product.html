@@ -63,12 +63,22 @@
 
                         <h1 class="title" itemprop="name">{{ product.name }}</h1>
 
-                        <form id="add-item-form" action="/categories/{{ product.category.pk }}/" method="post"
+                        <form id="add-item-form" action="/categories/{{ product.category.slug }}/" method="post"
                               class="variants clearfix">{% csrf_token %}
                             <!-- Begin product options -->
                             <div class="product-options">
                                 <div class="select clearfix">
-                                    <h3>{{ product.total_price }}</h3>
+                                    {% if product.old_price %}
+                                        <h2>{{ product.total_price }}
+                                            <del style="color: darkgrey">{{ product.old_price }} €</del>
+                                            <span class="price_percent_reduction"
+                                                  style="line-height: 36px; font-size: 28px">-{{ product.percent }}%</span>
+                                        </h2>
+
+                                    {% else %}
+                                        <h3>{{ product.total_price }}</h3>
+                                    {% endif %}
+
                                     <div class="description">
                                         <p>{{ product.description }}</p>
                                     </div>
@@ -193,7 +203,7 @@
                         {% if x %}
                             <div class="product span3 adaptive-grid">
                                 <div class="image">
-                                    <a href="/product/{{ x.pk }}/">
+                                    <a href="/{{ x.category.slug }}/{{ x.slug }}/">
                                         <img src="{{ x.get_thumb }}" alt="{{ x.short_description }}"/>
                                     </a>
                                 </div>
@@ -252,7 +262,7 @@
         {#        window.onload = function () {#}
         {#            var ps = document.getElementsByClassName('size_choice');#}
         {#            for (var i = 0; i < ps.length; i++) {#}
-                {#                alert(ps[i]);#}
+        {#                alert(ps[i]);#}
         {#                ps[i].addEventListener('click', SizeElected, false);#}
         {#            }#}
         {#            document.getElementById("size_input").setAttribute("value", document.getElementsByClassName('size_choice')[0].getAttribute("data-size"));#}

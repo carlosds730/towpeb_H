@@ -14,7 +14,8 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 import os
 
 import braintree
-from braintree import Configuration, Environment
+
+# from braintree import Configuration, Environment
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -45,7 +46,7 @@ INSTALLED_APPS = (
     'Shop_Site'
 )
 
-SESSION_COOKIE_DOMAIN = '.hutton.es'
+# SESSION_COOKIE_DOMAIN = '.hutton.es'
 
 WEB_SITE_URL = 'http://www.hutton.es/'
 
@@ -60,16 +61,17 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.security.SecurityMiddleware',
 )
 
-TPV_KEY = 'qwertyasdf0123456789'
+TPV_KEY = 'SO510VU7O274M4LM'
+# TPV_KEY = 'BXjNopkb5Tx8GehhBSdSRuHVaE8oDekF'
 TPV_FUC = '092508472'
 
-BRAINTREE_ENV = braintree.Environment.Sandbox
-BRAINTREE_MERCHANT = '96k3b4vd9q9nhbgy'
-BRAINTREE_PUBLIC_KEY = 'jstbmqbmbjtkyfsf'
-BRAINTREE_PRIVATE_KEY = '6dd9c7896bfb79dd15ab04b0e9ff01ff'
+# BRAINTREE_ENV = braintree.Environment.Sandbox
+BRAINTREE_MERCHANT = 'rgrr3976xdtj9r9x'
+BRAINTREE_PUBLIC_KEY = 'wp9wm59tpzg5ht43'
+BRAINTREE_PRIVATE_KEY = '223d029cad5b5aa6dbcb93b3fba280a0'
 
-Configuration.configure(
-    BRAINTREE_ENV,
+braintree.Configuration.configure(
+    braintree.Environment.Sandbox,
     BRAINTREE_MERCHANT,
     BRAINTREE_PUBLIC_KEY,
     BRAINTREE_PRIVATE_KEY
@@ -133,9 +135,9 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 MEDIA_URL = '/media/'
 
-TEMPLATE_DIRS = (
-    os.path.join(BASE_DIR, 'templates'),
-)
+# TEMPLATE_DIRS = (
+#     os.path.join(BASE_DIR, 'templates'),
+# )
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
@@ -143,19 +145,27 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
 EMAIL_FILE_PATH = os.path.join(BASE_DIR, 'emails')  # change this to a proper location
 
-EMAIL_HOST = 'smpt.hutton.es'
+# EMAIL_HOST = 'smpt.hutton.es'
 
 # EMAIL_HOST = 'mail.hutton.es'
 
-EMAIL_HOST_USER = 'testing@hutton.es'
+# EMAIL_HOST_USER = 'testing@hutton.es'
 
-EMAIL_PORT = 578
+# EMAIL_PORT = 578
 
-# EMAIL_PORT = 587
+# EMAIL_USE_TLS = False
 
-EMAIL_USE_TLS = False
+# EMAIL_HOST_PASSWORD = '12345678a'
 
-EMAIL_HOST_PASSWORD = '12345678a'
+EMAIL_HOST = 'smtp.gmail.com'
+
+EMAIL_HOST_USER = 'huttontextil@gmail.com'
+
+EMAIL_HOST_PASSWORD = 'dmfzsljprxhmfoci'
+
+EMAIL_PORT = 587
+
+EMAIL_USE_TLS = True
 
 # THUMBNAIL_ENGINE = 'sorl.thumbnail.engines.convert_engine.Engine'
 

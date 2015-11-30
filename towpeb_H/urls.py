@@ -13,77 +13,42 @@ Including another URLconf
     1. Add an import:  from blog import urls as blog_urls
     2. Add a URL to urlpatterns:  url(r'^blog/', include(blog_urls))
 """
-import datetime
 
 from django.conf.urls import include, url
-from django.contrib import admin
 from django.conf.urls.static import static
-import django.utils.timezone as tz
+from django.contrib import admin
 
 from Shop_Site import views
 from towpeb_H import settings
 
-if tz.now() > datetime.datetime(2015, 11, 19, 14, 0, 0, 0, tzinfo=tz.get_current_timezone()):
-    urlpatterns = static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + [
-        url(r'^admin/', include(admin.site.urls)),
-        url(r'^login/?$', views.login, name='login'),
-        url(r'^change_password/?$', views.change_password, name='change_password'),
-        url(r'^categories/(?P<pk>\d+)/?$', views.categories, name='categories'),
-        url(r'^payment/payments-billing/?$', views.payment_billing, name='payment'),
-        url(r'^payment-methods/?$', views.payment_methods, name='payment_method'),
-        url(r'^product/(?P<pk>\d+)/?$', views.products, name='product'),
-        url(r'^register/?$', views.register, name='register'),
-        url(r'^completed_payment/?$', views.completed_payment, name='completed_payment'),
-        url(r'^completed_payment_ok/?$', views.completed_payment_ok, name='completed_payment_ok'),
-        url(r'^completed_payment_fail/?$', views.completed_payment_fail, name='completed_payment_fail'),
-        url(r'^register/?$', views.register, name='register'),
-        url(r'^search/?$', views.search, name='search'),
-        url(r'^cart_shop/?$', views.cart_shop, name='cart shop'),
-        url(r'^eliminate/?$', views.eliminate, name='eliminate'),
-        # url(r'^add_to_cart/?$', views.add_to_cart, name='add_to_cart'),
-        url(r'^about_us/?$', views.about_us, name='about_us'),
-        url(r'^sizes/?$', views.sizes, name='sizes'),
-        url(r'^privacy/?$', views.privacy, name='privacy'),
-        url(r'^conditions/?$', views.conditions, name='conditions'),
-        url(r'^cookies/?$', views.cookies, name='cookies'),
-        url(r'^lookbook/?$', views.lookbook, name='lookbook'),
-        url(r'^shutdown/?$', views.shutdown, name='shutdown'),
-        url(r'^info_client/?$', views.info_client, name='info_client'),
-        # url(r'^shipping_info/?$', views.shipping_info, name='shipping_info'),
-        url(r'^info_card/?$', views.info_card, name='info_card'),
-        url(r'^shop/?$', views.shop, name='shop'),
-        url(r'^add_mail/?$', views.add_mail, name='add_mail'),
-        url(r'^$', views.home)
-    ]
-else:
-    urlpatterns = static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + [
-        url(r'^admin/', include(admin.site.urls)),
-        url(r'^login/?$', views.login, name='login'),
-        url(r'^change_password/?$', views.change_password, name='change_password'),
-        url(r'^categories/(?P<pk>\d+)/?$', views.categories, name='categories'),
-        url(r'^payment/payments-billing/?$', views.payment_billing, name='payment'),
-        url(r'^payment-methods/?$', views.payment_methods, name='payment_method'),
-        url(r'^product/(?P<pk>\d+)/?$', views.products, name='product'),
-        url(r'^register/?$', views.register, name='register'),
-        url(r'^completed_payment/?$', views.completed_payment, name='completed_payment'),
-        url(r'^completed_payment_ok/?$', views.completed_payment_ok, name='completed_payment_ok'),
-        url(r'^completed_payment_fail/?$', views.completed_payment_fail, name='completed_payment_fail'),
-        url(r'^register/?$', views.register, name='register'),
-        url(r'^search/?$', views.search, name='search'),
-        url(r'^cart_shop/?$', views.cart_shop, name='cart shop'),
-        url(r'^eliminate/?$', views.eliminate, name='eliminate'),
-        # url(r'^add_to_cart/?$', views.add_to_cart, name='add_to_cart'),
-        url(r'^about_us/?$', views.about_us, name='about_us'),
-        url(r'^sizes/?$', views.sizes, name='sizes'),
-        url(r'^privacy/?$', views.privacy, name='privacy'),
-        url(r'^conditions/?$', views.conditions, name='conditions'),
-        url(r'^cookies/?$', views.cookies, name='cookies'),
-        url(r'^lookbook/?$', views.lookbook, name='lookbook'),
-        url(r'^shutdown/?$', views.shutdown, name='shutdown'),
-        url(r'^info_client/?$', views.info_client, name='info_client'),
-        # url(r'^shipping_info/?$', views.shipping_info, name='shipping_info'),
-        url(r'^info_card/?$', views.info_card, name='info_card'),
-        url(r'^shop/?$', views.shop, name='shop'),
-        url(r'^add_mail/?$', views.add_mail, name='add_mail'),
-        url(r'^$', views.home)
-    ]
+urlpatterns = static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + [
+    url(r'^admin/', include(admin.site.urls)),
+    url(r'^login/?$', views.login, name='login'),
+    url(r'^change_password/?$', views.change_password, name='change_password'),
+    url(r'^payment/payments-billing/?$', views.payment_billing, name='payment'),
+    url(r'^payment-methods/?$', views.payment_methods, name='payment_method'),
+    url(r'^(?P<cat_slug>[-\w]+)/(?P<slug>[-\w]+)/?$', views.products, name='product'),
+    url(r'^register/?$', views.register, name='register'),
+    url(r'^completed_payment/?$', views.completed_payment, name='completed_payment'),
+    url(r'^completed_payment_ok/?$', views.completed_payment_ok, name='completed_payment_ok'),
+    url(r'^completed_payment_fail/?$', views.completed_payment_fail, name='completed_payment_fail'),
+    url(r'^register/?$', views.register, name='register'),
+    url(r'^search/?$', views.search, name='search'),
+    url(r'^cart_shop/?$', views.cart_shop, name='cart shop'),
+    url(r'^eliminate/?$', views.eliminate, name='eliminate'),
+    # url(r'^add_to_cart/?$', views.add_to_cart, name='add_to_cart'),
+    url(r'^about_us/?$', views.about_us, name='about_us'),
+    url(r'^sizes/?$', views.sizes, name='sizes'),
+    url(r'^privacy/?$', views.privacy, name='privacy'),
+    url(r'^conditions/?$', views.conditions, name='conditions'),
+    url(r'^cookies/?$', views.cookies, name='cookies'),
+    url(r'^lookbook/?$', views.lookbook, name='lookbook'),
+    url(r'^shutdown/?$', views.shutdown, name='shutdown'),
+    url(r'^info_client/?$', views.info_client, name='info_client'),
+    # url(r'^shipping_info/?$', views.shipping_info, name='shipping_info'),
+    url(r'^info_card/?$', views.info_card, name='info_card'),
+    url(r'^shop/?$', views.shop, name='shop'),
+    url(r'^add_mail/?$', views.add_mail, name='add_mail'),
+    url(r'^(?P<slug>[-\w]+)/?$', views.categories, name='categories'),
+    url(r'^$', views.home)
+]

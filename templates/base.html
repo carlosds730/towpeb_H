@@ -192,7 +192,7 @@
                         <span class="more"><i class="fa fa-plus"></i></span>
                         <ul class="sub-menu">
                             {% for c in categories %}
-                                <li><a href="/categories/{{ c.pk }}/" class=" navlink">{{ c.name }}</a></li>
+                                <li><a href="{{ c.get_absolute_url }}" class=" navlink">{{ c.name }}</a></li>
                             {% endfor %}
                         </ul>
                     </li>
@@ -262,7 +262,7 @@
 
                                             </div>
                                             {% for c in categories %}
-                                                <a href="/categories/{{ c.pk }}/">
+                                                <a href="{{ c.get_absolute_url }}">
                                                     <li>{{ c.name }}</li>
                                                 </a>
                                             {% endfor %}

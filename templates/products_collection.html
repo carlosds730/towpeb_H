@@ -61,17 +61,15 @@
 
                             {#TODO: All this images should be of the same size#}
                             <div class="image">
-                                {% if not p.6 %}
-                                    <span class="circle sold-out">Agotado</span>
-                                {% elif p.8 %}
+                                {% if p.8 %}
                                     <span class="circle sale">Oferta Especial!</span>
                                 {% endif %}
                                 {% if not p.6 %}
-                                    <img src="{{ p.3 }}"
+                                    <img class="sold_out" style="opacity: .5;" src="{{ p.3 }}"
                                          alt="{{ p.2 }}"/>
                                 {% else %}
 
-                                    <a href="/product/{{ p.0 }}/">
+                                    <a href="{{ category.get_absolute_url }}/{{ p.11 }}/">
                                         <img src="{{ p.3 }}"
                                              alt="{{ p.2 }}"/>
                                     </a>
@@ -114,7 +112,7 @@
     </section>
     <script>
         function order() {
-            var request = $.get('/categories/{{ category.pk }}/', {
+            var request = $.get('{{ category.get_absolute_url }}', {
                 'order': $('#select').val()
             });
             request.done(function (data) {
@@ -136,7 +134,7 @@
                             image_div.setAttribute('class', 'image');
                             var a_1 = document.createElement('a');
                             if (p[6] != 0) {
-                                a_1.setAttribute('href', '/product/' + p[0].toString() + '/');
+                                a_1.setAttribute('href', '{{category.get_absolute_url}}/' + p[11].toString() + '/');
                             }
                             var image = document.createElement('img');
                             image.setAttribute('src', p[3].toString());
@@ -145,10 +143,13 @@
                             image_div.appendChild(a_1);
 
                             if (p[6] == 0) {
-                                var span_sold_out = document.createElement("span");
-                                span_sold_out.setAttribute('class', 'circle sold-out');
-                                span_sold_out.innerText = 'Agotado';
-                                image_div.appendChild(span_sold_out);
+                                image.setAttribute('class', 'sold_out');
+                                image.setAttribute('style', 'opacity: .5;');
+
+                                {#                                var span_sold_out = document.createElement("span");#}
+                                {#                                span_sold_out.setAttribute('class', 'circle sold-out');#}
+                                {#                                span_sold_out.innerText = 'Agotado';#}
+                                {#                                image_div.appendChild(span_sold_out);#}
                             }
                             else if (p[8]) {
                                 var span_sale = document.createElement("span");
@@ -164,7 +165,7 @@
 
                             var a_2 = document.createElement('a');
                             if (p[6] != 0) {
-                                a_2.setAttribute('href', '/product/' + p[0].toString() + '/');
+                                a_2.setAttribute('href', '{{category.get_absolute_url}}/' + p[11].toString() + '/');
                             }
                             a_2.setAttribute('class', 'clearfix');
 

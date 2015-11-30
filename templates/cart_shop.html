@@ -21,7 +21,7 @@
                             <div class="row clearfix product_list_pc" id="product_{{ p.pk }}">
                                 <div class="span2" style="text-align: center">
                                     {% thumbnail p.product.image "100x100" as imagen %}
-                                        <a href="/product/{{ p.product.pk }}/">
+                                        <a href="/{{ p.product.category.slug }}/{{ p.product.slug }}/">
                                             <img src="{{ imagen.url }}">
                                         </a>
                                     {% endthumbnail %}
@@ -29,7 +29,7 @@
                                 <div class="span3 properties">
                                     <h5>
                                         Producto: <a style="color: #004024" id="dscrptn_{{ p.pk }}"
-                                                     href="/product/{{ p.product.pk }}/">{{ p.product.name }}</a>
+                                                     href="/{{ p.product.category.slug }}/{{ p.product.slug }}/">{{ p.product.name }}</a>
                                     </h5>
                                     <h5>
                                         {{ p.attribute }}
@@ -79,10 +79,10 @@
                                     {% endif %}
                                 </div>
                             </div>
-                            <div class="mobile-wrapper mobile_product">
+                            <div class="mobile-wrapper mobile_product" id="product_mobile{{ p.pk }}">
                                 <div class="span2" style="text-align: center">
                                     {% thumbnail p.product.image "100x100" as imagen %}
-                                        <a href="/product/{{ p.product.pk }}/">
+                                        <a href="/{{ p.product.category.slug }}/{{ p.product.slug }}/">
                                             <img src="{{ imagen.url }}">
                                         </a>
                                     {% endthumbnail %}
@@ -90,7 +90,7 @@
                                 <div class="span3 properties">
                                     <h5>
                                         Producto: <a style="color: #004024" id="dscrptn_{{ p.pk }}"
-                                                     href="/product/{{ p.product.pk }}/">{{ p.product.name }}</a>
+                                                     href="/{{ p.product.category.slug }}/{{ p.product.slug }}/">{{ p.product.name }}</a>
                                     </h5>
                                     <h5>
                                         {{ p.attribute }}
@@ -106,7 +106,7 @@
                                                name="quantity" value="{{ p.amount }}" min="1"
                                                class="tc item-quantity quantity_select"/>
                                         <a class="remove btn-delete"
-                                           style="cursor: pointer; float: right; margin-top: 4px"
+                                           style="cursor: pointer; float: right; margin-top: 4px; color: white"
                                            onclick="Eliminate({{ p.pk }})">
                                             <i class=" fa fa-trash-o">
                                             </i>
@@ -143,7 +143,7 @@
                                 </div>
                             </div>
                         {% endfor %}
-                        <div style="margin-bottom: 30px; float: right">
+                        <div style="margin-bottom: 30px; margin-top: 10px; float: right">
                             {% if on_hold.is_valid %}
                                 <a href="/info_client/" id="payment_button" class="remove btn-buy">
                                     <i class=" fa fa-shopping-cart" style="padding-top: 17px">
@@ -182,7 +182,7 @@
                                 {% for p in s.products.all %}
                                     <li>
                                         <a style="color: #004024"
-                                           href="/product/{{ p.product.pk }}/">{{ p.amount }} {{ p.product.name }}
+                                           href="/{{ p.product.category.slug }}/{{ p.product.slug }}/">{{ p.amount }} {{ p.product.name }}
                                             - {{ p.to_show_old_cart }}</a>
                                     </li>
                                 {% endfor %}
@@ -230,6 +230,7 @@
 
                 request.done(function (data) {
                     $('#product_' + id).slideUp(250);
+                    $('#product_mobile' + id).slideUp(250);
                     var timeoutID;
                     document.getElementById("carrito").innerHTML = "Carrito: " + data['cant'] + " Items";
                     document.getElementById("total_price").innerHTML = "Total: " + data['total'];
@@ -294,12 +295,20 @@
                         document.getElementById("succes_" + pk).setAttribute("style", "display: none");
                     }
 
-                    if (data['valid_com'])
+                    if (data['valid_com']) {
                         $("#payment_button").removeClass("disabled").css("cursor", "pointer");
-                    else
-                        $("#payment_button").addClass("disabled").css("cursor", "default").click(function () {
+                        document.getElementById("payment_button").onclick = function () {
+                            return true;
+                        };
+                    }
+                    else {
+                        $("#payment_button").addClass("disabled").css("cursor", "default");
+                        document.getElementById("payment_button").onclick = function () {
                             return false;
-                        });
+                        };
+                    }
+
+
                     if (data['prod_price']) {
                         var new_price = data['prod_price'];
 

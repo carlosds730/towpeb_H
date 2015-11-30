@@ -3,28 +3,110 @@
 
 {% block content %}
     <h1 id="home" style="text-align: center;">Flagship Store (Madrid)</h1>
-    <div style="text-align: center;  margin-bottom: 20px">
-        <img style="margin-bottom: 20px" src='{% static 'img/Tienda.jpg' %}'/>
+    <div class="row shop_container">
+        <div class="picture_holder_shop">
+            <img style="margin-bottom: 20px" src='{% static 'img/Tienda.jpg' %}'/>
+        </div>
+        <div class="row other_cantainer">
+            <div class="left">
+                Here goe the map
+            </div>
+            <div class="right">
+                <h3>Hutton Store Brands</h3>
 
-        {#        <p style="text-align: center;">.#}
-        {#            Desde Hutton ?? pensamos que era muy importante rescatar la historia del lugar donde se iba a crear nuestra primera tienda #HuttonStore.</p>#}
-        {##}
-        {#        <p>Después de mucho trabajo, esfuerzo y cariño en el proyecto podemos anunciar que ¡abrimos nuestras puertas!.</p>#}
-        {##}
-        {#        <p>No estamos solos, en este espacio podréis encontrar marcas como:</p>#}
-        {##}
-        {#        <div>#}
-        {#            <p>Biombo 13 ??</p>#}
-        {#            <p>C21 bebrave ??</p>#}
-        {#            <p>Diplomatic ??</p>#}
-        {#            <p>Flyhigh Sunglasses ??</p>#}
-        {#            <p>Four Cottons ??</p>#}
-        {#            <p>MTassels ????</p>#}
-        {#            <p>Neckabout ??</p>#}
-        {#            <p>Oui petit ??</p>#}
-        {#            <p>Pocketshirts ??</p>#}
-        {#        </div>#}
-        {#        <br>#}
-        {#        Dirección Calle Padilla 4 (esq. Calle Serrano) Madrid.#}
+                <div class="row_brand">
+                    <div class="row_brand_third">
+                        <a href="http://www.mtassels.com" target="_blank">
+                            <img src="{% static 'img/brands/mtassels logo.png' %}">
+                        </a>
+                    </div>
+                    <div class="row_brand_third" style="padding-top: 4%">
+                        {#                    <div style="background-color: brown">#}
+                        <a href="http://neckabout.es" target="_blank">
+                            <img src="{% static 'img/brands/neckabout logo_1.png' %}">
+                        </a>
+                        {#                    </div>#}
+                    </div>
+                    <div class="row_brand_third" style="padding-top: 4%">
+                        <a href="http://www.biombo13.net" target="_blank">
+                            <img src="{% static 'img/brands/biombo13 logo.png' %}">
+                        </a>
+                    </div>
+                </div>
+                <div class="row_brand">
+                    <div class="row_brand_third">
+                        <div style="background-color: brown">
+                            <a href="http://ptsshop.es/es/" target="_blank">
+                                <img src="{% static 'img/brands/pocketshirt logo.jpg' %}">
+                            </a>
+                        </div>
+                    </div>
+                    <div class="row_brand_third">
+                        <a href="http://www.c21bebrave.com" target="_blank">
+                            <img src="{% static 'img/brands/c21bebrave logo.jpg' %}">
+                        </a>
+                    </div>
+                    <div class="row_brand_third">
+                        <a href="http://www.flyhigh.es" target="_blank">
+                            <img src="{% static 'img/brands/flyhigh logo.jpg' %}">
+                        </a>
+                    </div>
+                </div>
+                <div class="row_brand">
+                    <div class="row_brand_third">
+                        {#                    <a href="http://www.mtassels.com" target="_blank">#}
+                        <img src="{% static 'img/brands/fourcottons logo.png' %}">
+                        {#                    </a>#}
+                    </div>
+                    <div class="row_brand_third">
+                        <a href="http://www.diplomaticbrand.com/" target="_blank">
+                            <img src="{% static 'img/brands/diplomaticbrand logo.png' %}">
+                        </a>
+                    </div>
+                    <div class="row_brand_third" style="padding-top: 9%">
+                        <a href="http://masgemelos.net/" target="_blank">
+                            <img src="{% static 'img/brands/masgemelos logo.jpg' %}">
+                        </a>
+                    </div>
+                </div>
+                <div class="row_brand">
+                    <div class="row_brand_half">
+                        <a href="http://ouipetit.com/" target="_blank">
+                            <img src="{% static 'img/brands/ouipetit logo.png' %}">
+                        </a>
+                    </div>
+                    <div class="row_brand_half">
+                        <a href="http://www.mac-navy.com/" target="_blank">
+                            <img src="{% static 'img/brands/mac-navy logo.jpg' %}">
+                        </a>
+                    </div>
+                </div>
+                <div class="row_brand">
+                <span class="social-links new_links">
+                            <a href="http://www.facebook.com/huttonofficial" title="Síguenos en Facebook!"><span
+                                    class="shopify-social-icon-facebook-circle"></span></a>
+{#                            <a href="http://twitter.com/hutton_official" title="Síguenos en Twitter!"><span#}
+{#                                    class="shopify-social-icon-twitter-circle"></span></a>#}
+{#                            <a href="https://pinterest.com/shopify/" title="Síguenos en Pinterest!"><span class="shopify-social-icon-wordpress"></span></a>#}
+{#                            <a href="https://plus.google.com/+shopify" title="Síguenos en Google+!" rel="publisher"><span class="shopify-social-icon-googleplus-circle"></span></a>#}
+                            <a href="http://instagram.com/hutton_official" title="Síguenos en Instagram!"><span
+                                    class="shopify-social-icon-instagram-circle"></span></a>
+{#                            <a href="https://vimeo.com/shopify" title="Síguenos en Vimeo!"><span class="shopify-social-icon-vimeo-circle"></span></a>#}
+                            <a href="http://www.youtube.com/user/huttonoffical" title="Síguenos en YouTube!"><span
+                                    class="shopify-social-icon-youtube-circle"></span></a>
+                            <a title="Síguenos en SnapChast!">
+                                <span
+                                        class="shopify-social-icon-snap-circle"></span></a>
+                            <a class="snap snap_store" style="color: black">
+                                <span>@hutton_official</span>
+                            </a>
+
+                        </span>
+                </div>
+            </div>
+        </div>
     </div>
+
+
+
 {% endblock %}

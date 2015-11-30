@@ -3,5 +3,9 @@ OLD: merchant account ID
 DONE: When I type and address it should be saved.
 DONE: Send emails to clients and Hutton people when a purchase has been made.
 DONE: Fix the problem when the client doesn't wanna save his personal data.
-TODO: Social network things (how to Share, Tweet, Pin It and Fancy)
-TODO: Do the Lookbook page.
+DONE: Do the Lookbook page.
+DONE: Add a price to Sale Product. Every time the purchase is saved it should be recalculated.
+TODO: Add an amount field for product (to see how many units of that product are)
+DONE: Fix the table width (address width should be fixed).
+TODO: Call slugify_all, fix_sale_product_price and fix_some_shops after migrate.
+TODO: Fix 404 pages (call fail instead)

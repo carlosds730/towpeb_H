@@ -9,6 +9,7 @@ from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.rl_config import defaultPageSize
 from reportlab.lib.units import inch
 
+from Shop_Site.extra_functions import random_string as rs
 from Shop_Site.models import shipping_Cost
 from towpeb_H.settings import BASE_DIR
 
@@ -21,7 +22,7 @@ def myFirstPage(canvas, doc):
     canvas.saveState()
     canvas.setFont('Helvetica', 26)
     canvas.drawCentredString(PAGE_WIDTH / 2.0, PAGE_HEIGHT - 108, Title[-1])
-    print(Title)
+    # print(Title)
     canvas.setFont('Helvetica', 11)
     canvas.drawString(inch, 0.75 * inch, "Hutton | Página %d" % doc.page)
     canvas.restoreState()
@@ -93,7 +94,6 @@ def CreatePDF(purchase, client):
         dirr = os.path.join(BASE_DIR, 'client_tickets')
         return os.path.join(dirr, "%s_CLIENT.pdf" % purchase.transaction_id)
     else:
-        print('Here')
         dirr = os.path.join(BASE_DIR, 'tickets')
         return os.path.join(dirr, "%s.pdf" % purchase.transaction_id)
 
@@ -102,9 +102,10 @@ def createTable(purchase):
     data = getHeaders(["Producto", "Cantidad", "Precio Unitario", "Precio Total"])
     for sale_product in purchase.products.all():
         data.append(
-            [sale_product.to_show_email(), sale_product.amount, sale_product.product.price, sale_product.price()])
+            [sale_product.to_show_email(), sale_product.amount, str(sale_product.price_sale) + ' €',
+             sale_product.price()])
 
-    P = Paragraph('''<para align=center><b>%s</b></para>''' % purchase.total_price_with_taxes()[0], styles["BodyText"])
+    P = Paragraph('''<para align=center><b>%s</b></para>''' % (str(purchase.monto) + ' €'), styles["BodyText"])
     data.append(['Envío', '', '', shipping_Cost()[1] + ' €'])
     data.append(['', '', '', P])
 
@@ -121,6 +122,73 @@ def createTable(purchase):
                            ]))
 
     return t
+
+
+def CreateReportPDF(queryset):
+    report_id = rs(7)
+    Title.append('Reporte %s' % report_id)
+    dirr = os.path.join(BASE_DIR, 'media', 'reportes')
+    # print(dirr)
+    doc = SimpleDocTemplate(os.path.join(dirr, "Reporte_%s.pdf" % report_id))
+
+    Story = [Spacer(1, 1 * inch)]
+
+    tabla, total, t_1 = createTableReport(queryset)
+
+    Story.append(tabla)
+    Story.append(t_1)
+
+    doc.build(Story, onFirstPage=myFirstPage, onLaterPages=myLaterPages)
+
+    return "Reporte_%s.pdf" % report_id, total
+
+
+def createTableReport(queryset):
+    data = getHeaders(["Id", "Cliente", "Dirección de envío", "Fecha", "Pagado", "Monto"])
+    total = 0
+    for q in queryset.all():
+        if q.address():
+            dirr_P = Paragraph('''<para align=center>%s</para>''' % q.address(), styles["BodyText"])
+        if q.client:
+            name_P = Paragraph('''<para align=center>%s</para>''' % q.client.full_name(), styles["BodyText"])
+        data.append(
+            [q.pk, name_P if q.client else "(Nada)", dirr_P if q.address() else "(Nada)", q.date,
+             q.pagado_to_spanish(),
+             q.Costo()])
+        total += q.monto
+
+    total = str(total) + ' €'
+
+    t = Table(data, colWidths=(30, 120, 160, 60, 50, 60), splitByRow=True)
+    t.setStyle(TableStyle([('TEXTCOLOR', (1, 1), (-2, -2), colors.black),
+                           # ('TEXTCOLOR', (0, 0), (0, -1), colors.blue),
+                           ('ALIGN', (0, 1), (-1, -1), 'CENTER'),
+                           ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+                           ('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black),
+                           ('BOX', (0, 0), (-1, -1), 0.25, colors.black),
+
+                           # ('BOX', (-1, -1), (-1, -1), 0.25, colors.black),
+                           # ('SPAN', (0, -2), (-2, -2)),
+                           # ('SPAN', (0, -1), (-2, -1))
+                           ]))
+
+    data_new = []
+    P = Paragraph('''<para align=center><b>%s</b></para>''' % total, styles["BodyText"])
+    data_new.append(['', '', '', '', '', P])
+    t_1 = Table(data_new, colWidths=(30, 120, 160, 60, 50, 60), splitByRow=True)
+    t_1.setStyle(TableStyle([('TEXTCOLOR', (1, 1), (-2, -2), colors.black),
+                             # ('TEXTCOLOR', (0, 0), (0, -1), colors.blue),
+                             ('ALIGN', (0, 1), (-1, -1), 'CENTER'),
+                             ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+                             # ('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black),
+                             ('BOX', (-1, -1), (-1, -1), 1, colors.black),
+                             ('LINEABOVE', (0, -1), (-1, -1), 1, colors.black),
+                             # ('BOX', (-1, -1), (-1, -1), 0.25, colors.black),
+                             # ('SPAN', (0, -2), (-2, -2)),
+                             ('SPAN', (0, -1), (-2, -1))
+                             ]))
+
+    return t, total, t_1
 
 
 def generateInfoClient(purchase, Story):

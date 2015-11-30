@@ -5,19 +5,20 @@ import string
 
 import braintree
 import django.utils.timezone as tz
-from django.http import HttpResponseRedirect, Http404, HttpResponse
-from django.views.decorators.csrf import csrf_exempt
-from django.shortcuts import render, redirect
-from django.core.validators import validate_email
 from django.core.mail import EmailMessage
+from django.core.validators import validate_email
+from django.http import HttpResponseRedirect, Http404, HttpResponse
+from django.shortcuts import render, redirect
 
-from Shop_Site.extra_functions import hash, create_unique_id, create_sha, create_sha_2
+from django.views.decorators.csrf import csrf_exempt
+
 from Shop_Site import models
 from Shop_Site import stopwords
-from towpeb_H.settings import WEB_SITE_URL as site_url
-from towpeb_H.settings import TPV_KEY as tpv_key
-from towpeb_H.settings import TPV_FUC as tpv_fuc
+from Shop_Site.extra_functions import hash, create_unique_id, create_sha, create_sha_2
 from Shop_Site.repots import CreatePDF
+from towpeb_H.settings import TPV_FUC as tpv_fuc
+from towpeb_H.settings import TPV_KEY as tpv_key
+from towpeb_H.settings import WEB_SITE_URL as site_url
 
 
 def random_string(length=16):
@@ -28,13 +29,16 @@ def get_login(cookies):
     try:
         user = cookies['user']
         password = cookies['password']
-        client = models.Clients.objects.get(email=user)
-        if password == client.password:
-            if client.name:
-                return client.pk, client.name
-            else:
-                return client.pk, client.email
-        return None
+        try:
+            client = models.Clients.objects.get(email=user)
+            if password == client.password:
+                if client.name:
+                    return client.pk, client.name
+                else:
+                    return client.pk, client.email
+            return None
+        except models.Clients.DoesNotExist:
+            return None
     except KeyError:
         return None
 
@@ -254,17 +258,27 @@ def order_by_price(products):
 
 def get_all_products(products):
     res_prod = []
-    for p in products.order_by('-pk'):
-        if p.old_price:
-            res_prod.append((p.pk, p.name, p.short_description, p.get_thumb(), None, p.color, p.sold_out(),
-                             str(p.price), str(p.old_price), None, p.percent))
+    finals = []
+    for p in products:
+        if p.sold_out():
+            if p.old_price:
+                res_prod.append((p.pk, p.name, p.short_description, p.get_thumb(), None, p.color, p.sold_out(),
+                                 str(p.price), str(p.old_price), None, p.percent, p.slug))
+            else:
+                res_prod.append((p.pk, p.name, p.short_description, p.get_thumb(), None, p.color, p.sold_out(),
+                                 str(p.price), None, None, p.percent, p.slug))
         else:
-            res_prod.append((p.pk, p.name, p.short_description, p.get_thumb(), None, p.color, p.sold_out(),
-                             str(p.price), None, None, p.percent))
+            if p.old_price:
+                finals.append((p.pk, p.name, p.short_description, p.get_thumb(), None, p.color, p.sold_out(),
+                               str(p.price), str(p.old_price), None, p.percent, p.slug))
+            else:
+                finals.append((p.pk, p.name, p.short_description, p.get_thumb(), None, p.color, p.sold_out(),
+                               str(p.price), None, None, p.percent, p.slug))
+    res_prod.extend(finals)
     return res_prod
 
 
-def categories(request, pk):
+def categories(request, slug):
     if request.is_ajax():
         log = get_login(request.COOKIES)
         try:
@@ -273,7 +287,7 @@ def categories(request, pk):
             return HttpResponse(json.dumps({}), content_type='application/json')
         result = []
         try:
-            product = models.Products.objects.filter(category__pk=int(pk), is_available=True)
+            product = models.Products.objects.filter(category__slug=slug, is_available=True)
         except Exception:
             return HttpResponse(json.dumps({}), content_type='application/json')
         if product:
@@ -298,18 +312,17 @@ def categories(request, pk):
         return HttpResponse(json.dumps(response_data), content_type='application/json')
     elif request.method == 'GET':
         try:
-            category = models.Category.objects.get(pk=int(pk))
+            category = models.Category.objects.get(slug=slug)
         except models.Category.DoesNotExist:
             category = None
         except ValueError:
             category = None
         if category:
-            products = models.Products.objects.filter(category__pk=category.pk, is_available=True)
+            products = models.Products.objects.filter(category__slug=category.slug, is_available=True)
             return add_info_home(request, {'category': category, 'products': get_all_products(products)},
                                  'products_collection.html')
         else:
             raise Http404('Esa categoría no existe')
-
     elif request.method == 'POST':
         log = None
         try:
@@ -338,7 +351,7 @@ def categories(request, pk):
         except models.Attribute.DoesNotExist:
             raise Http404('Not Found')
         try:
-            category = models.Category.objects.get(pk=int(pk))
+            category = models.Category.objects.get(slug=slug)
         except models.Category.DoesNotExist:
             category = None
             raise Http404('Not Found')
@@ -404,9 +417,9 @@ def categories(request, pk):
                              'products_collection.html')
 
 
-def products(request, pk):
+def products(request, slug, cat_slug):
     try:
-        product = models.Products.objects.get(pk=int(pk), is_available=True)
+        product = models.Products.objects.get(slug=slug, is_available=True)
     except models.Products.DoesNotExist:
         product = None
     except ValueError:
@@ -570,6 +583,7 @@ def cart_shop(request):
                     break
 
             if my_car:
+                my_car.save()
                 return HttpResponse(json.dumps(
                     {'valid': sale_prod.valid(), 'prod_price': sale_prod.price(), 'total': my_car.total_price(),
                      'valid_com': my_car.is_valid()}), content_type='application/json')
@@ -600,11 +614,14 @@ def cart_shop(request):
             try:
                 _pk = int(request.COOKIES['purchase'])
                 purchase = models.Purchase.objects.get(pk=_pk)
-                return add_info_home(request, {'on_hold': purchase, 'shops': []}, 'cart_shop.html')
+                if purchase.on_hold:
+                    return add_info_home(request, {'on_hold': purchase, 'shops': []}, 'cart_shop.html')
+                else:
+                    raise Http404('Carrito no encontrado')
             except KeyError:
                 return HttpResponseRedirect('/login/')
             except models.Purchase.DoesNotExist:
-                raise Http404('Purchase not found')
+                raise Http404('Carrito no encontrado')
 
 
 def about_us(request):
@@ -671,7 +688,7 @@ def send_mail_owners(purchase):
     message = "Estimado " + purchase.client.full_name() + "\n Le informamos que su pedido se ha completado con éxito y se encuentra en proceso de envío.\n Desde Hutton le agradecemos la confianza depositada en nuestra marca y esperamos que su experiencia de compra sea excelente. \n Para cualquier duda o consulta le facilitamos nuestro correo electrónico operativo 24H.\n info@hutton.es\n Saludos,\n Hutton."
 
     mail_client = EmailMessage(subject='Ticket de compra online en Hutton', body=message,
-                               from_email='huttontextil@gmail.com', to=[purchase.client.email],
+                               from_email='pedidos@hutton.es', to=[purchase.client.email],
                                headers={'Message-ID': 'foo'})
 
     mail_client.attach_file(toclient)
@@ -749,7 +766,7 @@ def info_client(request):
                 return HttpResponseRedirect('/login/')
         else:
             purchase = get_purchase(request.COOKIES)
-            if purchase:
+            if purchase and purchase.on_hold:
                 return add_info_home(request, {'on_hold': purchase, 'shops': [], 'already_login': already_login},
                                      'info_client.html')
             else:
@@ -1021,7 +1038,7 @@ def payment_billing(request):
         else:
             purchase = get_purchase(request.COOKIES)
 
-            if purchase:
+            if purchase and purchase.on_hold:
                 purchase.transaction_id = create_unique_id(purchase.pk)
                 purchase.date = tz.now()
                 purchase.save()

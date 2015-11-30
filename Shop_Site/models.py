@@ -1,22 +1,15 @@
 # -*- coding: utf8 -*-
 import random
-from urllib.parse import urljoin
 from decimal import *
+from urllib.parse import urljoin
 
 import django.utils.timezone as tz
-from django.db import models
 from django.core.exceptions import ValidationError
+from django.db import models
 from sorl.thumbnail import ImageField
+from django.core.urlresolvers import reverse
 
 from towpeb_H.settings import WEB_SITE_URL as web_site_url
-
-
-
-
-
-
-
-
 
 
 # TODO: Terminar de poner la tallas q faltan, estas fueron la unicas que se me ocurrieron
@@ -30,6 +23,10 @@ def validate(number):
     if number >= 0:
         return number
     raise ValidationError('%s No es un precio valido' % number)
+
+
+def validate_image():
+    pass
 
 
 class FrontImg(models.Model):
@@ -71,11 +68,14 @@ class Products(models.Model):
     class Meta:
         verbose_name = 'Producto'
         verbose_name_plural = 'Productos'
+        ordering = ['-sort_order']
 
     name = models.CharField(verbose_name='Nombre', max_length=200, help_text='Nombre del producto')
 
     cod_ref = models.CharField(verbose_name='Código de referencia', max_length=100,
                                help_text='Código único que define a un producto')
+
+    slug = models.SlugField(verbose_name='Slug', max_length=200, help_text='Este campo no se edita')
 
     category = models.ForeignKey('Category', verbose_name='Categoría a la que pertenece', blank=True, null=True,
                                  help_text='La categoría a la que pertenece el producto')
@@ -85,24 +85,27 @@ class Products(models.Model):
     description = models.TextField(verbose_name='Descripción', help_text='Descripción del producto', null=True,
                                    blank=True)
 
+    sort_order = models.IntegerField(verbose_name='Número de orden', default=1,
+                                     help_text='Este número da el oreden del producto a la hora de mostrarse, '
+                                               'se ordena decreciente')
+
     short_description = models.TextField(verbose_name='Descripción breve', max_length=100,
                                          help_text='Breve descripción del producto', null=True, blank=True)
 
     image = ImageField(verbose_name='Imagen Principal', upload_to='Pictures',
-                       help_text='Foto del principal producto', null=True, blank=True)
+                       help_text='Foto del principal producto')
 
     color = models.CharField(verbose_name='Color', max_length=50, help_text='Color del producto')
 
     price = models.DecimalField(verbose_name='Precio actual', default=0, max_digits=10, decimal_places=2,
-                                help_text='Precio real del producto', validators=[validate])
+                                help_text='Precio actual del producto', validators=[validate])
 
-    old_price = models.DecimalField(verbose_name='Precio antiguo de oferta', default=None, max_digits=10,
+    old_price = models.DecimalField(verbose_name='Precio antiguo', default=None, max_digits=10,
                                     decimal_places=2, null=True, blank=True,
-                                    help_text='Precio anterior del producto si esta en oferta, sino dejar en blanco',
+                                    help_text='Precio anterior del producto (usar solo si el producto está en oferta, sino dejar en blando)',
                                     validators=[validate])
 
-    percent = models.IntegerField(verbose_name='Porciento', default=None, null=True, blank=True,
-                                  help_text='Porciento de la oferta, sino dejar en blanco')
+    percent = models.IntegerField(verbose_name='Porciento de descuento', default=None, null=True, blank=True)
 
     label = models.CharField(verbose_name='Etiquetas', max_length=200, blank=True, null=True,
                              help_text='Palabras claves que describan al producto que lo ayuden a ser encontrado '
@@ -129,14 +132,22 @@ class Products(models.Model):
         return count
 
     def get_absolute_url(self):
-        from django.core.urlresolvers import reverse
-        return reverse('product', args=[str(self.pk)])
+        return reverse('product', kwargs={'cat_slug': self.category.slug, 'slug': self.slug})
 
     def get_full_url(self):
         return urljoin(web_site_url, self.get_absolute_url())
 
     def total_price(self):
         return str(self.price) + ' €'
+
+    def save(self, *args, **kwargs):
+        self.percent = 100 - self.price / self.old_price * 100 if self.old_price else 0
+        super(Products, self).save(*args, **kwargs)
+        for sale_pro in self.sale_product_set.all():
+            for pur in sale_pro.purchase.all():
+                if pur.on_hold:
+                    sale_pro.save()
+                    pur.save()
 
 
 class Attribute(models.Model):
@@ -167,10 +178,15 @@ class Category(models.Model):
     description = models.TextField(verbose_name='Descripción', max_length=500, help_text='Descripción de la categoría',
                                    blank=True, null=True)
 
+    slug = models.SlugField(verbose_name='Slug', max_length=200, help_text='Este campo no se edita')
+
     parent = models.ForeignKey('Category', verbose_name='Padre', blank=True, null=True, help_text='Categoría padre')
 
     image = ImageField(verbose_name='Imagen', upload_to='Pictures', help_text='Foto de la categoría', null=True,
                        blank=True)
+
+    def get_absolute_url(self):
+        return reverse('categories', kwargs={'slug': self.slug})
 
     def __str__(self):
         return str(self.name)
@@ -195,6 +211,7 @@ class Clients(models.Model):
     class Meta:
         verbose_name = 'Cliente'
         verbose_name_plural = 'Clientes'
+        ordering = ['name', 'last_name']
 
     name = models.CharField(verbose_name='Nombre', max_length=200, help_text='Nombre del cliente')
 
@@ -209,7 +226,7 @@ class Clients(models.Model):
                                    help_text='Es para cuando un cliente pidió no salvar sus datos', default=False)
 
     def __str__(self):
-        return str(self.name)
+        return self.full_name()
 
         # def save(self, *args, **kwargs):
         # if self.password:
@@ -238,9 +255,9 @@ class Purchase(models.Model):
     on_hold = models.BooleanField(verbose_name='En espera', default=True,
                                   help_text='Define si la compra no se ha realizado')
 
-    # when the hasn't been payed date represents the date the of the first purchase made in this cart.
-    # when the Purchase has been settled for payment date represents the date when this happened.
-    date = models.DateField(verbose_name='Fecha', default=tz.now(), blank=True, null=True,
+    # when the purchase hasn't been payed, date represents the date the of the first purchase made in this cart.
+    # when the Purchase has been settled for payment, date represents the date when this happened.
+    date = models.DateField(verbose_name='Fecha', default=tz.now, blank=True, null=True,
                             help_text='Fecha en que se realiza la compra')
     # DONE: Why?
     amount = models.IntegerField(verbose_name='Cantidad', default=1,
@@ -249,14 +266,27 @@ class Purchase(models.Model):
     transaction_id = models.CharField(verbose_name='Id de la Transacción', default='', max_length=700,
                                       help_text='Numero de la transacción')
 
+    monto = models.DecimalField(verbose_name='Monto', max_length=50, decimal_places=2, max_digits=10)
+
     def __str__(self):
         return str(self.pk)
 
-    def addreess(self):
-        if self.client:
+    # __str__.short_description = 'Dirección entrega'
+    # __str__.admin_order_field = 'pk'
+
+    def number(self):
+        return str(self.pk)
+
+    number.short_description = 'Carrito'
+    number.admin_order_field = 'pk'
+
+    def address(self):
+        if self.client and hasattr(self.client, 'address'):
             return str(self.client.address)
         else:
             return None
+
+    address.short_description = 'Dirección de entrega'
 
     def is_valid(self):
         for p in self.products.all():
@@ -280,9 +310,13 @@ class Purchase(models.Model):
         total = shipping_Cost()[0]
         for p in self.products.all():
             total += p.product.price * p.amount
-        print(total)
-        print(str(total * 100).split('0')[0])
         return str(total) + ' €', str(total), str(total * 100).split('.')[0]
+
+    def total_price_after_sale(self):
+        total = shipping_Cost()[0]
+        for p in self.products.all():
+            total += p.price_sale * p.amount
+        return str(total) + ' €', str(total)
 
     def discount(self):
         if self.on_hold:
@@ -295,6 +329,33 @@ class Purchase(models.Model):
             for sale_product in self.products.all():
                 sale_product.attribute.save()
                 sale_product.save()
+            self.save()
+
+    def Pagado(self):
+        return not self.on_hold
+
+    def pagado_to_spanish(self):
+        return 'Sí' if not self.on_hold else 'No'
+
+    Pagado.boolean = True
+    Pagado.admin_order_field = '-on_hold'
+
+    def Costo(self):
+        return str(self.monto) + ' €'
+
+    Costo.admin_order_field = 'monto'
+    Costo.short_description = 'Monto'
+
+    def save(self, *args, **kwargs):
+        try:
+            if self.on_hold:
+                self.monto = self.total_price_two()[1]
+            else:
+                self.monto = self.total_price_after_sale()[1]
+        except Exception as e:
+            print(e)
+            self.monto = 0
+        super(Purchase, self).save(*args, **kwargs)
 
 
 class Sale_Product(models.Model):
@@ -308,17 +369,19 @@ class Sale_Product(models.Model):
 
     amount = models.IntegerField(verbose_name='Cantidad', default=0, null=True, blank=True)
 
+    price_sale = models.DecimalField(verbose_name='Precio', default=0, max_length=50, decimal_places=2, max_digits=10)
+
     def __str__(self):
         return str(self.product) + ' ' + str(self.attribute)
 
     def price(self):
-        return str(self.product.price * self.amount) + ' €'
+        return str(self.price_sale * self.amount) + ' €'
 
     def valid(self):
         return self.amount <= self.attribute.amount
 
     def to_show_old_cart(self):
-        total = self.product.price * self.amount
+        total = self.price_sale * self.amount
         return 'Talla: ' + str(
             self.attribute.size + ' - ' 'Color: ' + self.product.color + ' - ' + 'Precio Total: ' + str(total) + '€')
 
@@ -344,6 +407,17 @@ class Sale_Product(models.Model):
                 purchase.amount += 1
                 purchase.save()
                 self.save()
+
+    def save(self, *args, **kwargs):
+        try:
+            if not self.purchase.all()[0].on_hold:
+                super(Sale_Product, self).save(*args, **kwargs)
+            else:
+                self.price_sale = self.product.price
+                super(Sale_Product, self).save(*args, **kwargs)
+        except Exception as e:
+            self.price_sale = self.product.price
+            super(Sale_Product, self).save(*args, **kwargs)
 
 
 class Pictures(models.Model):
