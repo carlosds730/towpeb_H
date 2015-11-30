@@ -29,7 +29,7 @@ SECRET_KEY = 'f-!cid_mmvn(8f+7wz6^vh#qwx3-zf303i-y)%kb3pkb9r(%be'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-SECURE_SSL_REDIRECT = True
+# SECURE_SSL_REDIRECT = True
 
 ALLOWED_HOSTS = ['*']
 
