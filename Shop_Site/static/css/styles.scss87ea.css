@@ -4057,12 +4057,12 @@ button.close {
 
 .other_cantainer > .left {
     float: left;
-    width: 45%;
+    width: 49%;
 }
 
 .other_cantainer > .right {
     float: right;
-    width: 45%;
+    width: 49%;
 }
 
 .new_links > a > span:before {
