@@ -9,7 +9,6 @@ from django.core.mail import EmailMessage
 from django.core.validators import validate_email
 from django.http import HttpResponseRedirect, Http404, HttpResponse
 from django.shortcuts import render, redirect
-
 from django.views.decorators.csrf import csrf_exempt
 
 from Shop_Site import models
@@ -322,6 +321,8 @@ def categories(request, slug):
             return add_info_home(request, {'category': category, 'products': get_all_products(products)},
                                  'products_collection.html')
         else:
+            if slug == 'admin':
+                return HttpResponseRedirect("/admin/")
             raise Http404('Esa categoría no existe')
     elif request.method == 'POST':
         log = None

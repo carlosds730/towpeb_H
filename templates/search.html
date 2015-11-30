@@ -14,7 +14,7 @@
             {% else %}
             <ul>
                 {% for product in results %}
-                    <li><a style="color: #004024" href="/product/{{ product.pk }}/">{{ product.name }}</a></li>
+                    <li><a style="color: #004024" href="{{ product.get_absolute_url }}/">{{ product.name }}</a></li>
                 {% endfor %}
             </ul>
             {% endif %}
