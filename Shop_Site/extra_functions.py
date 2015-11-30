@@ -65,14 +65,14 @@ def fix_monto():
 
 
 def fix_sale_product_price():
-    set_discount()
+    # set_discount()
     for x in models.Purchase.objects.all():
         for pro in x.products.all():
             if not x.on_hold:
                 pro.price_sale = pro.product.price
             pro.save()
         x.save()
-    reverse_discount()
+        # reverse_discount()
 
 
 def set_discount():

@@ -63,7 +63,7 @@
 
                         <h1 class="title" itemprop="name">{{ product.name }}</h1>
 
-                        <form id="add-item-form" action="/categories/{{ product.category.slug }}/" method="post"
+                        <form id="add-item-form" action="/{{ product.category.slug }}/" method="post"
                               class="variants clearfix">{% csrf_token %}
                             <!-- Begin product options -->
                             <div class="product-options">
