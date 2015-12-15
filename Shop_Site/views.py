@@ -6,6 +6,7 @@ import string
 import braintree
 import django.utils.timezone as tz
 from django.core.mail import EmailMessage
+
 from django.core.validators import validate_email
 
 from django.http import HttpResponseRedirect, Http404, HttpResponse
@@ -705,7 +706,7 @@ def send_mail_owners(purchase):
     message = "Información de la compra con Id %s" % purchase.transaction_id
 
     mail_client = EmailMessage(subject='%s Nueva compra online' % purchase.transaction_id, body=message,
-                               from_email='huttontextil@gmail.com', to=['pedidos@hutton.es'],
+                               from_email='pedidos@hutton.es', to=['pedidos@hutton.es'],
                                headers={'Message-ID': 'foo'})
 
     mail_client.attach_file(toowner)
@@ -734,7 +735,7 @@ def send_mail_new_client(client):
         client.full_name(), "https://www.hutton.es", "info@hutton.es")
 
     msg = EmailMessage(subject='Su nueva cuenta en Hutton.es', body=html_content, from_email='info@hutton.es',
-                       to=[client.email])
+                       to=[client.email], reply_to='info@hutton.es', headers={'Message-ID': 'foo'})
     msg.content_subtype = "html"  # Main content is now text/html
     try:
         msg.send()
