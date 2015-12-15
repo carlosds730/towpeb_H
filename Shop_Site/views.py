@@ -7,6 +7,7 @@ import braintree
 import django.utils.timezone as tz
 from django.core.mail import EmailMessage
 from django.core.validators import validate_email
+
 from django.http import HttpResponseRedirect, Http404, HttpResponse
 
 from django.shortcuts import render, redirect
@@ -720,7 +721,8 @@ def send_mail_pass(client):
     html_content = '<p>Estimado %s </p> <p>Haga click en el siguiente enlace para cambiar su contraseña en Hutton.es</p> <a href="%s">%s</a> <p>Atentamente,</p><p>Equipo de Hutton</p> ' % (
         client.full_name(), url, url)
 
-    msg = EmailMessage('Su nueva cuenta en Hutton.es', html_content, 'info@hutton.es', [client.email])
+    msg = EmailMessage(subject='Su nueva cuenta en Hutton.es', body=html_content, from_email='info@hutton.es',
+                       to=[client.email])
     msg.content_subtype = "html"  # Main content is now text/html
 
     msg.send()
@@ -728,11 +730,11 @@ def send_mail_pass(client):
 
 
 def send_mail_new_client(client):
-    url = site_url
-    html_content = '<p>Estimado %s </p> <p>Muchas gracias por darse de alta en nuestra cartera de clientes. Le mantendremos informado de todas las novedades, promociones y eventos que Hutton realice.</p> <p>Aprovechamos para informarle que puede encontrarnos en nuestra #Flagshipstore en la Calle Padilla 4 (28006 Madrid) y en nuestra #Onlinestore <a href="%s">Hutton.es</a></p><p>Para cualquier aclaración o duda dispone de nuestro mail disponible 24h:</p><p><a href="%s">info@hutton.es</a></p> ' % (
-        client.full_name(), "http://www.hutton.es", "info@hutton.es")
+    html_content = '<p>Estimado %s </p> <p>Muchas gracias por darse de alta en nuestra cartera de clientes. Le mantendremos informado de todas las novedades, promociones y eventos que Hutton realice.</p> <p>Aprovechamos para informarle que puede encontrarnos en nuestra #Flagshipstore en la Calle Padilla 4 (28006 Madrid) y en nuestra #Onlinestore <a href="%s">Hutton.es</a></p><p>Para cualquier aclaración o duda dispone de nuestro mail disponible 24h:</p><p><a href="mailto:%s">info@hutton.es</a></p> ' % (
+        client.full_name(), "https://www.hutton.es", "info@hutton.es")
 
-    msg = EmailMessage('Su nueva cuenta en Hutton.es', html_content, 'info@hutton.es', [client.email])
+    msg = EmailMessage(subject='Su nueva cuenta en Hutton.es', body=html_content, from_email='info@hutton.es',
+                       to=[client.email])
     msg.content_subtype = "html"  # Main content is now text/html
     try:
         msg.send()
