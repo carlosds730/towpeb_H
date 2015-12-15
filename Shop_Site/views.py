@@ -8,6 +8,7 @@ import django.utils.timezone as tz
 from django.core.mail import EmailMessage
 from django.core.validators import validate_email
 from django.http import HttpResponseRedirect, Http404, HttpResponse
+
 from django.shortcuts import render, redirect
 
 from django.views.decorators.csrf import csrf_exempt
@@ -727,7 +728,9 @@ def send_mail_pass(client):
 
 
 def send_mail_new_client(client):
-    html_content = '<p>Estimado %s </p> <p>Bienvenido a Hutton</p> <p>Atentamente,</p><p>El equipo de Hutton.es</p> ' % client.full_name()
+    url = site_url
+    html_content = '<p>Estimado %s </p> <p>Muchas gracias por darse de alta en nuestra cartera de clientes. Le mantendremos informado de todas las novedades, promociones y eventos que Hutton realice.</p> <p>Aprovechamos para informarle que puede encontrarnos en nuestra #Flagshipstore en la Calle Padilla 4 (28006 Madrid) y en nuestra #Onlinestore <a href="%s">Hutton.es</a></p><p>Para cualquier aclaración o duda dispone de nuestro mail disponible 24h:</p><p><a href="%s">info@hutton.es</a></p> ' % (
+        client.full_name(), "http://www.hutton.es", "info@hutton.es")
 
     msg = EmailMessage('Su nueva cuenta en Hutton.es', html_content, 'info@hutton.es', [client.email])
     msg.content_subtype = "html"  # Main content is now text/html
