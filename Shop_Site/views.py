@@ -9,6 +9,7 @@ from django.core.mail import EmailMessage
 from django.core.validators import validate_email
 from django.http import HttpResponseRedirect, Http404, HttpResponse
 from django.shortcuts import render, redirect
+
 from django.views.decorators.csrf import csrf_exempt
 
 from Shop_Site import models
@@ -220,6 +221,7 @@ def register(request):
                     except KeyError:
                         client = models.Clients.objects.create(email=email, password=hash(password))
                 client.save()
+                send_mail_new_client(client)
                 purchase = get_purchase(request.COOKIES)
                 if purchase:
                     purchase.client = client
@@ -722,6 +724,19 @@ def send_mail_pass(client):
 
     msg.send()
     print("message sent")
+
+
+def send_mail_new_client(client):
+    html_content = '<p>Estimado %s </p> <p>Bienvenido a Hutton</p> <p>Atentamente,</p><p>El equipo de Hutton.es</p> ' % client.full_name()
+
+    msg = EmailMessage('Su nueva cuenta en Hutton.es', html_content, 'info@hutton.es', [client.email])
+    msg.content_subtype = "html"  # Main content is now text/html
+    try:
+        msg.send()
+        print("message sent")
+    except Exception as e:
+        print("We couldn't send the email")
+        print(e)
 
 
 def info_client(request):

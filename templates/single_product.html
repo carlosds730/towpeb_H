@@ -80,7 +80,7 @@
                                     {% endif %}
 
                                     <div class="description">
-                                        <p>{{ product.description }}</p>
+                                        <p>{{ product.description|safe }}</p>
                                     </div>
                                     <div class="selector-wrapper">
                                         <label for="product-select">Tallas</label>
