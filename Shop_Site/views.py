@@ -5,6 +5,7 @@ import string
 
 import braintree
 import django.utils.timezone as tz
+
 from django.core.mail import EmailMessage
 
 from django.core.validators import validate_email
@@ -694,7 +695,7 @@ def send_mail_owners(purchase):
     message = "Estimado " + purchase.client.full_name() + "\n Le informamos que su pedido se ha completado con éxito y se encuentra en proceso de envío.\n Desde Hutton le agradecemos la confianza depositada en nuestra marca y esperamos que su experiencia de compra sea excelente. \n Para cualquier duda o consulta le facilitamos nuestro correo electrónico operativo 24H.\n info@hutton.es\n Saludos,\n Hutton."
 
     mail_client = EmailMessage(subject='Ticket de compra online en Hutton', body=message,
-                               from_email='pedidos@hutton.es', to=[purchase.client.email],
+                               from_email='pedidos@hutton.es', to=[purchase.client.email], reply_to='info@hutton.es',
                                headers={'Message-ID': 'foo'})
 
     mail_client.attach_file(toclient)
@@ -706,7 +707,7 @@ def send_mail_owners(purchase):
     message = "Información de la compra con Id %s" % purchase.transaction_id
 
     mail_client = EmailMessage(subject='%s Nueva compra online' % purchase.transaction_id, body=message,
-                               from_email='pedidos@hutton.es', to=['pedidos@hutton.es'],
+                               from_email='pedidos@hutton.es', to=['pedidos@hutton.es'], reply_to='info@hutton.es',
                                headers={'Message-ID': 'foo'})
 
     mail_client.attach_file(toowner)
@@ -723,6 +724,7 @@ def send_mail_pass(client):
         client.full_name(), url, url)
 
     msg = EmailMessage(subject='Su nueva cuenta en Hutton.es', body=html_content, from_email='info@hutton.es',
+                       reply_to='info@hutton.es',
                        to=[client.email])
     msg.content_subtype = "html"  # Main content is now text/html
 
