@@ -17,8 +17,8 @@
 {% block form_content %}
     <h2 class="section__title">Método de pago</h2>
     <form id="braintree_form" method="post"
-          action="https://hutton.es/payment-methods/">{% csrf_token %}
-        <div class="section__content">
+          action="https://www.hutton.es/payment-methods/">{% csrf_token %}
+        <div class="section__content" style="display: none">
             <div style="margin-top: 10px; margin-bottom: 10px" id="paypal-container"></div>
         </div>
     </form>
@@ -95,7 +95,6 @@
             {#            PayPalOneTimePayment: true,#}
             locale: 'es_es',
             amount: {{ on_hold.total_price_two.1 }},
-            form: "braintree_form",
             currency: 'EUR',
             onPaymentMethodReceived: function (obj) {
                 // Do some logic in here.
