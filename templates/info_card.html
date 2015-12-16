@@ -87,7 +87,7 @@
         braintree.setup("{{ token }}", "paypal", {
             container: "paypal-container",
             singleUse: true,
-            PayPalOneTimePayment: true,
+            {#            PayPalOneTimePayment: true,#}
             locale: 'es_es',
             amount: {{ on_hold.total_price_two.1 }},
             currency: 'EUR'
