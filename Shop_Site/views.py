@@ -1118,6 +1118,7 @@ def change_password(request):
 @csrf_exempt
 def payment_methods(request):
     if request.method == 'POST':
+        print(request.POST)
         nonce = request.POST['payment_method_nonce']
 
         log = get_login(request.COOKIES)
