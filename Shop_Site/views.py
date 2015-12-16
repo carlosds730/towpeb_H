@@ -1115,6 +1115,7 @@ def change_password(request):
             raise Http404('Not Found')
 
 
+@csrf_exempt
 def payment_methods(request):
     if request.method == 'POST':
         nonce = request.POST['payment_method_nonce']
