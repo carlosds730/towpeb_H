@@ -15,7 +15,7 @@
     {#    </div>#}
 {% endblock %}
 {% block form_content %}
-    <form id="braintree_form" style="display: none" method="post" action="payment-methods">{% csrf_token %}
+    <form id="braintree_form" style="display: none" method="post" action="/payment-methods/">{% csrf_token %}
 
     </form>
     <form class="edit_checkout animate-floating-labels" action="https://sis.redsys.es/sis/realizarPago"
