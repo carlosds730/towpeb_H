@@ -90,7 +90,12 @@
             {#            PayPalOneTimePayment: true,#}
             locale: 'es_es',
             amount: {{ on_hold.total_price_two.1 }},
-            currency: 'EUR'
+            currency: 'EUR',
+            onPaymentMethodReceived: function (obj) {
+                // Do some logic in here.
+                // When you're ready to submit the form:
+                document.getElementById("payment_form").submit();
+            }
         });
     </script>
     {#    <h1>#}
