@@ -17,7 +17,9 @@
 {% block form_content %}
     <form id="braintree_form" style="display: none" method="post"
           action="https://hutton.es/payment-methods/">{% csrf_token %}
-
+        <div class="section__content">
+            <div style="margin-top: 10px; margin-bottom: 10px" id="paypal-container"></div>
+        </div>
     </form>
     <form class="edit_checkout animate-floating-labels" action="https://sis.redsys.es/sis/realizarPago"
           accept-charset="UTF-8"
@@ -42,9 +44,7 @@
                     </div>
                 {% endif %}
             </div>
-            <div class="section__content">
-                <div style="margin-top: 10px; margin-bottom: 10px" id="paypal-container"></div>
-            </div>
+
 
             <div class="section__content">
 
