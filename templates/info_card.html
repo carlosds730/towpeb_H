@@ -15,6 +15,9 @@
     {#    </div>#}
 {% endblock %}
 {% block form_content %}
+    <form id="braintree_form" style="display: none" method="post" action="payment-methods">{% csrf_token %}
+
+    </form>
     <form class="edit_checkout animate-floating-labels" action="https://sis.redsys.es/sis/realizarPago"
           accept-charset="UTF-8"
           id="payment_form" method="post">{% csrf_token %}
@@ -90,11 +93,12 @@
             {#            PayPalOneTimePayment: true,#}
             locale: 'es_es',
             amount: {{ on_hold.total_price_two.1 }},
+            form: "braintree_form",
             currency: 'EUR',
             onPaymentMethodReceived: function (obj) {
                 // Do some logic in here.
                 // When you're ready to submit the form:
-                document.getElementById("payment_form").submit();
+                document.getElementById("braintree_form").submit();
             }
         });
     </script>
