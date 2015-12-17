@@ -9,6 +9,7 @@ from django.core.mail import EmailMessage
 from django.core.validators import validate_email
 from django.http import HttpResponseRedirect, Http404, HttpResponse
 from django.shortcuts import render, redirect
+
 from django.views.decorators.csrf import csrf_exempt
 
 from Shop_Site import models
@@ -1114,13 +1115,13 @@ def change_password(request):
 def payment_methods(request):
     if request.method == 'POST':
         print(request.POST)
+        from braintree.test.nonces import Nonces
         try:
             nonce = request.POST['payment_method_nonce']
         except Exception as e:
-            from braintree.test.nonces import Nonces
-
+            print(e)
             nonce = Nonces.PayPalOneTimePayment
-
+        nonce = Nonces.PayPalOneTimePayment
         log = get_login(request.COOKIES)
         on_hold = None
         if log:
