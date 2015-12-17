@@ -17,10 +17,11 @@
 {% block form_content %}
     <h2 class="section__title">Método de pago</h2>
     <form id="braintree_form" method="post"
-          action="https://www.hutton.es/payment-methods/">{% csrf_token %}
-        <div class="section__content" style="display: none">
+          action="/payment-methods/">{% csrf_token %}
+        <div class="section__content">
             <div style="margin-top: 10px; margin-bottom: 10px" id="paypal-container"></div>
         </div>
+        <a onclick="Cosa()">Click me</a>
     </form>
     <form class="edit_checkout animate-floating-labels" action="https://sis.redsys.es/sis/realizarPago"
           accept-charset="UTF-8"
@@ -28,7 +29,7 @@
         <div class="section" data-payment-method="">
             <div class="section__header">
 
-            {% if error %}
+                {% if error %}
                     <div class="alert alert-danger alert-dismissable fade in">
                         <button type="button" class="close" data-dismiss="alert"
                                 aria-hidden="true" onclick="Close(3)"
@@ -88,6 +89,7 @@
     {#        </a>#}
     {#    </div>#}
     <script src="https://js.braintreegateway.com/v2/braintree.js"></script>
+    {#    <script src="{% static 'js/compra/braintree.js' %}"></script>#}
     <script type="text/javascript">
         braintree.setup("{{ token }}", "paypal", {
             container: "paypal-container",
@@ -102,6 +104,12 @@
                 document.getElementById("braintree_form").submit();
             }
         });
+    </script>
+    <script>
+        function Cosa() {
+            document.getElementById("braintree_form").submit();
+        }
+
     </script>
     {#    <h1>#}
     {#        Disponible en breve!!!!!#}

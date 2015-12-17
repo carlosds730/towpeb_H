@@ -5,15 +5,10 @@ import string
 
 import braintree
 import django.utils.timezone as tz
-
 from django.core.mail import EmailMessage
-
 from django.core.validators import validate_email
-
 from django.http import HttpResponseRedirect, Http404, HttpResponse
-
 from django.shortcuts import render, redirect
-
 from django.views.decorators.csrf import csrf_exempt
 
 from Shop_Site import models
@@ -1119,7 +1114,12 @@ def change_password(request):
 def payment_methods(request):
     if request.method == 'POST':
         print(request.POST)
-        nonce = request.POST['payment_method_nonce']
+        try:
+            nonce = request.POST['payment_method_nonce']
+        except Exception as e:
+            from braintree.test.nonces import Nonces
+
+            nonce = Nonces.PayPalOneTimePayment
 
         log = get_login(request.COOKIES)
         on_hold = None
@@ -1135,7 +1135,7 @@ def payment_methods(request):
         if on_hold and on_hold.is_valid():
             try:
                 result = braintree.Transaction.sale({
-                    "amount": on_hold.total_price_two()[1],
+                    "amount": on_hold.total_price_with_taxes()[1],
                     "payment_method_nonce": nonce,
                     "options": {
                         "submit_for_settlement": True
@@ -1164,8 +1164,8 @@ def payment_methods(request):
                     send_mail_owners(purchase)
                 except Exception:
                     print('Call owners!!!!!!!!!!!!!!!!!!!!!!!')
-            except Exception:
-                print("It sucks")
+            except Exception as e:
+                print(e)
                 result = None
         else:
             return HttpResponseRedirect('/cart_shop/')
