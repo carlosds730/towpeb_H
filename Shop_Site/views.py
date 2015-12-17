@@ -1141,10 +1141,11 @@ def payment_methods(request):
                         "submit_for_settlement": True
                     }
                 })
+                print(result)
                 try:
                     on_hold.discount()
-
-                except Exception:
+                    print("We discount")
+                except Exception as e:
                     transaction = braintree.Transaction.find(result.transaction.id)
                     if transaction.status == braintree.Transaction.Status.SubmittedForSettlement:
                         void_result = braintree.Transaction.void(result.transaction.id)
@@ -1160,10 +1161,12 @@ def payment_methods(request):
                             raise Http404(str(refound_result.errors.deep_errors))
                     else:
                         raise Http404(str(transaction.errors.deep_errors))
-                try:
-                    send_mail_owners(purchase)
-                except Exception:
-                    print('Call owners!!!!!!!!!!!!!!!!!!!!!!!')
+                    print(e)
+                    # try:
+                    # # send_mail_owners(purchase)
+                    # except Exception as e:
+                    #     print(e)
+                    #     print('Call owners!!!!!!!!!!!!!!!!!!!!!!!')
             except Exception as e:
                 print(e)
                 result = None
