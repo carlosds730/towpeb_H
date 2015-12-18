@@ -6,6 +6,7 @@ import string
 import braintree
 import django.utils.timezone as tz
 from django.core.mail import EmailMessage
+
 from django.core.validators import validate_email
 
 from django.http import HttpResponseRedirect, Http404, HttpResponse
@@ -1138,7 +1139,8 @@ def payment_methods(request):
         if on_hold and on_hold.is_valid():
             try:
                 result = braintree.Transaction.sale({
-                    "amount": on_hold.total_price_with_taxes()[1],
+                    # "amount": on_hold.total_price_with_taxes()[1],
+                    "amount": on_hold.total_price_two()[1],
                     "payment_method_nonce": nonce,
                     "options": {
                         "submit_for_settlement": True
@@ -1167,10 +1169,10 @@ def payment_methods(request):
                         raise Http404(str(transaction.errors.deep_errors))
 
                         # try:
-                    # # send_mail_owners(purchase)
-                    # except Exception as e:
-                    #     print(e)
-                    #     print('Call owners!!!!!!!!!!!!!!!!!!!!!!!')
+                        # # send_mail_owners(purchase)
+                        # except Exception as e:
+                        #     print(e)
+                        #     print('Call owners!!!!!!!!!!!!!!!!!!!!!!!')
             except Exception as e:
                 print(e)
                 result = None
