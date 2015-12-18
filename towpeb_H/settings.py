@@ -67,29 +67,29 @@ TPV_KEY = 'SO510VU7O274M4LM'
 # TPV_KEY = 'BXjNopkb5Tx8GehhBSdSRuHVaE8oDekF'
 TPV_FUC = '092508472'
 
-# BRAINTREE_ENV = braintree.Environment.Production
-# BRAINTREE_MERCHANT = '5mbk28tz7tp7vzsp'
-# BRAINTREE_PUBLIC_KEY = 'xbzyp9nzm24gk5zg'
-# BRAINTREE_PRIVATE_KEY = '4febe8b21f7144c0186b366031d55556'
-#
-# braintree.Configuration.configure(
-#     braintree.Environment.Production,
-#     '5mbk28tz7tp7vzsp',
-#     'xbzyp9nzm24gk5zg',
-#     '4febe8b21f7144c0186b366031d55556'
-# )
-
-BRAINTREE_ENV = braintree.Environment.Sandbox
-BRAINTREE_MERCHANT = 'rgrr3976xdtj9r9x'
-BRAINTREE_PUBLIC_KEY = 'wp9wm59tpzg5ht43'
-BRAINTREE_PRIVATE_KEY = '223d029cad5b5aa6dbcb93b3fba280a0'
+BRAINTREE_ENV = braintree.Environment.Production
+BRAINTREE_MERCHANT = '5mbk28tz7tp7vzsp'
+BRAINTREE_PUBLIC_KEY = 'xbzyp9nzm24gk5zg'
+BRAINTREE_PRIVATE_KEY = '4febe8b21f7144c0186b366031d55556'
 
 braintree.Configuration.configure(
-    braintree.Environment.Sandbox,
-    'rgrr3976xdtj9r9x',
-    'wp9wm59tpzg5ht43',
-    '223d029cad5b5aa6dbcb93b3fba280a0'
+    braintree.Environment.Production,
+    '5mbk28tz7tp7vzsp',
+    'xbzyp9nzm24gk5zg',
+    '4febe8b21f7144c0186b366031d55556'
 )
+
+# BRAINTREE_ENV = braintree.Environment.Sandbox
+# BRAINTREE_MERCHANT = 'rgrr3976xdtj9r9x'
+# BRAINTREE_PUBLIC_KEY = 'wp9wm59tpzg5ht43'
+# BRAINTREE_PRIVATE_KEY = '223d029cad5b5aa6dbcb93b3fba280a0'
+#
+# braintree.Configuration.configure(
+#     braintree.Environment.Sandbox,
+#     'rgrr3976xdtj9r9x',
+#     'wp9wm59tpzg5ht43',
+#     '223d029cad5b5aa6dbcb93b3fba280a0'
+# )
 
 # If you cannot install M2Crypto (e.g. AppEngine):
 # BRAINTREE_UNSAFE_SSL = True

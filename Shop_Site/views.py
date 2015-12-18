@@ -7,6 +7,7 @@ import braintree
 import django.utils.timezone as tz
 from django.core.mail import EmailMessage
 from django.core.validators import validate_email
+
 from django.http import HttpResponseRedirect, Http404, HttpResponse
 
 from django.shortcuts import render, redirect
@@ -1122,7 +1123,7 @@ def payment_methods(request):
         except Exception as e:
             print(e)
             nonce = Nonces.PayPalOneTimePayment
-        nonce = Nonces.PayPalOneTimePayment
+        # nonce = Nonces.PayPalOneTimePayment
         log = get_login(request.COOKIES)
         on_hold = None
         if log:
