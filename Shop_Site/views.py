@@ -8,6 +8,7 @@ import django.utils.timezone as tz
 from django.core.mail import EmailMessage
 from django.core.validators import validate_email
 from django.http import HttpResponseRedirect, Http404, HttpResponse
+
 from django.shortcuts import render, redirect
 
 from django.views.decorators.csrf import csrf_exempt
@@ -1147,6 +1148,7 @@ def payment_methods(request):
                     on_hold.discount()
                     print("We discount")
                 except Exception as e:
+                    print(e)
                     transaction = braintree.Transaction.find(result.transaction.id)
                     if transaction.status == braintree.Transaction.Status.SubmittedForSettlement:
                         void_result = braintree.Transaction.void(result.transaction.id)
@@ -1162,8 +1164,8 @@ def payment_methods(request):
                             raise Http404(str(refound_result.errors.deep_errors))
                     else:
                         raise Http404(str(transaction.errors.deep_errors))
-                    print(e)
-                    # try:
+
+                        # try:
                     # # send_mail_owners(purchase)
                     # except Exception as e:
                     #     print(e)
@@ -1195,8 +1197,9 @@ def payment_methods(request):
         else:
             try:
                 error_message = format(result.message)
-            except TypeError:
-                raise Http404('Braintree Error')
+            except Exception as e:
+                print(e)
+                return add_info_home(request, {'error': e}, 'fail.html')
             try:
                 token = braintree.ClientToken.generate()
             except Exception:
