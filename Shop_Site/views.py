@@ -6,13 +6,9 @@ import string
 import braintree
 import django.utils.timezone as tz
 from django.core.mail import EmailMessage
-
 from django.core.validators import validate_email
-
 from django.http import HttpResponseRedirect, Http404, HttpResponse
-
 from django.shortcuts import render, redirect
-
 from django.views.decorators.csrf import csrf_exempt
 
 from Shop_Site import models
@@ -714,6 +710,35 @@ def send_mail_owners(purchase):
     mail_client.send(fail_silently=False)
 
 
+def send_mail_owners_prueba(purchase):
+    toclient = CreatePDF(purchase, True)
+    message = "Estimado " + purchase.client.full_name() + "\n Le informamos que su pedido se ha completado con éxito y se encuentra en proceso de envío.\n Desde Hutton le agradecemos la confianza depositada en nuestra marca y esperamos que su experiencia de compra sea excelente. \n Para cualquier duda o consulta le facilitamos nuestro correo electrónico operativo 24H.\n info@hutton.es\n Saludos,\n Hutton."
+
+    mail_client = EmailMessage(subject='Ticket de compra online en Hutton', body=message,
+                               from_email='towpeb@gmail.com', to=[purchase.client.email], reply_to=['towpeb@gmail.com'],
+                               headers={'Message-ID': 'foo'})
+
+    mail_client.attach_file(toclient)
+
+    mail_client.send(fail_silently=False)
+
+    print("Mail client sent")
+
+    toowner = CreatePDF(purchase, False)
+
+    message = "Información de la compra con Id %s" % purchase.transaction_id
+
+    mail_client = EmailMessage(subject='%s Nueva compra online' % purchase.transaction_id, body=message,
+                               from_email='towpeb@gmail.com', to=['towpeb@gmail.com'], reply_to=['towpeb@gmail.com'],
+                               headers={'Message-ID': 'foo'})
+
+    mail_client.attach_file(toowner)
+
+    mail_client.send(fail_silently=False)
+
+    print("Mail owner sent")
+
+
 # TODO: DO this
 def send_mail_pass(client):
     # url = 'http://127.0.0.1:8000/change_password/?email=' + client.email + '&key=' + password
@@ -1118,12 +1143,11 @@ def change_password(request):
 def payment_methods(request):
     if request.method == 'POST':
         print(request.POST)
-        from braintree.test.nonces import Nonces
         try:
             nonce = request.POST['payment_method_nonce']
         except Exception as e:
             print(e)
-            nonce = Nonces.PayPalOneTimePayment
+            # nonce = Nonces.PayPalOneTimePayment
         # nonce = Nonces.PayPalOneTimePayment
         log = get_login(request.COOKIES)
         on_hold = None
@@ -1168,11 +1192,12 @@ def payment_methods(request):
                     else:
                         raise Http404(str(transaction.errors.deep_errors))
 
-                        # try:
-                        # # send_mail_owners(purchase)
-                        # except Exception as e:
-                        #     print(e)
-                        #     print('Call owners!!!!!!!!!!!!!!!!!!!!!!!')
+                try:
+                    # send_mail_owners(purchase)
+                    send_mail_owners_prueba(purchase)
+                except Exception as e:
+                    print(e)
+                    print('Call owners!!!!!!!!!!!!!!!!!!!!!!!')
             except Exception as e:
                 print(e)
                 result = None
