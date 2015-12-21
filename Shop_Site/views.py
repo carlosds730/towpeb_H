@@ -8,6 +8,7 @@ import django.utils.timezone as tz
 from django.core.mail import EmailMessage
 from django.core.validators import validate_email
 from django.http import HttpResponseRedirect, Http404, HttpResponse
+
 from django.shortcuts import render, redirect
 
 from django.views.decorators.csrf import csrf_exempt
@@ -1197,7 +1198,7 @@ def payment_methods(request):
 
                 try:
                     # send_mail_owners(purchase)
-                    send_mail_owners_prueba(purchase)
+                    send_mail_owners_prueba(on_hold)
                 except Exception as e:
                     print(e)
                     print('Call owners!!!!!!!!!!!!!!!!!!!!!!!')
