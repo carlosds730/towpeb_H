@@ -96,7 +96,7 @@
             singleUse: true,
             {#            PayPalOneTimePayment: true,#}
             locale: 'es_es',
-            amount: {{ on_hold.total_price_two.1 }},
+            amount: {{ on_hold.total_price_with_taxes.1 }},
             currency: 'EUR',
             onPaymentMethodReceived: function (obj) {
                 // Do some logic in here.
