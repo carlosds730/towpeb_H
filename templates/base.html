@@ -491,6 +491,11 @@
 
             function CloseButton() {
                 $(".notification_zone_big").fadeOut();
+                {% if successful_purchase %}
+                    var carrito_a = document.getElementById("carrito");
+                    carrito_a.innerText = "Carrito: 0 Items";
+                    carrito_a.removeAttribute("href");
+                {% endif %}
                 return false;
             }
         </script>
