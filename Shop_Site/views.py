@@ -9,6 +9,7 @@ from django.core.mail import EmailMessage
 from django.core.validators import validate_email
 from django.http import HttpResponseRedirect, Http404, HttpResponse
 from django.shortcuts import render, redirect
+
 from django.views.decorators.csrf import csrf_exempt
 
 from Shop_Site import models
@@ -1047,6 +1048,7 @@ def add_mail(request):
 # DONE: What this should do when there is no purchase
 def payment_billing(request):
     if request.method == 'GET':
+        print("Hellow")
         completed_pay_url = site_url + 'completed_payment'
         completed_payment_url = completed_pay_url + '/'
         try:
