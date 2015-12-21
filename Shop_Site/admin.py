@@ -174,7 +174,7 @@ class MontoListFilter(admin.SimpleListFilter):
 class PurchaseAdmin(admin.ModelAdmin):
     models = models.Purchase
     list_display = ['number', 'admin_client', 'address', 'date', 'Pagado', 'Costo']
-    search_fields = ['address']
+    # search_fields = ['date', 'client']
     list_filter = ['date', MontoListFilter, PagadoListFilter, 'client']
     filter_horizontal = ['products']
     readonly_fields = ['transaction_id', 'monto']
