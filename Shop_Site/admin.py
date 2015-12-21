@@ -54,6 +54,7 @@ class ProductsAdmin(AdminImageMixin, admin.ModelAdmin):
     # list_filter = ['name', 'label']
     readonly_fields = ['percent']
     prepopulated_fields = {"slug": ("name",)}
+    actions = ['reverse_discount', 'discount']
 
     def product_price(self, obj):
         return obj.total_price()
@@ -80,6 +81,18 @@ class ProductsAdmin(AdminImageMixin, admin.ModelAdmin):
     admin_amount.short_description = 'Existencias'
     # admin_amount.admin_order_field = 'percent'
 
+    def discount(self, request, queryset):
+        for product in queryset:
+            product.set_discount(50)
+
+    discount.short_description = 'Aplicar descuento de 50'
+
+    def reverse_discount(self, request, queryset):
+        for product in queryset:
+            product.reverse_discount()
+
+    reverse_discount.short_description = 'Eliminar descuentos'
+
 
 class CategoryAdmin(AdminImageMixin, admin.ModelAdmin):
     models = models.Category
@@ -96,6 +109,24 @@ class ClientAdmin(admin.ModelAdmin):
     search_fields = ['name', 'address', 'email']
     list_filter = ['name', 'email', 'is_ghost']
     readonly_fields = ['password']
+    actions = ['download_mails']
+
+    def download_mails(self, request, queryset):
+        f = open("mails.txt", mode='w')
+
+        for cliente in queryset.all():
+            f.writelines(cliente.email + "\n")
+
+        f.close()
+
+        file = open('mails.txt', mode='r+b')
+        name = 'mails.txt'
+        response = HttpResponse(file, content_type='application/txt')
+        response['Content-Disposition'] = 'attachment; filename="%s"' % name
+        self.message_user(request, 'Archivo generado con éxito')
+        return response
+
+    download_mails.short_description = 'Descargar los mails de los clientes'
 
 
 class PagadoListFilter(admin.SimpleListFilter):
@@ -197,6 +228,24 @@ class NewsletterClientsAdmin(admin.ModelAdmin):
     list_display = ['email']
     search_fields = ['email']
     list_filter = ['email']
+    actions = ['download_mails']
+
+    def download_mails(self, request, queryset):
+        f = open("mails.txt", mode='w')
+
+        for cliente in queryset.all():
+            f.writelines(cliente.email + "\n")
+
+        f.close()
+
+        file = open('mails.txt', mode='r+b')
+        name = 'mails.txt'
+        response = HttpResponse(file, content_type='application/txt')
+        response['Content-Disposition'] = 'attachment; filename="%s"' % name
+        self.message_user(request, 'Archivo generado con éxito')
+        return response
+
+    download_mails.short_description = 'Descargar los mails de los clientes'
 
 
 class LookBookImgAdmin(AdminImageMixin, admin.ModelAdmin):

@@ -12,6 +12,7 @@ from django.core.urlresolvers import reverse
 from towpeb_H.settings import WEB_SITE_URL as web_site_url
 
 
+
 # TODO: Terminar de poner la tallas q faltan, estas fueron la unicas que se me ocurrieron
 sizes = [('S', 'S'), ('M', 'M'), ('L', 'L'), ('XL', 'XL'), ('44', '44'), ('46', '46'), ('48', '48'), ('50', '50'),
          ('52', '52'), ('54', '54'), ('56', '56'), ('única', 'única')]
@@ -139,6 +140,16 @@ class Products(models.Model):
 
     def total_price(self):
         return str(self.price) + ' €'
+
+    def set_discount(self, percent):
+        self.old_price = self.price
+        self.price *= Decimal((100 - percent) / 100)
+        self.save()
+
+    def reverse_discount(self):
+        self.price = self.old_price
+        self.old_price = None
+        self.save()
 
     def save(self, *args, **kwargs):
         self.percent = 100 - self.price / self.old_price * 100 if self.old_price else 0
