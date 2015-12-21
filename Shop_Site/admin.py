@@ -115,7 +115,9 @@ class ClientAdmin(admin.ModelAdmin):
         f = open("mails.txt", mode='w')
 
         for cliente in queryset.all():
-            f.writelines(cliente.email + "\n")
+            f.writelines(cliente.email + ";")
+
+        f.writelines("\n")
 
         f.close()
 
@@ -234,7 +236,9 @@ class NewsletterClientsAdmin(admin.ModelAdmin):
         f = open("mails.txt", mode='w')
 
         for cliente in queryset.all():
-            f.writelines(cliente.email + "\n")
+            f.writelines(cliente.email + ";")
+
+        f.writelines("\n")
 
         f.close()
 
