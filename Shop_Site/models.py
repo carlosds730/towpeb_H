@@ -14,6 +14,7 @@ from towpeb_H.settings import WEB_SITE_URL as web_site_url
 
 
 
+
 # TODO: Terminar de poner la tallas q faltan, estas fueron la unicas que se me ocurrieron
 sizes = [('S', 'S'), ('M', 'M'), ('L', 'L'), ('XL', 'XL'), ('44', '44'), ('46', '46'), ('48', '48'), ('50', '50'),
          ('52', '52'), ('54', '54'), ('56', '56'), ('única', 'única')]
@@ -153,7 +154,7 @@ class Products(models.Model):
         self.save()
 
     def save(self, *args, **kwargs):
-        self.percent = 100 - self.price / self.old_price * 100 if self.old_price else 0
+        self.percent = int(100 - self.price / self.old_price * 100) if self.old_price else 0
         super(Products, self).save(*args, **kwargs)
         for sale_pro in self.sale_product_set.all():
             for pur in sale_pro.purchase.all():
