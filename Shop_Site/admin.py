@@ -83,7 +83,7 @@ class ProductsAdmin(AdminImageMixin, admin.ModelAdmin):
 
     def discount(self, request, queryset):
         for product in queryset:
-            product.set_discount(10)
+            product.set_discount(50)
 
     discount.short_description = 'Aplicar descuento de 10 porciento'
 
