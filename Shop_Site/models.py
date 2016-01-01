@@ -17,6 +17,7 @@ from towpeb_H.settings import WEB_SITE_URL as web_site_url
 
 
 
+
 # TODO: Terminar de poner la tallas q faltan, estas fueron la unicas que se me ocurrieron
 sizes = [('S', 'S'), ('M', 'M'), ('L', 'L'), ('XL', 'XL'), ('44', '44'), ('46', '46'), ('48', '48'), ('50', '50'),
          ('52', '52'), ('54', '54'), ('56', '56'), ('única', 'única')]
@@ -345,13 +346,20 @@ class Purchase(models.Model):
     def discount(self):
         if self.on_hold:
             self.on_hold = False
+            attributes = []
             for sale_product in self.products.all():
                 if sale_product.valid():
-                    sale_product.attribute.amount -= sale_product.amount
+                    attr = Attribute.objects.get(pk=sale_product.attribute.pk)
+                    attr.amount -= sale_product.amount
+                    attributes.append(attr)
                 else:
                     raise Exception()
+            for attr in attributes:
+                attr.save()
             for sale_product in self.products.all():
-                sale_product.attribute.save()
+                # attr = Attribute.objects.get(pk=sale_product.attribute.pk)
+                # attr.save()
+                # sale_product.attribute.save()
                 sale_product.save()
             self.save()
 

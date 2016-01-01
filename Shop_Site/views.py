@@ -1149,7 +1149,7 @@ def payment_methods(request):
             nonce = request.POST['payment_method_nonce']
         except Exception as e:
             print(e)
-            # nonce = Nonces.PayPalOneTimePayment
+            # nonce = "fake-paypal-one-time-nonce"
         # nonce = Nonces.PayPalOneTimePayment
         log = get_login(request.COOKIES)
         on_hold = None
