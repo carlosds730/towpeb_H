@@ -20,6 +20,7 @@ from towpeb_H.settings import WEB_SITE_URL as web_site_url
 
 
 
+
 # TODO: Terminar de poner la tallas q faltan, estas fueron la unicas que se me ocurrieron
 sizes = [('S', 'S'), ('M', 'M'), ('L', 'L'), ('XL', 'XL'), ('44', '44'), ('46', '46'), ('48', '48'), ('50', '50'),
          ('52', '52'), ('54', '54'), ('56', '56'), ('única', 'única')]
@@ -188,6 +189,9 @@ class Attribute(models.Model):
 
     amount = models.IntegerField(verbose_name='Cantidad de existencias', default=0, validators=[validate],
                                  help_text='Cantidad de existencias del producto')
+
+    def is_available(self):
+        return self.amount > 0
 
     def __str__(self):
         return self.size

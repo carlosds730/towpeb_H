@@ -3853,6 +3853,15 @@ button.close {
     border-top: 1px solid #004024;
 }
 
+.sizes_list > .disabledSize {
+    float: left;
+    /*width: 30px;*/
+    text-align: center;
+    border-left: 1px solid grey;
+    border-bottom: 1px solid grey;
+    border-top: 1px solid grey;
+}
+
 .sizes_list > li:last-child {
     border-right: 1px solid #004024;
 }
@@ -3864,6 +3873,11 @@ button.close {
     -moz-transition: background-color 0.2s ease-in;
     -o-transition: background-color 0.2s ease-in;
     transition: background-color 0.2s ease-in
+}
+
+.disabledSize {
+    background-color: grey;
+    color: white;
 }
 
 .unselected:hover {

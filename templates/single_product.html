@@ -86,13 +86,24 @@
                                         <label for="product-select">Tallas</label>
                                         <ul class="sizes_list">
                                             <input type="text" hidden value="" name="size" id="size_input">
-                                            {% for x in product.available_sizes.all %}
-                                                <li>
-                                                    <label class="size_choice unselected" id="size_{{ x.size }}"
-                                                           data-size="{{ x.pk }}">
-                                                        {{ x.size }}
-                                                    </label>
-                                                </li>
+                                            {% for x in product.attributes.all %}
+
+                                                {% if x.is_available %}
+                                                    <li>
+                                                        <label class="size_choice unselected" id="size_{{ x.size }}"
+                                                               data-size="{{ x.pk }}">
+                                                            {{ x.size }}
+                                                        </label>
+                                                    </li>
+                                                {% else %}
+                                                    <li class="disabledSize">
+                                                        <label class="disabled" id="size_{{ x.size }}"
+                                                               data-size="{{ x.pk }}">
+                                                            {{ x.size }}
+                                                        </label>
+                                                    </li>
+                                                {% endif %}
+
                                             {% endfor %}
 
                                         </ul>

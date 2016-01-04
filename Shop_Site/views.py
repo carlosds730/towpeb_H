@@ -740,7 +740,7 @@ def send_mail_owners_prueba(purchase):
     print("Mail owner sent")
 
 
-# TODO: DO this
+# DONE: DO this
 def send_mail_pass(client):
     # url = 'http://127.0.0.1:8000/change_password/?email=' + client.email + '&key=' + password
     url = site_url + 'change_password/' + '?email=' + client.email + '&key=' + client.password
